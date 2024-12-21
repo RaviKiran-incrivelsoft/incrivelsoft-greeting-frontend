@@ -1,17 +1,23 @@
+import axios from "axios";
 import React, { useState } from "react";
 
-const RegisterPopup = ({ openLoginModal, closeRegModal }) => {
-	// Single state to hold all form data
+const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
+	const handleOutsideClick = (e) => {
+		if (e.target.id === 'modal-container') {
+			onClose();
+		}
+	};
+
 	const [formData, setFormData] = useState({
-		firstName: "",
-		lastName: "",
+		first_name: "",
+		last_name: "",
 		email: "",
-		password: "",
-		confirmPassword: "",
+		password: null,
+		confirmPassword: null,
 	});
 
 	const [isEmailSignup, setIsEmailSignup] = useState(false);
-
+	const isPasswordMatch = formData.password === formData.confirmPassword;
 	// Handle form input changes
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -24,41 +30,22 @@ const RegisterPopup = ({ openLoginModal, closeRegModal }) => {
 	// Handle form submission
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		const { firstName, lastName, email, password, confirmPassword } = formData;
-
+		const { confirmPassword, ...dataToSubmit } = formData;
 		try {
-			const response = await fetch("http://localhost:3001/api/user_register", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ firstName, lastName, email, password, confirmPassword }),
-			});
+			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/users/register`, dataToSubmit);
+			console.log(response.data.message);
 
-			const data = await response.json();
-			if (response.ok) {
-				const fullName = `${firstName} ${lastName}`;
-				localStorage.setItem("userName", fullName);
-				openLoginModal(); // Open login modal
-			} else {
-				console.error(data.error || "Registration failed");
-			}
-		} catch (error) {
-			console.error("Failed to register:", error);
+			const fullName = `${formData.first_name} ${formData.last_name}`;
+			localStorage.setItem("userName", fullName);
+			onClose();
+		} catch (err) {
+			console.error('Error registering user:', err);
 		}
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
-			<div className="flex relative items-center justify-center w-full max-w-xl overflow-hidden bg-white rounded-lg shadow-lg">
-				<button
-					onClick={closeRegModal}
-					className="absolute top-3 right-3 bg-gray-300 hover:bg-gray-400 hover:cursor-pointer text-white rounded-md w-6 h-6 flex items-center justify-center"
-					aria-label="Close"
-				>
-					<span className="text-lg font-bold">&times;</span>
-				</button>
+		<div id="modal-container" onClick={handleOutsideClick} className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+			<div onClick={(e) => e.stopPropagation()} className="flex items-center justify-center w-full max-w-xl overflow-hidden bg-white rounded-lg shadow-lg">
 				<div className="flex w-1/2">
 					<img src="/images/loginbg.png" alt="Promotion" className="w-full object-cover" />
 				</div>
@@ -93,7 +80,7 @@ const RegisterPopup = ({ openLoginModal, closeRegModal }) => {
 									</p>
 								</div>
 								<p className="text-center text-gray-600">
-									Already have an account? <button className="text-blue-600" onClick={openLoginModal}>Log In</button>
+									Already have an account? <button className="text-blue-600" onClick={onSwitchToLogin}>Log In</button>
 								</p>
 							</>
 						) : (
@@ -103,20 +90,20 @@ const RegisterPopup = ({ openLoginModal, closeRegModal }) => {
 									<div className="space-y-4">
 										<input
 											id="first-name"
-											name="firstName"
+											name="first_name"
 											type="text"
 											required
-											value={formData.firstName}
+											value={formData.first_name}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="First Name"
 										/>
 										<input
 											id="last-name"
-											name="lastName"
+											name="last_name"
 											type="text"
 											required
-											value={formData.lastName}
+											value={formData.last_name}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="Last Name"
@@ -155,6 +142,7 @@ const RegisterPopup = ({ openLoginModal, closeRegModal }) => {
 									<button
 										type="submit"
 										className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+										disabled={!isPasswordMatch}
 									>
 										Register
 									</button>

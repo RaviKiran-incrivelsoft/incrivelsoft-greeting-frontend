@@ -1,16 +1,37 @@
-// LoginModal.js
-
+import axios from "axios";
 import React, { useState } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
+import RegisterPopup from "./RegisterPopup";
 
-const LoginModal = ({ isOpen, toggleModal }) => {
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+const LoginModal = ({ onClose, onSwitchToRegister }) => {
+
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		console.log("Login submitted", { email, password });
-		toggleModal();
+
+		try {
+			const response = await axios.post(`${backendUrl}/users/login`, {
+				email,
+				password
+			});
+
+			if (response.data.token) {
+				console.log('Login successful:', response.data);
+				localStorage.setItem('token', response.data.token);
+				localStorage.setItem('userId', response.data.userId);
+			} else {
+				console.log('Invalid credentials');
+			}
+		} catch (err) {
+			console.error('Error logging in:', err);
+		}
+
+		onClose();
 	};
 
 	const handleGoogleLogin = () => {
@@ -21,12 +42,17 @@ const LoginModal = ({ isOpen, toggleModal }) => {
 		console.log("Facebook login");
 	};
 
-	if (!isOpen) return null;
+	const handleOutsideClick = (e) => {
+		if (e.target.id === 'modal-container') {
+			onClose();
+		}
+	};
 
 	return (
 		<div
-			className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
-			onClick={toggleModal}
+			id="modal-container"
+			className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
+			onClick={handleOutsideClick}
 		>
 			<div
 				className="bg-white p-[0.5rem] rounded-lg"
@@ -114,7 +140,7 @@ const LoginModal = ({ isOpen, toggleModal }) => {
 								Don't have an account?{" "}
 								<button
 									className="font-medium text-indigo-600 hover:text-indigo-500"
-									onClick={toggleModal}
+									onClick={onSwitchToRegister}
 								>
 									Sign Up
 								</button>

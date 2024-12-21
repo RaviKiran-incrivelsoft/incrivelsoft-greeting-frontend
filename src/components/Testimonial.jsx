@@ -23,7 +23,7 @@ const Testimonial = () => {
 				<div className="bg-white text-black p-8 rounded-lg shadow-xl max-w-xs w-full transform transition-transform duration-300 hover:scale-105">
 					<div className="mb-6">
 						<svg className="w-12 h-12 text-yellow-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9l2 2-2 2m4 0l2 2-2 2m0-8l2 2-2 2m4 0l2 2-2 2m0-4l-2-2 2-2m-4 0l-2-2 2-2M2 12h8m4 0h8" />
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 9l2 2-2 2m4 0l2 2-2 2m0-8l2 2-2 2m4 0l2 2-2 2m0-4l-2-2 2-2m-4 0l-2-2 2-2M2 12h8m4 0h8" />
 						</svg>
 					</div>
 					<p className="text-lg mb-4">
@@ -37,7 +37,7 @@ const Testimonial = () => {
 				<div className="bg-white text-black p-8 rounded-lg shadow-xl max-w-xs w-full transform transition-transform duration-300 hover:scale-105">
 					<div className="mb-6">
 						<svg className="w-12 h-12 text-yellow-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9l2 2-2 2m4 0l2 2-2 2m0-8l2 2-2 2m4 0l2 2-2 2m0-4l-2-2 2-2m-4 0l-2-2 2-2M2 12h8m4 0h8" />
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 9l2 2-2 2m4 0l2 2-2 2m0-8l2 2-2 2m4 0l2 2-2 2m0-4l-2-2 2-2m-4 0l-2-2 2-2M2 12h8m4 0h8" />
 						</svg>
 					</div>
 					<p className="text-lg mb-4">
@@ -51,7 +51,7 @@ const Testimonial = () => {
 				<div className="bg-white text-black p-8 rounded-lg shadow-xl max-w-xs w-full transform transition-transform duration-300 hover:scale-105">
 					<div className="mb-6">
 						<svg className="w-12 h-12 text-yellow-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9l2 2-2 2m4 0l2 2-2 2m0-8l2 2-2 2m4 0l2 2-2 2m0-4l-2-2 2-2m-4 0l-2-2 2-2M2 12h8m4 0h8" />
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 9l2 2-2 2m4 0l2 2-2 2m0-8l2 2-2 2m4 0l2 2-2 2m0-4l-2-2 2-2m-4 0l-2-2 2-2M2 12h8m4 0h8" />
 						</svg>
 					</div>
 					<p className="text-lg mb-4">

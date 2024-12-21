@@ -7,13 +7,13 @@ import Business from '../components/Business'
 import Testimonial from '../components/Testimonial'
 import Process from '../components/Process'
 
-const Home = () => {
+const Home = ({onRegisterClick}) => {
 	return (
 		<div>
 			<Hero />
 			<Temple />
 			<Services />
-			<Join/>
+			<Join onRegisterClick={onRegisterClick}/>
 			<Process/>
 			<Testimonial/>
 			<Business/>
