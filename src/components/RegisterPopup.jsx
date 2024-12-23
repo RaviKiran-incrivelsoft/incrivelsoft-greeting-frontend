@@ -9,8 +9,8 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	};
 
 	const [formData, setFormData] = useState({
-		first_name: "",
-		last_name: "",
+		firstName: "",
+		lastName: "",
 		email: "",
 		password: null,
 		confirmPassword: null,
@@ -30,14 +30,13 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	// Handle form submission
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const { confirmPassword, ...dataToSubmit } = formData;
 		try {
-			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/users/register`, dataToSubmit);
+			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user_register`, formData);
 			console.log(response.data.message);
 
-			const fullName = `${formData.first_name} ${formData.last_name}`;
+			const fullName = `${formData.firstName} ${formData.lastName}`;
 			localStorage.setItem("userName", fullName);
-			onClose();
+			onSwitchToLogin();
 		} catch (err) {
 			console.error('Error registering user:', err);
 		}
@@ -90,20 +89,20 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									<div className="space-y-4">
 										<input
 											id="first-name"
-											name="first_name"
+											name="firstName"
 											type="text"
 											required
-											value={formData.first_name}
+											value={formData.firstName}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="First Name"
 										/>
 										<input
 											id="last-name"
-											name="last_name"
+											name="lastName"
 											type="text"
 											required
-											value={formData.last_name}
+											value={formData.lastName}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="Last Name"

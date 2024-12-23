@@ -5,13 +5,14 @@ const Navbar = ({ onLoginClick }) => {
 	const navigate = useNavigate();
 
 	const token = localStorage.getItem('token');
-	const username = localStorage.getItem('userName');
+	const user = JSON.parse(localStorage.getItem('user'));
+	
+	const fullname = user?.firstName + ' ' + user?.lastName;
 	const profileImage = 'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-1024.png';
 
 	const handleLogout = () => {
 		localStorage.removeItem('token');
-		localStorage.removeItem('userName');
-		localStorage.removeItem('userId');
+		localStorage.removeItem('user');
 		navigate('/');
 	};
 
@@ -51,8 +52,8 @@ const Navbar = ({ onLoginClick }) => {
 							alt="Profile"
 							className="w-10 h-10 rounded-full mr-2"
 						/>
-						{/* Username */}
-						<span className="text-black font-semibold mr-4">{username}</span>
+						{/* User */}
+						<span className="text-black font-semibold mr-3 ml-2">{fullname}</span>
 						{/* Logout Button */}
 						<button
 							onClick={handleLogout}

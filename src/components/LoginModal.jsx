@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import RegisterPopup from "./RegisterPopup";
+import { useNavigate } from "react-router-dom";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -9,29 +9,43 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		console.log("Login submitted", { email, password });
 
 		try {
-			const response = await axios.post(`${backendUrl}/users/login`, {
+			// Perform login
+			const response = await axios.post(`${backendUrl}/api/user_login`, {
 				email,
-				password
+				password,
 			});
 
 			if (response.data.token) {
-				console.log('Login successful:', response.data);
-				localStorage.setItem('token', response.data.token);
-				localStorage.setItem('userId', response.data.userId);
+				console.log("Login successful:", response.data);
+
+				// Save token to localStorage
+				localStorage.setItem("token", response.data.token);
+
+				// Fetch user profile
+				const userProfileResponse = await axios.get(`${backendUrl}/api/user/${response.data.id}`);
+				const userProfile = userProfileResponse.data;
+
+				// Save user data to localStorage
+				localStorage.setItem("user", JSON.stringify(userProfile));
+
+				// Redirect to home
+				navigate("/");
+
+				// Close modal
+				onClose();
 			} else {
-				console.log('Invalid credentials');
+				console.error("Invalid credentials");
 			}
 		} catch (err) {
-			console.error('Error logging in:', err);
+			console.error("Error logging in:", err);
 		}
-
-		onClose();
 	};
 
 	const handleGoogleLogin = () => {
