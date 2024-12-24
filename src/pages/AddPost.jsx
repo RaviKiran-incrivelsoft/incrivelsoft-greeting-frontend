@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { FaUpload, FaRedo } from "react-icons/fa";
 
@@ -19,17 +20,11 @@ const AddPost = () => {
 			formData.append('userMedia', media);
 			formData.append('userDescription', paragraph);
 
-			const campaignResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/create_campaign`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					campaignName: title,
-					campaignDescription: paragraph,
-					createdAt: new Date().toISOString(),
-					id: Date.now(),
-				}),
+			const campaignResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/create_campaign`, {
+				campaignName: title,
+				campaignDescription: paragraph,
+				createdAt: new Date().toISOString(),
+				id: Date.now(),
 			});
 
 			console.log('Campaign response status:', campaignResponse.status);
@@ -40,12 +35,13 @@ const AddPost = () => {
 			}
 
 			const uploadEndpoint = `${process.env.REACT_APP_BACKEND_URL}/api/addpost`;
-			const uploadResponse = await fetch(uploadEndpoint, {
-				method: 'POST',
-				body: formData,
-			});
+			const uploadResponse = await axios.post(uploadEndpoint, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			}, formData);
 			console.log(media);
-			
+
 
 			console.log('Media upload response status:', uploadResponse.status);
 			if (uploadResponse.ok) {
