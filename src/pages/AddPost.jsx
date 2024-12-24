@@ -12,10 +12,57 @@ const AddPost = () => {
 		reader.readAsDataURL(file);
 	};
 
-	const handleSubmit = () => {
-		const postData = { title, media, paragraph };
-		console.log("Post submitted:", postData);
+	const handleSubmit = async () => {
+		const formData = new FormData();
+
+		try {
+			formData.append('userMedia', media);
+			formData.append('userDescription', paragraph);
+
+			const campaignResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/create_campaign`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					campaignName: title,
+					campaignDescription: paragraph,
+					createdAt: new Date().toISOString(),
+					id: Date.now(),
+				}),
+			});
+
+			console.log('Campaign response status:', campaignResponse.status);
+			if (!campaignResponse.ok) {
+				const errorResponse = await campaignResponse.text();
+				console.log('Error response from campaign API:', errorResponse);
+				throw new Error('Failed to create campaign.');
+			}
+
+			const uploadEndpoint = `${process.env.REACT_APP_BACKEND_URL}/api/addpost`;
+			const uploadResponse = await fetch(uploadEndpoint, {
+				method: 'POST',
+				body: formData,
+			});
+			console.log(media);
+			
+
+			console.log('Media upload response status:', uploadResponse.status);
+			if (uploadResponse.ok) {
+				const data = await uploadResponse.json();
+				console.log('Response data:', data);
+			} else {
+				const uploadErrorResponse = await uploadResponse.text();
+				console.log('Error response from media upload API:', uploadErrorResponse);
+				throw new Error('Failed to submit post.');
+			}
+
+			window.history.pushState({}, '', `/dashboard?userDescription=${encodeURIComponent(paragraph)}`);
+		} catch (error) {
+			console.error('Error:', error);
+		}
 	};
+
 
 	return (
 		<div className="mx-48 px-16 py-6 bg-[#f5f5f5]">
