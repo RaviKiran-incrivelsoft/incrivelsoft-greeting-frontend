@@ -14,6 +14,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		console.log("Login submitted", { email, password });
+		console.log("REACT_APP_BACKEND_URL", process.env.REACT_APP_BACKEND_URL);
 
 		try {
 			// Perform login

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaUpload, FaRedo } from "react-icons/fa";
+import { v4 as uuidv4 } from "uuid";
 
 const AddPost = () => {
 	const [title, setTitle] = useState("");
@@ -8,57 +9,44 @@ const AddPost = () => {
 	const [paragraph, setParagraph] = useState("");
 
 	const handleMediaUpload = (file) => {
-		const reader = new FileReader();
-		reader.onload = () => setMedia({ type: file.type.startsWith("video") ? "video" : "image", url: reader.result });
-		reader.readAsDataURL(file);
+		setMedia({ file, type: file.type.startsWith("video") ? "video" : "image" });
 	};
 
 	const handleSubmit = async () => {
-		const formData = new FormData();
-
 		try {
-			formData.append('userMedia', media);
-			formData.append('userDescription', paragraph);
-
+			// Campaign Creation
 			const campaignResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/create_campaign`, {
 				campaignName: title,
 				campaignDescription: paragraph,
 				createdAt: new Date().toISOString(),
-				id: Date.now(),
+				id: uuidv4(),
 			});
 
-			console.log('Campaign response status:', campaignResponse.status);
-			if (!campaignResponse.ok) {
-				const errorResponse = await campaignResponse.text();
-				console.log('Error response from campaign API:', errorResponse);
+			if (campaignResponse.status !== 200) {
+				console.error('Error response from campaign API:', campaignResponse.data.error);
 				throw new Error('Failed to create campaign.');
 			}
 
-			const uploadEndpoint = `${process.env.REACT_APP_BACKEND_URL}/api/addpost`;
-			const uploadResponse = await axios.post(uploadEndpoint, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			}, formData);
-			console.log(media);
+			// Media Upload
+			const formData = new FormData();
+			formData.append(media.type === "video" ? 'userVideo' : 'userImage', media.file);
+			formData.append('userDescription', paragraph);
 
+			const endpoint = media.type === "video" ? '/api/user_video' : '/api/user_info';
+			const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, formData, {
+				headers: { "Content-Type": "multipart/form-data" },
+			});
 
-			console.log('Media upload response status:', uploadResponse.status);
-			if (uploadResponse.ok) {
-				const data = await uploadResponse.json();
-				console.log('Response data:', data);
+			if (res.status === 200) {
+				console.log('Media uploaded successfully:', res.data);
+				window.history.pushState({}, '', `/dashboard?userDescription=${encodeURIComponent(paragraph)}`);
 			} else {
-				const uploadErrorResponse = await uploadResponse.text();
-				console.log('Error response from media upload API:', uploadErrorResponse);
 				throw new Error('Failed to submit post.');
 			}
-
-			window.history.pushState({}, '', `/dashboard?userDescription=${encodeURIComponent(paragraph)}`);
 		} catch (error) {
-			console.error('Error:', error);
+			console.error('Error:', error.message);
 		}
 	};
-
 
 	return (
 		<div className="mx-48 px-16 py-6 bg-[#f5f5f5]">
@@ -78,9 +66,9 @@ const AddPost = () => {
 				{media ? (
 					<div className="relative">
 						{media.type === "image" ? (
-							<img src={media.url} alt="Uploaded" className="w-auto h-72 rounded shadow" />
+							<img src={URL.createObjectURL(media.file)} alt="Uploaded" className="w-auto h-72 rounded shadow" />
 						) : (
-							<video controls src={media.url} className="w-auto h-72 rounded shadow"></video>
+							<video controls src={URL.createObjectURL(media.file)} className="w-auto h-72 rounded shadow"></video>
 						)}
 						<label className="absolute top-2 right-2 p-2 bg-white text-gray-700 rounded-full shadow hover:bg-gray-100 cursor-pointer">
 							<input
