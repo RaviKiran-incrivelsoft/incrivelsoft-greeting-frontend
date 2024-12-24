@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* slick-carousel styles */
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+/* Override slick-carousel dots */
+.slick-dots li button:before {
+  color: #aaa;
+  opacity: 0.5;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #fff;
+  opacity: 1;
+}
+
+.slick-slide img {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
