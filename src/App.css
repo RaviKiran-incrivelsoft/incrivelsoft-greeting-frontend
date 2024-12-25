@@ -23,3 +23,20 @@
   max-width: 100%;
   height: auto;
 }
+
+@keyframes diagonalMove {
+  0% {
+    transform: translate(0, 0);rotate: 45deg;
+  }
+  50% {
+    transform: translate(2px, -8px);rotate: 45deg
+  }
+  100% {
+    transform: translate(0, 0);rotate: 45deg
+  }
+}
+
+/* Apply the animation to the SVG */
+.moving-diagonal {
+  animation: diagonalMove 2s ease-in-out infinite;
+}

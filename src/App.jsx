@@ -10,6 +10,7 @@ import AddPost from './pages/AddPost';
 import ScheduleDashboard from './pages/ScheduleDashboard';
 import { jwtDecode } from 'jwt-decode';
 import { ToastContainer } from 'react-toastify';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />
+        <Route element={<NotFoundPage />} path="*" />
       </Routes>
       <Footer />
     </BrowserRouter>
