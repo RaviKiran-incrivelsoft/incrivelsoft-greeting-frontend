@@ -14,6 +14,15 @@ const CampaignDashboard = () => {
 	const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 	const [selectedMedia, setSelectedMedia] = useState(null);
 
+	const options = {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: true,
+	};
+
 	useEffect(() => {
 		const token = localStorage.getItem("token");
 
@@ -79,27 +88,27 @@ const CampaignDashboard = () => {
 				<table className="w-full bg-white shadow-lg rounded-lg">
 					<thead>
 						<tr className="bg-gray-200 text-gray-600 uppercase text-sm">
-							<th className="py-4 px-6 text-left">Media</th>
-							<th className="py-4 px-6 text-left">Status</th>
-							<th className="py-4 px-6 text-left">Created At</th>
+							<th className="py-4 px-6 text-center">Media</th>
+							<th className="py-4 px-6 text-center">Status</th>
+							<th className="py-4 px-6 text-center">Created At</th>
 							<th className="py-4 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
 					<tbody className="text-gray-700 text-sm">
 						{campaigns.map((campaign) => (
 							<tr key={campaign._id} className="border-b border-gray-200 hover:bg-gray-100">
-								<td className="py-4 px-6">
-									<div className="flex items-center">
+								<td className="py-4">
+									<div className="flex items-center justify-center">
 										{mediaUrls[campaign._id]?.mediaUrl ? (
 											mediaUrls[campaign._id].mediaUrl.endsWith(".mp4") ? (
-												<video width="100" className="w-24 h-24 object-cover rounded">
+												<video width="100" className="w-36 h-24 object-cover rounded">
 													<source src={mediaUrls[campaign._id].mediaUrl} type="video/mp4" />
 												</video>
 											) : (
 												<img
 													src={mediaUrls[campaign._id].mediaUrl}
 													alt="Media"
-													className="w-24 h-24 object-cover rounded"
+													className="w-36 h-24 object-cover rounded"
 												/>
 											)
 										) : (
@@ -108,13 +117,13 @@ const CampaignDashboard = () => {
 									</div>
 								</td>
 
-								<td className="py-4 px-6">
+								<td className="py-4 px-6 text-center">
 									<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-xs">
 										{campaign.status || "Pending"}
 									</span>
 								</td>
 
-								<td className="py-4 px-6">{new Date(campaign.createdAt).toLocaleString()}</td>
+								<td className="py-4 px-6 text-center">{new Date(campaign.createdAt).toLocaleString('en-GB', options)}</td>
 
 								<td className="py-4 px-6 text-center">
 									<div className="flex justify-center space-x-4">
@@ -187,7 +196,7 @@ const CampaignDashboard = () => {
 								<source src={selectedMedia.mediaUrl} type="video/mp4" />
 							</video>
 						) : (
-							<img src={selectedMedia.mediaUrl} alt="Media" width={"500px"} />
+							<img src={selectedMedia.mediaUrl} alt="Media" />
 						)}
 					</div>
 				</div>
