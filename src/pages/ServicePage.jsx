@@ -6,19 +6,14 @@ const ServicePage = () => {
 	const services = [
 		{
 			id: 1,
-			image: "https://via.placeholder.com/300",
+			image: "/images/whatsAppService.png",
 			text: "The temple sends special messages on your special day through WhatsApp. You can also donate to the temple.",
 		},
 		{
 			id: 2,
-			image: "https://via.placeholder.com/300",
+			image: "/images/gmailGreetings.png",
 			text: "The temple sends special messages on your special day through WhatsApp. You can also donate to the temple.",
-		},
-		{
-			id: 3,
-			image: "https://via.placeholder.com/300",
-			text: "The temple sends special messages on your special day through WhatsApp. You can also donate to the temple.",
-		},
+		}
 	];
 
 	return (
@@ -63,7 +58,7 @@ const ServicePage = () => {
 						Receive heartfelt blessings and messages from the temple on your special day through email and WhatsApp.
 					</p>
 
-					<div className="flex justify-center space-x-6 overflow-x-auto pb-4">
+					<div className="flex justify-center space-x-24 overflow-x-auto pb-4">
 						{services.map((service) => (
 							<div
 								key={service.id}

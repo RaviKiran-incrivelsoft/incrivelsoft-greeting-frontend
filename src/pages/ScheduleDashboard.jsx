@@ -97,7 +97,7 @@ const ScheduleDashboard = () => {
 	};
 
 	return (
-		<div className="container mx-auto py-10 px-32">
+		<div className="container mx-auto py-10 px-32 bg-gray-100">
 			<h1 className="text-center text-3xl font-semibold mb-6">Schedule Dashboard</h1>
 
 			<div className="flex items-center mb-6">

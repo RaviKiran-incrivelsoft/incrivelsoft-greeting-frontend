@@ -82,7 +82,7 @@ const CampaignDashboard = () => {
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
 			<div className="mb-8 text-center">
-				<h2 className="text-3xl font-bold text-gray-800">Campaign Dashboard</h2>
+				<h2 className="text-3xl font-semibold text-gray-800">Campaign Dashboard</h2>
 				<p className="text-gray-600 pt-6">Manage Your Campaigns</p>
 			</div>
 
@@ -105,8 +105,8 @@ const CampaignDashboard = () => {
 				</button>
 			</div>
 
-			<div className="overflow-x-auto rounded-lg">
-				<table className="w-full bg-white shadow-lg">
+			<div className="overflow-x-auto shadow-md rounded-lg">
+				<table className="w-full bg-white">
 					<thead>
 						<tr className="border-b bg-gray-200 text-gray-600 uppercase text-sm">
 							<th className="py-4 px-6 text-center">Media</th>
