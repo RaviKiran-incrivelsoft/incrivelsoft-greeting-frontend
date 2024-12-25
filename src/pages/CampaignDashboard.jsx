@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaPlay, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaCalendarAlt, FaPlay, FaPlus, FaTrash } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import TempleGreetings from '../components/TempleGreetings';
@@ -73,13 +73,22 @@ const CampaignDashboard = () => {
 				<p className="text-gray-600 pt-6">Manage Your Campaigns</p>
 			</div>
 
-			<div className="mb-4 flex justify-between items-center">
+			<div className="mb-4 flex items-center">
 				<button
 					onClick={() => navigate('/addpost')}
-					className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
+					className="flex items-center mr-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
 				>
 					<FaPlus className="mr-2" />
 					Add Campaign
+				</button>
+				<button
+					onClick={() => {
+						navigate('/schedule')
+					}}
+					className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+				>
+					<FaCalendarAlt className="mr-2" />
+					Schedule
 				</button>
 			</div>
 
@@ -101,13 +110,14 @@ const CampaignDashboard = () => {
 										{mediaUrls[campaign._id]?.mediaUrl ? (
 											mediaUrls[campaign._id].mediaUrl.endsWith(".mp4") ? (
 												<video width="100" className="w-36 h-24 object-cover rounded">
-													<source src={mediaUrls[campaign._id].mediaUrl} type="video/mp4" />
+													<source src={mediaUrls[campaign._id].mediaUrl} type="video/mp4" onError={(e) => e.target.src = "error.mp4"}/>
 												</video>
 											) : (
 												<img
 													src={mediaUrls[campaign._id].mediaUrl}
 													alt="Media"
 													className="w-36 h-24 object-cover rounded"
+													onError={(e) => e.target.src = "https://placehold.co/300/ddd/white?text=Error"}
 												/>
 											)
 										) : (
@@ -142,7 +152,7 @@ const CampaignDashboard = () => {
 												<FaPlus className="mr-2" />Add Temple Details
 											</button>
 											<button
-											onClick={() => handleDeleteCampaign(campaign._id)}
+												onClick={() => handleDeleteCampaign(campaign._id)}
 												className="text-red-600 hover:text-white hover:bg-red-600 hover:border-transparent py-2 px-4 border-2 border-red-600 rounded-md transition-all duration-300 ease-in-out"
 												title="Delete"
 											>
