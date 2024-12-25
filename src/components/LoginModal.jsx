@@ -13,12 +13,10 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log("Login submitted", { email, password });
-		console.log("REACT_APP_BACKEND_URL", process.env.REACT_APP_BACKEND_URL);
 
 		try {
 			// Perform login
-			const response = await axios.post(`${backendUrl}/api/user_login`, {
+			const response = await axios.post(`${backendUrl}/users/login`, {
 				email,
 				password,
 			});
@@ -28,13 +26,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 				// Save token to localStorage
 				localStorage.setItem("token", response.data.token);
-
-				// Fetch user profile
-				const userProfileResponse = await axios.get(`${backendUrl}/api/user/${response.data.id}`);
-				const userProfile = userProfileResponse.data;
-
-				// Save user data to localStorage
-				localStorage.setItem("user", JSON.stringify(userProfile));
+				localStorage.setItem("userName", JSON.stringify(response.data.userName));
 
 				// Redirect to home
 				navigate("/");
