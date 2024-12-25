@@ -105,10 +105,10 @@ const CampaignDashboard = () => {
 				</button>
 			</div>
 
-			<div className="overflow-x-auto">
-				<table className="w-full bg-white shadow-lg rounded-lg">
+			<div className="overflow-x-auto rounded-lg">
+				<table className="w-full bg-white shadow-lg">
 					<thead>
-						<tr className="bg-gray-200 text-gray-600 uppercase text-sm">
+						<tr className="border-b bg-gray-200 text-gray-600 uppercase text-sm">
 							<th className="py-4 px-6 text-center">Media</th>
 							<th className="py-4 px-6 text-center">Status</th>
 							<th className="py-4 px-6 text-center">Created At</th>
@@ -116,7 +116,28 @@ const CampaignDashboard = () => {
 						</tr>
 					</thead>
 					<tbody className="text-gray-700 text-sm">
-						{campaigns.map((campaign) => (
+						{campaigns.length === 0 ? (
+							<tr>
+							<td colSpan="4" className="py-12 text-center text-sm text-gray-500">
+								<div className="flex flex-col items-center justify-center space-y-4">
+									<svg
+										className="w-12 h-12 text-gray-300"
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									>
+										<circle cx="12" cy="12" r="10"></circle>
+										<path d="M12 6v6l4 2"></path>
+									</svg>
+									<p className='font-semibold text-lg text-gray-400'>No Campaigns available</p>
+								</div>
+							</td>
+						</tr>
+						) : (campaigns.map((campaign) => (
 							<tr key={campaign._id} className="border-b border-gray-200 hover:bg-gray-100">
 								<td className="py-4">
 									<div className="flex items-center justify-center">
@@ -175,7 +196,7 @@ const CampaignDashboard = () => {
 									</div>
 								</td>
 							</tr>
-						))}
+						)))}
 					</tbody>
 				</table>
 			</div>
@@ -193,7 +214,7 @@ const CampaignDashboard = () => {
 						/>
 						{selectedMedia.mediaUrl.endsWith(".mp4") ? (
 							<video autoPlay controls className="w-full h-auto">
-								<source src={selectedMedia.mediaUrl} type="video/mp4" onError={(e) => e.target.src = "https://placehold.co/300/aaa/white?text=Error"}/>
+								<source src={selectedMedia.mediaUrl} type="video/mp4" onError={(e) => e.target.src = "https://placehold.co/300/aaa/white?text=Error"} />
 							</video>
 						) : (
 							<img src={selectedMedia.mediaUrl} alt="Media"

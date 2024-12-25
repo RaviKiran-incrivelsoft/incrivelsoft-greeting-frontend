@@ -27,7 +27,7 @@ const ScheduleDashboard = () => {
 				console.error('Error fetching schedules', error);
 				toast.error('Failed to fetch schedules', {
 					position: 'top-center',
-					theme: "colored" 
+					theme: "colored"
 				})
 			}
 		};
@@ -76,13 +76,13 @@ const ScheduleDashboard = () => {
 				console.log("Schedule updated successfully:", response.data);
 				toast.success('Schedule updated successfully', {
 					position: 'top-center',
-					theme: "colored" 
+					theme: "colored"
 				})
 			} else {
 				console.error("Error updating schedule:", response.data);
 				toast.error('Failed to schedule', {
 					position: 'top-center',
-					theme: "colored" 
+					theme: "colored"
 				})
 			}
 
@@ -91,7 +91,7 @@ const ScheduleDashboard = () => {
 			console.error("Error in handleScheduleSubmit:", error);
 			toast.error('Error while scheduling', {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
 		}
 	};
@@ -111,15 +111,36 @@ const ScheduleDashboard = () => {
 			<div className="overflow-x-auto shadow-md rounded-lg">
 				<table className="min-w-full bg-white">
 					<thead>
-						<tr className="border-b">
-							<th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Time</th>
-							<th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Temple</th>
-							<th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
-							<th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Action</th>
+						<tr className="border-b bg-gray-200 text-gray-600 uppercase text-sm">
+							<th className="px-6 py-3 text-sm text-gray-500">Time</th>
+							<th className="px-6 py-3 text-sm text-gray-500">Temple</th>
+							<th className="px-6 py-3 text-sm text-gray-500">Status</th>
+							<th className="px-6 py-3 text-sm text-gray-500">Action</th>
 						</tr>
 					</thead>
 					<tbody>
-						{schedules.map((schedule) => (
+						{schedules.length === 0 ? (
+							<tr>
+								<td colSpan="4" className="py-12 text-center text-sm text-gray-500">
+									<div className="flex flex-col items-center justify-center space-y-4">
+										<svg
+											className="w-12 h-12 text-gray-300"
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										>
+											<circle cx="12" cy="12" r="10"></circle>
+											<path d="M12 6v6l4 2"></path>
+										</svg>
+										<p className='font-semibold text-lg text-gray-400'>No schedules available</p>
+									</div>
+								</td>
+							</tr>
+						) : (schedules.map((schedule) => (
 							<tr key={schedule._id} className="border-b hover:bg-gray-50">
 								<td className="px-6 py-4 text-sm text-gray-900">{schedule.temple?.templeName || "TempleName"}</td>
 								<td className="px-6 py-4 text-sm text-gray-900">{new Date(schedule.time).toLocaleString()}</td>
@@ -132,8 +153,8 @@ const ScheduleDashboard = () => {
 										}}
 										disabled={schedule.schedule === "completed"}
 										className={`flex items-center py-2 px-4 border-2 rounded-md transition-all duration-300 ease-in-out ${schedule.schedule === "completed"
-												? "text-gray-400 border-gray-400 cursor-not-allowed"
-												: "text-yellow-600 border-yellow-600 hover:text-white hover:bg-yellow-600 hover:border-transparent"
+											? "text-gray-400 border-gray-400 cursor-not-allowed"
+											: "text-yellow-600 border-yellow-600 hover:text-white hover:bg-yellow-600 hover:border-transparent"
 											}`}
 									>
 										<FaCalendarAlt className="mr-2" />
@@ -141,7 +162,7 @@ const ScheduleDashboard = () => {
 									</button>
 								</td>
 							</tr>
-						))}
+						)))}
 					</tbody>
 				</table>
 			</div>
