@@ -7,11 +7,26 @@ import ServicePage from './pages/ServicePage';
 import ContactPage from './pages/ContactPage';
 import CampaignDashboard from './pages/CampaignDashboard';
 import AddPost from './pages/AddPost';
+import ScheduleDashboard from './pages/ScheduleDashboard';
+import { jwtDecode } from 'jwt-decode';
 
 function App() {
 
   const isAuthenticated = () => {
-    return !!localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
+        localStorage.removeItem('token');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      localStorage.removeItem('token');
+      return false;
+    }
   };
 
   const ProtectedRoute = ({ element }) => {
@@ -26,6 +41,7 @@ function App() {
         <Route element={<ServicePage />} path='/service' />
         <Route element={<ContactPage />} path='/contact' />
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
+        <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />
       </Routes>
       <Footer />

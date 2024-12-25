@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaPlay, FaEdit, FaCalendarAlt, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaPlay, FaPlus, FaTrash } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import TempleGreetings from '../components/TempleGreetings';
@@ -66,14 +66,6 @@ const CampaignDashboard = () => {
 			});
 	};
 
-	const handleEditCampaign = (id) => {
-		console.log('Edit campaign', id);
-	};
-
-	const handleScheduleCampaign = (id) => {
-		console.log('Schedule campaign', id);
-	};
-
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
 			<div className="mb-8 text-center">
@@ -134,54 +126,29 @@ const CampaignDashboard = () => {
 
 								<td className="py-4 px-6 text-center">
 									<div className="flex justify-center space-x-4">
-										{campaign.status !== 'active' ?
-											<>
-												<button
-													onClick={() => handlePlay(campaign.mediaURL)}
-													className="text-green-600 hover:text-green-800"
-													title="Play"
-												>
-													<FaPlay />
-												</button>
-												<button
-													onClick={() => handleEditCampaign(campaign._id)}
-													className="text-blue-600 hover:text-blue-800"
-													title="Edit"
-												>
-													<FaEdit />
-												</button>
-												<button
-													onClick={() => handleScheduleCampaign(campaign._id)}
-													className="text-yellow-600 hover:text-yellow-800"
-													title="Schedule"
-												>
-													<FaCalendarAlt />
-												</button>
-												<button
-													onClick={() => handleDeleteCampaign(campaign._id)}
-													className="text-red-600 hover:text-red-800"
-													title="Delete"
-												>
-													<FaTrash />
-												</button>
-											</>
-											:
-											<>
-												<button
-													onClick={() => handlePlay(campaign.mediaURL)}
-													className="text-green-600 hover:text-white hover:bg-green-600 hover:border-transparent py-2 px-4 border-2 border-green-600 rounded-md transition-all duration-300 ease-in-out"
-													title="Play"
-												>
-													Play
-												</button>
-												<button
-													onClick={() => handleAddDetails(campaign._id)}
-													className="text-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent py-2 px-4 border-2 border-blue-600 rounded-md transition-all duration-300 ease-in-out"
-													title="Add Details"
-												>
-													Add Details
-												</button>
-											</>}
+										<>
+											<button
+												onClick={() => handlePlay(campaign.mediaURL)}
+												className="flex items-center text-green-600 hover:text-white hover:bg-green-600 hover:border-transparent py-2 px-4 border-2 border-green-600 rounded-md transition-all duration-300 ease-in-out"
+												title="Play"
+											>
+												<FaPlay className="mr-2" /> Play
+											</button>
+											<button
+												onClick={() => handleAddDetails(campaign._id)}
+												className="flex items-center text-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent py-2 px-4 border-2 border-blue-600 rounded-md transition-all duration-300 ease-in-out"
+												title="Add Details"
+											>
+												<FaPlus className="mr-2" />Add Temple Details
+											</button>
+											<button
+											onClick={() => handleDeleteCampaign(campaign._id)}
+												className="text-red-600 hover:text-white hover:bg-red-600 hover:border-transparent py-2 px-4 border-2 border-red-600 rounded-md transition-all duration-300 ease-in-out"
+												title="Delete"
+											>
+												<FaTrash />
+											</button>
+										</>
 									</div>
 								</td>
 							</tr>
@@ -191,7 +158,7 @@ const CampaignDashboard = () => {
 			</div>
 
 			{showTempleGreetings && selectedCampaignId && (
-				<TempleGreetings campaignId={selectedCampaignId} closeModal={() => setShowTempleGreetings(false)}/>
+				<TempleGreetings campaignId={selectedCampaignId} closeModal={() => setShowTempleGreetings(false)} />
 			)}
 
 			{isMediaModalOpen && selectedMedia && (
