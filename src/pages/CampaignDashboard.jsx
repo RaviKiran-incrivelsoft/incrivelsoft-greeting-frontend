@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaPlay, FaEdit, FaCalendarAlt, FaTrash, FaPlus } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
+import TempleGreetings from '../components/TempleGreetings';
 
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -13,7 +14,13 @@ const CampaignDashboard = () => {
 	const [mediaUrls, setMediaUrls] = useState({});
 	const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 	const [selectedMedia, setSelectedMedia] = useState(null);
+	const [showTempleGreetings, setShowTempleGreetings] = useState(false);
+	const [selectedCampaignId, setSelectedCampaignId] = useState(null);
 
+	const handleAddDetails = (campaignId) => {
+		setSelectedCampaignId(campaignId);
+		setShowTempleGreetings(true);
+	};
 	const options = {
 		day: '2-digit',
 		month: '2-digit',
@@ -168,7 +175,7 @@ const CampaignDashboard = () => {
 													Play
 												</button>
 												<button
-													// onClick={() => handleAddDetails(campaign._id)}
+													onClick={() => handleAddDetails(campaign._id)}
 													className="text-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent py-2 px-4 border-2 border-blue-600 rounded-md transition-all duration-300 ease-in-out"
 													title="Add Details"
 												>
@@ -183,7 +190,10 @@ const CampaignDashboard = () => {
 				</table>
 			</div>
 
-			{/* Media Modal */}
+			{showTempleGreetings && selectedCampaignId && (
+				<TempleGreetings campaignId={selectedCampaignId} closeModal={() => setShowTempleGreetings(false)}/>
+			)}
+
 			{isMediaModalOpen && selectedMedia && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 					<div className="relative max-w-[600px] max-h-[600px] bg-white p-1 rounded shadow">
