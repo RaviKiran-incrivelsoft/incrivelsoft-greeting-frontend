@@ -1,5 +1,9 @@
+import axios from "axios";
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // Use useNavigate in React Router v6
+
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function TempleGreetings({ sideImage, selectedOption }) {
 	const formRef = useRef(null);
@@ -45,30 +49,41 @@ function TempleGreetings({ sideImage, selectedOption }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const formDataObj = new FormData();
-		Object.keys(formData).forEach((key) => {
-			formDataObj.append(key, formData[key]);
-		});
+		const formDataToSubmit = new FormData();
+
+		for (const key in formData) {
+			if (formData[key]) {
+				if (formData[key] instanceof File) {
+					formDataToSubmit.append(key, formData[key]);
+				} else {
+					formDataToSubmit.append(key, formData[key]);
+				}
+			}
+		}
 
 		try {
-			const response = await fetch("http://localhost:3001/api/temple-details", {
-				method: "POST",
-				body: formDataObj,
-			});
-			const data = await response.json();
-			console.log("Server response:", data); // Log the entire response
+			const token = localStorage.getItem("token");
 
-			// Encode the parameters
-			const encodedTitle = encodeURIComponent(formData.templeTitle);
-			const encodedImage = encodeURIComponent(sideImage); // Use the fetched image URL
+			const response = await axios.post(
+				`${backendUrl}/temple?campaign=your-campaign-id`,
+				formDataToSubmit,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
 
-			// Store the title in local storage or handle it as needed
-			localStorage.setItem("dashboardTitle", formData.templeTitle);
+			console.log("Form submitted successfully:", response.data);
 
-			// Navigate to the /board page with title and image parameters
-			navigate(`/board?selectedOption=${selectedOption}&title=${encodedTitle}&image=${encodedImage}`);
+			navigate("/campaign");
 		} catch (error) {
 			console.error("Error submitting form:", error);
+
+			const errorMessage =
+				error.response?.data?.error || "Failed to submit form";
+			alert(`Error: ${errorMessage}`);
 		}
 	};
 
