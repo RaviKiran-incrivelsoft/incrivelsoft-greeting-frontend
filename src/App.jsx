@@ -9,6 +9,7 @@ import CampaignDashboard from './pages/CampaignDashboard';
 import AddPost from './pages/AddPost';
 import ScheduleDashboard from './pages/ScheduleDashboard';
 import { jwtDecode } from 'jwt-decode';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Navbar />
       <Routes>
         <Route element={<HomePage />} path='/' />

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -64,14 +65,19 @@ function TempleGreetings({ campaignId, closeModal }) {
 				}
 			);
 
+			toast.success('Temple Details added', {
+				position: 'top-center',
+				theme: "colored" 
+			})
 			console.log("Form submitted successfully:", response.data);
 			closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
-
-			const errorMessage =
-				error.response?.data?.error || "Failed to submit form";
-			alert(`Error: ${errorMessage}`);
+			const errorMessage = error.response?.data?.error || "Failed to submit form";
+			toast.error(errorMessage, {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const ContactPage = () => {
 	const [name, setName] = useState('');
@@ -8,6 +9,10 @@ const ContactPage = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		toast.success('Message Sent Successfully', {
+			position: 'top-center',
+			theme: "colored" 
+		})
 		console.log("Message Sent:", { name, email, message });
 	};
 

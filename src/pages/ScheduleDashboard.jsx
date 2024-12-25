@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaCalendarAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -24,6 +25,10 @@ const ScheduleDashboard = () => {
 				setSchedules(response.data.schedules);
 			} catch (error) {
 				console.error('Error fetching schedules', error);
+				toast.error('Failed to fetch schedules', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 			}
 		};
 
@@ -69,13 +74,25 @@ const ScheduleDashboard = () => {
 
 			if (response.status === 200) {
 				console.log("Schedule updated successfully:", response.data);
+				toast.success('Schedule updated successfully', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 			} else {
 				console.error("Error updating schedule:", response.data);
+				toast.error('Failed to schedule', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 			}
 
 			handlePopupToggle();
 		} catch (error) {
 			console.error("Error in handleScheduleSubmit:", error);
+			toast.error('Error while scheduling', {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 

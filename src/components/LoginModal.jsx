@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -23,10 +24,14 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 			if (response.data.token) {
 				console.log("Login successful:", response.data);
+				toast.success('Login successful', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 
 				// Save token to localStorage
 				localStorage.setItem("token", response.data.token);
-				localStorage.setItem("userName", JSON.stringify(response.data.userName));
+				localStorage.setItem("userName", response.data.userName);
 
 				// Redirect to home
 				navigate("/");
@@ -35,9 +40,17 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 				onClose();
 			} else {
 				console.error("Invalid credentials");
+				toast.error('Invalid credentials', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 			}
 		} catch (err) {
 			console.error("Error logging in:", err);
+			toast.error('Login Failed', {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 

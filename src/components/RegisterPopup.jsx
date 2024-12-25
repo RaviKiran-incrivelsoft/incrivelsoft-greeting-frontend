@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	const handleOutsideClick = (e) => {
@@ -7,18 +8,15 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 			onClose();
 		}
 	};
-
 	const [formData, setFormData] = useState({
-		firstName: "",
-		lastName: "",
+		first_name: "",
+		last_name: "",
 		email: "",
 		password: null,
-		confirmPassword: null,
+		confirm_password: null,
 	});
-
 	const [isEmailSignup, setIsEmailSignup] = useState(false);
-	const isPasswordMatch = formData.password === formData.confirmPassword;
-	// Handle form input changes
+
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
@@ -31,14 +29,22 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user_register`, formData);
+			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/users/register`, formData);
 			console.log(response.data.message);
 
-			const fullName = `${formData.firstName} ${formData.lastName}`;
-			localStorage.setItem("userName", fullName);
-			onSwitchToLogin();
+			toast.success(response.data.message, {
+				position: 'top-center',
+				theme: "colored",
+				onClose: () => {
+					onSwitchToLogin();
+				}
+			})
 		} catch (err) {
 			console.error('Error registering user:', err);
+			toast.error(err.response.data.message, {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 
@@ -89,20 +95,20 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									<div className="space-y-4">
 										<input
 											id="first-name"
-											name="firstName"
+											name="first_name"
 											type="text"
 											required
-											value={formData.firstName}
+											value={formData.first_name}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="First Name"
 										/>
 										<input
 											id="last-name"
-											name="lastName"
+											name="last_name"
 											type="text"
 											required
-											value={formData.lastName}
+											value={formData.last_name}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="Last Name"
@@ -129,10 +135,10 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 										/>
 										<input
 											id="confirm-password"
-											name="confirmPassword"
+											name="confirm_password"
 											type="password"
 											required
-											value={formData.confirmPassword}
+											value={formData.confirm_password}
 											onChange={handleChange}
 											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
 											placeholder="Confirm Password"
@@ -141,7 +147,6 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									<button
 										type="submit"
 										className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-										disabled={!isPasswordMatch}
 									>
 										Register
 									</button>

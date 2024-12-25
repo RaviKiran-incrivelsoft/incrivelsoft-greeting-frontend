@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { FaUpload, FaRedo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -38,9 +39,20 @@ const AddPost = () => {
 			);
 
 			console.log("Campaign created successfully:", response.data);
-			navigate("/campaign")
+			toast.success('Campaign created successfully', {
+				position: 'top-center',
+				autoClose: 3000,
+				theme: "colored",
+				onClose: () => {
+					navigate("/campaign")
+				}
+			})
 		} catch (error) {
 			console.error("Error in submitting campaign:", error);
+			toast.error('Failed to create campaign', {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 

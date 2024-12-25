@@ -4,6 +4,7 @@ import { FaCalendarAlt, FaPlay, FaPlus, FaTrash } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import TempleGreetings from '../components/TempleGreetings';
+import { toast } from 'react-toastify';
 
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -45,6 +46,10 @@ const CampaignDashboard = () => {
 			})
 			.catch(error => {
 				console.error('Error fetching campaigns:', error);
+				toast.error('Failed to fetch campaigns', {
+					position: 'top-center',
+					theme: "colored"
+				})
 			});
 	}, []);
 
@@ -60,9 +65,17 @@ const CampaignDashboard = () => {
 		axios.delete(`${backendUrl}/campaigns/${id}`, { headers: { Authorization: `Bearer ${token}` } })
 			.then(response => {
 				setCampaigns(campaigns.filter(campaign => campaign._id !== id));
+				toast.success('Campaign Deleted', {
+					position: 'top-center',
+					theme: "colored"
+				})
 			})
 			.catch(error => {
 				console.error('Error deleting campaign:', error);
+				toast.error('Failed to Delete', {
+					position: 'top-center',
+					theme: "colored"
+				})
 			});
 	};
 
@@ -110,7 +123,7 @@ const CampaignDashboard = () => {
 										{mediaUrls[campaign._id]?.mediaUrl ? (
 											mediaUrls[campaign._id].mediaUrl.endsWith(".mp4") ? (
 												<video width="100" className="w-36 h-24 object-cover rounded">
-													<source src={mediaUrls[campaign._id].mediaUrl} type="video/mp4" onError={(e) => e.target.src = "error.mp4"}/>
+													<source src={mediaUrls[campaign._id].mediaUrl} type="video/mp4" onError={(e) => e.target.src = "error.mp4"} />
 												</video>
 											) : (
 												<img
@@ -180,10 +193,12 @@ const CampaignDashboard = () => {
 						/>
 						{selectedMedia.mediaUrl.endsWith(".mp4") ? (
 							<video autoPlay controls className="w-full h-auto">
-								<source src={selectedMedia.mediaUrl} type="video/mp4" />
+								<source src={selectedMedia.mediaUrl} type="video/mp4" onError={(e) => e.target.src = "https://placehold.co/300/aaa/white?text=Error"}/>
 							</video>
 						) : (
-							<img src={selectedMedia.mediaUrl} alt="Media" />
+							<img src={selectedMedia.mediaUrl} alt="Media"
+								onError={(e) => e.target.src = "https://placehold.co/600x400/aaa/white?text=Failed+to+load+the+Image"}
+							/>
 						)}
 					</div>
 				</div>

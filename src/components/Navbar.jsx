@@ -11,7 +11,7 @@ const Navbar = () => {
 	const closeModal = () => setActiveModal(null);
 
 	const token = localStorage.getItem('token');
-	const userName = JSON.parse(localStorage.getItem('userName'));
+	const userName = localStorage.getItem('userName');
 
 	const profileImage = 'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-1024.png';
 
