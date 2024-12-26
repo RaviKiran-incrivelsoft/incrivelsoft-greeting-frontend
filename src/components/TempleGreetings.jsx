@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function TempleGreetings({ campaignId, closeModal }) {
+	const [loading, setLoading] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState({
 		templeName: "",
 		templeTitle: "",
@@ -19,14 +21,31 @@ function TempleGreetings({ campaignId, closeModal }) {
 		instagramUrl: "",
 		paypalQrCode: null,
 		zelleQrCode: null,
-		csvUser: null,
+		csvFile: null,
 	});
+
+	const toggleModal = () => {
+		setIsModalOpen(!isModalOpen);
+	};
+
+	const downloadSampleCSV = () => {
+		const sampleCSV = `first_name,last_name,email,contact,birthdate\nmufasa,babu,mahesh@example.com,1234567890,dd-mm-yyy`;
+		const blob = new Blob([sampleCSV], { type: 'text/csv' });
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(blob);
+		link.download = 'sample.csv';
+		link.click();
+	};
 
 	const handleFileChange = (field) => (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[field]: e.target.files[0],
 		}));
+	};
+
+	const isFileUploaded = (field) => {
+		return formData[field] ? true : false;
 	};
 
 	const handleInputChange = (field) => (e) => {
@@ -38,6 +57,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true)
 
 		const formDataToSubmit = new FormData();
 
@@ -67,7 +87,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 
 			toast.success('Temple Details added', {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
 			console.log("Form submitted successfully:", response.data);
 			closeModal();
@@ -76,8 +96,10 @@ function TempleGreetings({ campaignId, closeModal }) {
 			const errorMessage = error.response?.data?.error || "Failed to submit form";
 			toast.error(errorMessage, {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
+		} finally {
+			setLoading(false)
 		}
 	};
 
@@ -203,46 +225,118 @@ function TempleGreetings({ campaignId, closeModal }) {
 									required
 								/>
 							</div>
-							<div className="form-group">
-								<label className="block text-sm text-gray-700 font-semibold mb-2">PayPal QR Code Image</label>
+						</div>
+
+						<div className="flex gap-6 my-4 mb-6">
+							<div>
+								<button
+									type="button"
+									className="py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+									onClick={() => document.getElementById('paypalQrCodeInput').click()}
+								>
+									Upload PayPal QR Code
+								</button>
 								<input
+									id="paypalQrCodeInput"
 									type="file"
 									accept="image/*"
 									onChange={handleFileChange('paypalQrCode')}
-									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+									className="hidden"
 									required
 								/>
+								{isFileUploaded('paypalQrCode') && <span className="block text-green-600">File uploaded</span>}
 							</div>
-							<div className="form-group">
-								<label className="block text-sm text-gray-700 font-semibold mb-2">Zelle QR Code Image</label>
+							<div>
+								<button
+									type="button"
+									className="py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+									onClick={() => document.getElementById('zelleQrCodeInput').click()}
+								>
+									Upload Zelle QR Code
+								</button>
 								<input
+									id="zelleQrCodeInput"
 									type="file"
 									accept="image/*"
 									onChange={handleFileChange('zelleQrCode')}
-									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+									className="hidden"
 									required
 								/>
+								{isFileUploaded('zelleQrCode') && <span className="block text-green-600">File uploaded</span>}
+							</div>
+							<div>
+								<input
+									id="csvFileInput"
+									type="file"
+									accept=".csv"
+									onChange={(e) => {handleFileChange('csvFile')(e);toggleModal()}}
+									className="hidden w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+									required
+								/>
+								<button
+									type="button"
+									onClick={toggleModal}
+									className="py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+								>
+									Upload Devotee CSV
+								</button>
+								{isFileUploaded('csvFile') && <span className="block text-green-600">File uploaded</span>}
 							</div>
 						</div>
 
-						<div className="text-xl font-semibold text-center mt-5">Devotee Information</div>
-						<div className="form-group">
-							<label className="block text-sm text-gray-700 font-semibold mb-2">CSV File</label>
-							<input
-								type="file"
-								accept=".csv"
-								onChange={handleFileChange('csvFile')}
-								className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
-								required
-							/>
-						</div>
+						{/* Modal Popup */}
+						{isModalOpen && (
+							<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+								<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
+									<h2 className="text-lg font-semibold mb-4">CSV File Requirements</h2>
+									<p className="mb-6">
+										Please make sure the CSV file contains the following fields: <br />
+										<span className="font-semibold">first_name, last_name, email, contact, birthdate</span>
+									</p>
+
+									{/* Buttons to download sample CSV or close */}
+									<div className="flex justify-end space-x-4">
+										<button
+											type="button"
+											onClick={downloadSampleCSV}
+											className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+										>
+											Sample CSV
+										</button>
+										<button
+											type="button"
+											className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+											onClick={() => document.getElementById('csvFileInput').click()}
+										>
+											Upload
+										</button>
+										<button
+											onClick={toggleModal}
+											className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+										>
+											Close
+										</button>
+									</div>
+								</div>
+							</div>
+						)}
 
 						<div className="flex justify-center">
 							<button
 								type="submit"
-								className="bg-blue-500 hover:bg-blue-700 text-white rounded-xl w-1/3 mt-5 h-[2.4rem]"
+								disabled={loading}
+								className={`h-10 flex items-center justify-center px-4 rounded text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+									}`}
 							>
-								Next
+								{loading ? (
+									<div className="flex space-x-1 p-1.5">
+										<span className="dot bg-white"></span>
+										<span className="dot bg-white"></span>
+										<span className="dot bg-white"></span>
+									</div>
+								) : (
+									"Create"
+								)}
 							</button>
 						</div>
 					</form>
