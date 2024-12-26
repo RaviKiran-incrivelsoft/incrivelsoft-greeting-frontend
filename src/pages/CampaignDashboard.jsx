@@ -43,6 +43,8 @@ const CampaignDashboard = () => {
 					return acc;
 				}, {});
 				setMediaUrls(mediaUrls);
+				console.log(response.data.campaigns);
+				
 			})
 			.catch(error => {
 				console.error('Error fetching campaigns:', error);
@@ -83,7 +85,6 @@ const CampaignDashboard = () => {
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
 			<div className="mb-8 text-center">
 				<h2 className="text-3xl font-semibold text-gray-800">Campaign Dashboard</h2>
-				<p className="text-gray-600 pt-6">Manage Your Campaigns</p>
 			</div>
 
 			<div className="mb-4 flex items-center">
@@ -115,7 +116,7 @@ const CampaignDashboard = () => {
 							<th className="py-4 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
-					<tbody className="text-gray-700 text-sm">
+					<tbody className="text-gray-700">
 						{campaigns.length === 0 ? (
 							<tr>
 							<td colSpan="4" className="py-12 text-center text-sm text-gray-500">
@@ -161,7 +162,7 @@ const CampaignDashboard = () => {
 								</td>
 
 								<td className="py-4 px-6 text-center">
-									<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-xs">
+									<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full">
 										{campaign.status || "Pending"}
 									</span>
 								</td>

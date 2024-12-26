@@ -39,15 +39,15 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 				// Close modal
 				onClose();
 			} else {
-				console.error("Invalid credentials");
-				toast.error('Invalid credentials', {
+				console.error("Login Failed");
+				toast.error('Login Failed', {
 					position: 'top-center',
 					theme: "colored" 
 				})
 			}
 		} catch (err) {
 			console.error("Error logging in:", err);
-			toast.error('Login Failed', {
+			toast.error(err.response.data.message, {
 				position: 'top-center',
 				theme: "colored" 
 			})
