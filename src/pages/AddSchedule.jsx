@@ -45,6 +45,9 @@ const AddSchedule = ({ isOpen, onClose }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const { schedule, time, temple, mode } = formData;
+		const localDate = new Date(time); // Create a Date object in local timezone
+		const utcDate = new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000); // Convert to UTC
+        formData.time = utcDate;
 
 		if (!schedule || !time || !temple || !mode) {
 			toast.error("Please fill all fields.", {
