@@ -1,9 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaUpload, FaRedo } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const AddPost = () => {
+	const navigate = useNavigate();
 	const [title, setTitle] = useState("");
 	const [media, setMedia] = useState(null);
 	const [paragraph, setParagraph] = useState("");
@@ -13,38 +17,42 @@ const AddPost = () => {
 	};
 
 	const handleSubmit = async () => {
+		const formData = new FormData();
+		formData.append("campaignName", title);
+		formData.append("campaignDescription", paragraph);
+		if (media) {
+			formData.append("media", media.file);
+		}
+
 		try {
-			// Campaign Creation
-			const campaignResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/create_campaign`, {
-				campaignName: title,
-				campaignDescription: paragraph,
-				createdAt: new Date().toISOString(),
-				id: uuidv4(),
-			});
+			const token = localStorage.getItem("token");
 
-			if (campaignResponse.status !== 200) {
-				console.error('Error response from campaign API:', campaignResponse.data.error);
-				throw new Error('Failed to create campaign.');
-			}
+			const response = await axios.post(
+				`${backendUrl}/campaigns`,
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
 
-			// Media Upload
-			const formData = new FormData();
-			formData.append(media.type === "video" ? 'userVideo' : 'userImage', media.file);
-			formData.append('userDescription', paragraph);
-
-			const endpoint = media.type === "video" ? '/api/user_video' : '/api/user_info';
-			const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, formData, {
-				headers: { "Content-Type": "multipart/form-data" },
-			});
-
-			if (res.status === 200) {
-				console.log('Media uploaded successfully:', res.data);
-				window.history.pushState({}, '', `/dashboard?userDescription=${encodeURIComponent(paragraph)}`);
-			} else {
-				throw new Error('Failed to submit post.');
-			}
+			console.log("Campaign created successfully:", response.data);
+			toast.success('Campaign created successfully', {
+				position: 'top-center',
+				autoClose: 3000,
+				theme: "colored",
+				onClose: () => {
+					navigate("/campaign")
+				}
+			})
 		} catch (error) {
-			console.error('Error:', error.message);
+			console.error("Error in submitting campaign:", error);
+			toast.error('Failed to create campaign', {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 

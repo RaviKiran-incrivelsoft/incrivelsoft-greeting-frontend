@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -13,28 +14,24 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log("Login submitted", { email, password });
-		console.log("REACT_APP_BACKEND_URL", process.env.REACT_APP_BACKEND_URL);
 
 		try {
 			// Perform login
-			const response = await axios.post(`${backendUrl}/api/user_login`, {
+			const response = await axios.post(`${backendUrl}/users/login`, {
 				email,
 				password,
 			});
 
 			if (response.data.token) {
 				console.log("Login successful:", response.data);
+				toast.success('Login successful', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 
 				// Save token to localStorage
 				localStorage.setItem("token", response.data.token);
-
-				// Fetch user profile
-				const userProfileResponse = await axios.get(`${backendUrl}/api/user/${response.data.id}`);
-				const userProfile = userProfileResponse.data;
-
-				// Save user data to localStorage
-				localStorage.setItem("user", JSON.stringify(userProfile));
+				localStorage.setItem("userName", response.data.userName);
 
 				// Redirect to home
 				navigate("/");
@@ -42,10 +39,18 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 				// Close modal
 				onClose();
 			} else {
-				console.error("Invalid credentials");
+				console.error("Login Failed");
+				toast.error('Login Failed', {
+					position: 'top-center',
+					theme: "colored" 
+				})
 			}
 		} catch (err) {
 			console.error("Error logging in:", err);
+			toast.error(err.response.data.message, {
+				position: 'top-center',
+				theme: "colored" 
+			})
 		}
 	};
 

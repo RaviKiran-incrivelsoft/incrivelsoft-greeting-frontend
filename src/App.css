@@ -6,6 +6,11 @@
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
 /* Override slick-carousel dots */
 .slick-dots li button:before {
   color: #aaa;
@@ -22,4 +27,21 @@
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+@keyframes diagonalMove {
+  0% {
+    transform: translate(0, 0);rotate: 45deg;
+  }
+  50% {
+    transform: translate(2px, -8px);rotate: 45deg
+  }
+  100% {
+    transform: translate(0, 0);rotate: 45deg
+  }
+}
+
+/* Apply the animation to the SVG */
+.moving-diagonal {
+  animation: diagonalMove 2s ease-in-out infinite;
 }
