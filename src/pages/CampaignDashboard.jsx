@@ -42,9 +42,7 @@ const CampaignDashboard = () => {
 					acc[campaign._id] = { mediaUrl: campaign.mediaURL };
 					return acc;
 				}, {});
-				setMediaUrls(mediaUrls);
-				console.log(response.data.campaigns);
-				
+				setMediaUrls(mediaUrls);				
 			})
 			.catch(error => {
 				console.error('Error fetching campaigns:', error);
