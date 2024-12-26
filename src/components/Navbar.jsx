@@ -6,14 +6,24 @@ import RegisterPopup from './RegisterPopup';
 const Navbar = () => {
 	const navigate = useNavigate();
 	const [activeModal, setActiveModal] = useState(null);
+	const [profileImage, setProfileImage] = useState('https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-1024.png')
 
 	const openModal = (modal) => setActiveModal(modal);
 	const closeModal = () => setActiveModal(null);
 
+	const images = [
+		"bear", "cat", "chicken", "deer", "dog",
+		"eagle", "giraffe", "meerkat", "panda", "sealion",
+		"lion", "cow", "dragon", "duck", "hippopotamus"
+	];
+
+	function getRandomImage() {
+		const randomIndex = Math.floor(Math.random() * images.length);
+		setProfileImage(`/avatars/${images[randomIndex]}.png`);
+	}
 	const token = localStorage.getItem('token');
 	const userName = localStorage.getItem('userName');
 
-	const profileImage = 'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-1024.png';
 
 	const handleLogout = () => {
 		localStorage.removeItem('token');
@@ -76,7 +86,7 @@ const Navbar = () => {
 						</div>
 					) : (
 						< button
-							onClick={() => openModal('login')}
+							onClick={() => {getRandomImage();openModal('login')}}
 							className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-black rounded-lg group bg-white border border-black hover:bg-gradient-to-br hover:from-gray-700 hover:to-gray-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-gray-300"
 						>
 							<span className="relative uppercase px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
