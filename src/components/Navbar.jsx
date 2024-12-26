@@ -6,7 +6,7 @@ import RegisterPopup from './RegisterPopup';
 const Navbar = () => {
 	const navigate = useNavigate();
 	const [activeModal, setActiveModal] = useState(null);
-	const [profileImage, setProfileImage] = useState('https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-1024.png')
+	const [profileImage, setProfileImage] = useState('/avatars/cat.png')
 
 	const openModal = (modal) => setActiveModal(modal);
 	const closeModal = () => setActiveModal(null);
@@ -14,7 +14,8 @@ const Navbar = () => {
 	const images = [
 		"bear", "cat", "chicken", "deer", "dog",
 		"eagle", "giraffe", "meerkat", "panda", "sealion",
-		"lion", "cow", "dragon", "duck", "hippopotamus"
+		"lion", "cow", "dragon", "duck", "hippopotamus",
+		"koala", "wolf", "fox", "rabbit", "monkey", "fish", "wrabbit"
 	];
 
 	function getRandomImage() {
