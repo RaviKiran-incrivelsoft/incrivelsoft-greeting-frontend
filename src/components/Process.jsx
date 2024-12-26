@@ -21,7 +21,7 @@ const Process = () => {
 					Sign Up With Us, And On Your Birthday, You'll Receive A Personalized Message Filled With
 					Blessings From The Temple.
 				</p>
-				<button onClick={()=> navigate('/campaign')} className="bg-black text-white border-2 border-white py-3 px-6 rounded-lg hover:bg-white hover:text-black hover:border-black">
+				<button onClick={()=> navigate('/service')} className="bg-black text-white border-2 border-white py-3 px-6 rounded-lg hover:bg-white hover:text-black hover:border-black">
 					Discover More
 				</button>
 			</div>
