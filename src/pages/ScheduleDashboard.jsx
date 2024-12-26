@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AddSchedule from './AddSchedule';
+import convertToUTC from "../utils/convertToUTC.js";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -60,9 +61,9 @@ const ScheduleDashboard = () => {
 			};
 
 			if (selectedOption === "schedule_later" && scheduleTime) {
-				data.time = scheduleTime;
+				data.time = convertToUTC(scheduleTime);
 			} else {
-				data.time = new Date().toISOString();
+				data.time = convertToUTC(new Date());
 			}
 
 			const response = await axios.put(
