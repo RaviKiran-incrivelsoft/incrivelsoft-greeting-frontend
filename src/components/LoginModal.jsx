@@ -9,7 +9,12 @@ const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const [password, setPassword] = useState('');
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+	const togglePasswordVisibility = () => {
+		setIsPasswordVisible(!isPasswordVisible);
+	};
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
@@ -110,24 +115,47 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 											required
 											value={email}
 											onChange={(e) => setEmail(e.target.value)}
-											className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+											className="relative block w-full px-3 py-2 border border-gray-400 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
 											placeholder="Email address"
 										/>
 									</div>
 									<div>
-										<label htmlFor="password" className="sr-only">
-											Password
-										</label>
-										<input
-											id="password"
-											name="password"
-											type="password"
-											required
-											value={password}
-											onChange={(e) => setPassword(e.target.value)}
-											className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											placeholder="Password"
-										/>
+										<div className="relative">
+											<input
+												id="password"
+												name="password"
+												type={isPasswordVisible ? 'text' : 'password'}
+												className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+												placeholder="Enter password"
+												value={password}
+												onChange={(e) => setPassword(e.target.value)}
+												required
+											/>
+											<button
+												type="button"
+												onClick={togglePasswordVisibility}
+												className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-blue-600 dark:text-neutral-600 dark:focus:text-blue-500"
+											>
+												<svg
+													className="shrink-0 size-3.5"
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+												>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+													<line className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} x1="2" x2="22" y1="2" y2="22"></line>
+													<path className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+													<circle className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} cx="12" cy="12" r="3"></circle>
+												</svg>
+											</button>
+										</div>
 									</div>
 								</div>
 
