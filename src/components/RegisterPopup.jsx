@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
+	const [loading, setLoading] = useState(false);
 	const handleOutsideClick = (e) => {
 		if (e.target.id === 'modal-container') {
 			onClose();
@@ -28,6 +29,7 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	// Handle form submission
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true)
 		try {
 			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/users/register`, formData);
 			console.log(response.data.message);
@@ -41,10 +43,12 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 			})
 		} catch (err) {
 			console.error('Error registering user:', err);
-			toast.error(err.response.data.message, {
+			toast.error(err.response?.data?.message || "Failed to Register", {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -146,9 +150,19 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									</div>
 									<button
 										type="submit"
-										className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+										disabled={loading}
+										className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+											}`}
 									>
-										Register
+										{loading ? (
+											<div className="flex space-x-1">
+												<span className="dot bg-white"></span>
+												<span className="dot bg-white"></span>
+												<span className="dot bg-white"></span>
+											</div>
+										) : (
+											"Register"
+										)}
 									</button>
 								</form>
 							</>

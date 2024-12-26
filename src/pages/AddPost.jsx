@@ -11,12 +11,14 @@ const AddPost = () => {
 	const [title, setTitle] = useState("");
 	const [media, setMedia] = useState(null);
 	const [paragraph, setParagraph] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const handleMediaUpload = (file) => {
 		setMedia({ file, type: file.type.startsWith("video") ? "video" : "image" });
 	};
 
 	const handleSubmit = async () => {
+		setLoading(true)
 		const formData = new FormData();
 		formData.append("campaignName", title);
 		formData.append("campaignDescription", paragraph);
@@ -51,8 +53,10 @@ const AddPost = () => {
 			console.error("Error in submitting campaign:", error);
 			toast.error('Failed to create campaign', {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -118,10 +122,20 @@ const AddPost = () => {
 			{/* Submit Button */}
 			<div className="flex justify-center">
 				<button
+					type="submit"
+					disabled={loading}
 					onClick={handleSubmit}
-					className="px-4 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600"
+					className={`h-10 flex items-center justify-center px-4 rounded shadow text-white ${loading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
 				>
-					Submit Post
+					{loading ? (
+						<div className="flex space-x-1">
+							<span className="dot bg-white"></span>
+							<span className="dot bg-white"></span>
+							<span className="dot bg-white"></span>
+						</div>
+					) : (
+						"Submit Post"
+					)}
 				</button>
 			</div>
 		</div>

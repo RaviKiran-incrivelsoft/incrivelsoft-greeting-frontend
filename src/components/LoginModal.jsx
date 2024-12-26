@@ -10,10 +10,12 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 
 		try {
 			// Perform login
@@ -26,7 +28,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 				console.log("Login successful:", response.data);
 				toast.success('Login successful', {
 					position: 'top-center',
-					theme: "colored" 
+					theme: "colored"
 				})
 
 				// Save token to localStorage
@@ -42,15 +44,17 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 				console.error("Login Failed");
 				toast.error('Login Failed', {
 					position: 'top-center',
-					theme: "colored" 
+					theme: "colored"
 				})
 			}
 		} catch (err) {
 			console.error("Error logging in:", err);
-			toast.error(err.response.data.message, {
+			toast.error(err.response?.data?.message || "Failed to Login", {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -130,9 +134,19 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 								<div className="flex items-center justify-between">
 									<button
 										type="submit"
-										className="group w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+										disabled={loading}
+										className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+											}`}
 									>
-										Sign in
+										{loading ? (
+											<div className="flex space-x-1">
+												<span className="dot bg-white"></span>
+												<span className="dot bg-white"></span>
+												<span className="dot bg-white"></span>
+											</div>
+										) : (
+											"Sign in"
+										)}
 									</button>
 								</div>
 							</form>

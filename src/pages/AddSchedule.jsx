@@ -5,7 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-const AddSchedule = ({ isOpen, onClose }) => {
+const AddSchedule = ({ isOpen, onClose }) => {	
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		schedule: "",
 		time: "",
@@ -44,10 +45,11 @@ const AddSchedule = ({ isOpen, onClose }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true)
 		const { schedule, time, temple, mode } = formData;
 		const localDate = new Date(time); // Create a Date object in local timezone
 		const utcDate = new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000); // Convert to UTC
-        formData.time = utcDate;
+		formData.time = utcDate;
 
 		if (!schedule || !time || !temple || !mode) {
 			toast.error("Please fill all fields.", {
@@ -87,6 +89,8 @@ const AddSchedule = ({ isOpen, onClose }) => {
 				}
 			);
 			console.error("Error creating schedule:", error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -159,15 +163,25 @@ const AddSchedule = ({ isOpen, onClose }) => {
 						<button
 							type="button"
 							onClick={onClose}
-							className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none"
+							className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
 						>
 							Cancel
 						</button>
 						<button
 							type="submit"
-							className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+							disabled={loading}
+							className={`h-10 flex items-center justify-center px-4 rounded text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+								}`}
 						>
-							Create
+							{loading ? (
+								<div className="flex space-x-1 p-1.5">
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+								</div>
+							) : (
+								"Create"
+							)}
 						</button>
 					</div>
 				</form>
