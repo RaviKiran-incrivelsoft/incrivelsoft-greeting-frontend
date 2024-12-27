@@ -11,8 +11,15 @@ import ScheduleDashboard from './pages/ScheduleDashboard';
 import { jwtDecode } from 'jwt-decode';
 import { ToastContainer } from 'react-toastify';
 import NotFoundPage from './pages/NotFoundPage';
+import { useState } from 'react';
+import LoginModal from './components/LoginModal';
+import RegisterPopup from './components/RegisterPopup';
 
 function App() {
+  const [activeModal, setActiveModal] = useState(null);
+
+  const openModal = (modal) => setActiveModal(modal);
+  const closeModal = () => setActiveModal(null);
 
   const isAuthenticated = () => {
     const token = localStorage.getItem('token');
@@ -38,9 +45,11 @@ function App() {
   return (
     <BrowserRouter>
       <ToastContainer />
-      <Navbar />
+      <Navbar onLoginClick={() => openModal('login')} />
+      {activeModal === 'login' && <LoginModal onClose={closeModal} onSwitchToRegister={() => openModal('register')} />}
+      {activeModal === 'register' && <RegisterPopup onClose={closeModal} onSwitchToLogin={() => openModal('login')} />}
       <Routes>
-        <Route element={<HomePage />} path='/' />
+        <Route element={<HomePage onRegisterClick={() => openModal('register')} />} path='/' />
         <Route element={<ServicePage />} path='/service' />
         <Route element={<ContactPage />} path='/contact' />
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
