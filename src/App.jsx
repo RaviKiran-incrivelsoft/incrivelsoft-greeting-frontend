@@ -1,4 +1,7 @@
 import './App.css';
+import { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { ToastContainer } from 'react-toastify';
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import HomePage from './pages/HomePage';
 import Navbar from './components/Navbar';
@@ -8,12 +11,17 @@ import ContactPage from './pages/ContactPage';
 import CampaignDashboard from './pages/CampaignDashboard';
 import AddPost from './pages/AddPost';
 import ScheduleDashboard from './pages/ScheduleDashboard';
-import { jwtDecode } from 'jwt-decode';
-import { ToastContainer } from 'react-toastify';
 import NotFoundPage from './pages/NotFoundPage';
-import { useState } from 'react';
 import LoginModal from './components/LoginModal';
 import RegisterPopup from './components/RegisterPopup';
+import GreetingDashboard from './pages/GreetingsDashboard';
+import CompanyPopup from './components/CompanyPopup';
+import MarriageDetails from './components/MarriageDetails';
+import BirthdayGreetings from './components/BirthdayGreetings';
+import EventComponent from './components/EventComponent';
+import FestivalGreetings from './components/FestivalGreetings';
+import Template from './components/Template';
+import TemplateDashboard from './pages/TemplateDashboard';
 
 function App() {
   const [activeModal, setActiveModal] = useState(null);
@@ -52,6 +60,14 @@ function App() {
         <Route element={<HomePage onRegisterClick={() => openModal('register')} />} path='/' />
         <Route element={<ServicePage />} path='/service' />
         <Route element={<ContactPage />} path='/contact' />
+        <Route element={<CompanyPopup />} path='/company' />
+        <Route element={<GreetingDashboard />} path='/greetings' />
+        <Route element={<Template />} path='/template' />
+        <Route element={<TemplateDashboard />} path='/templates' />
+        <Route element={<MarriageDetails />} path='/marriage' />
+        <Route element={<BirthdayGreetings />} path='/birthday' />
+        <Route element={<EventComponent />} path='/event' />
+        <Route element={<FestivalGreetings />} path='/festival' />
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />

@@ -46,7 +46,7 @@ const AddPost = () => {
 				autoClose: 3000,
 				theme: "colored",
 				onClose: () => {
-					navigate("/campaign")
+					navigate("/templates")
 				}
 			})
 		} catch (error) {

@@ -46,7 +46,7 @@ const Navbar = ({ onLoginClick }) => {
 								to="/campaign"
 								className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
 							>
-								Campaigns
+								Dashboard
 							</Link>}
 						<Link
 							to="/service"

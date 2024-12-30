@@ -1,28 +1,36 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
+import Template from "./Template";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function TempleGreetings({ campaignId, closeModal }) {
 	const [loading, setLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isTemplateSelected, setIsTemplateSelected] = useState(false);
 	const [formData, setFormData] = useState({
 		templeName: "",
-		templeTitle: "",
 		address: "",
 		taxId: "",
 		phone: "",
-		fax: "",
-		templeDescription: "",
 		websiteUrl: "",
 		facebookUrl: "",
 		twitterUrl: "",
 		instagramUrl: "",
 		paypalQrCode: null,
 		zelleQrCode: null,
-		csvFile: null,
+		csvData: [],
+		postId: ""
 	});
+
+	const handlePostSelect = (id) => {
+		setFormData((prevData) => ({
+			...prevData,
+			postId: id,
+		}));
+	};
 
 	const toggleModal = () => {
 		setIsModalOpen(!isModalOpen);
@@ -37,21 +45,56 @@ function TempleGreetings({ campaignId, closeModal }) {
 		link.click();
 	};
 
-	const handleFileChange = (field) => (e) => {
+	const handleQRcode = (field) => (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[field]: e.target.files[0],
 		}));
 	};
 
+	const handleFileChange = (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+
+		reader.onload = () => {
+			const text = reader.result;
+			const rows = text.trim().split("\n");
+			const headers = rows[0].split(",");
+
+			const data = rows.slice(1).map((row) => {
+				const values = row.split(",");
+				const obj = {};
+				headers.forEach((header, index) => {
+					obj[header.trim()] = values[index]?.trim();
+				});
+				return obj;
+			});
+
+			console.log("Parsed CSV data:", data);
+			setFormData((prevData) => ({
+				...prevData,
+				csvData: data,
+			}));
+		};
+
+		reader.onerror = (error) => {
+			console.error("Error reading file:", error);
+			toast.error("Failed to read file");
+		};
+
+		reader.readAsText(file);
+	};
+
 	const isFileUploaded = (field) => {
 		return formData[field] ? true : false;
 	};
 
-	const handleInputChange = (field) => (e) => {
+	const handleInputChange = (e) => {
 		setFormData((prevData) => ({
 			...prevData,
-			[field]: e.target.value,
+			[e.target.name]: e.target.value,
 		}));
 	};
 
@@ -109,29 +152,20 @@ function TempleGreetings({ campaignId, closeModal }) {
 			onClick={closeModal}
 		>
 			<div
-				className="bg-white p-6 rounded-lg w-2/3"
+				className="bg-white p-6 rounded-lg w-3/5"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-xl font-bold text-center mb-5">Temple Information</div>
 				<div className="container mx-auto px-4">
 					<form onSubmit={handleSubmit}>
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-							<div className="form-group">
-								<label className="block text-sm text-gray-700 font-semibold mb-2">Temple Title</label>
-								<input
-									type="text"
-									value={formData.templeTitle}
-									onChange={handleInputChange('templeTitle')}
-									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
-									required
-								/>
-							</div>
+						<div className="grid items-end grid-cols-3 gap-3">
 							<div className="form-group">
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Temple Name</label>
 								<input
 									type="text"
 									value={formData.templeName}
-									onChange={handleInputChange('templeName')}
+									onChange={handleInputChange}
+									name="templeName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
@@ -141,7 +175,8 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="text"
 									value={formData.address}
-									onChange={handleInputChange('address')}
+									onChange={handleInputChange}
+									name="address"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
@@ -151,7 +186,8 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="text"
 									value={formData.taxId}
-									onChange={handleInputChange('taxId')}
+									onChange={handleInputChange}
+									name="taxId"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
@@ -161,28 +197,10 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="number"
 									value={formData.phone}
-									onChange={handleInputChange('phone')}
+									onChange={handleInputChange}
+									name="phone"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
-								/>
-							</div>
-							<div className="form-group">
-								<label className="block text-sm text-gray-700 font-semibold mb-2">Fax</label>
-								<input
-									type="text"
-									value={formData.fax}
-									onChange={handleInputChange("fax")}
-									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 py-1 px-2"
-								/>
-							</div>
-							<div className="form-group">
-								<label className="block text-sm text-gray-700 font-semibold mb-2">Temple Description</label>
-								<input
-									type="text"
-									value={formData.templeDescription}
-									onChange={handleInputChange("templeDescription")}
-									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 py-1 px-2"
-									rows="4"
 								/>
 							</div>
 							<div className="form-group">
@@ -190,7 +208,8 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="text"
 									value={formData.websiteUrl}
-									onChange={handleInputChange('websiteUrl')}
+									onChange={handleInputChange}
+									name="websiteUrl"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
@@ -200,7 +219,8 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="text"
 									value={formData.facebookUrl}
-									onChange={handleInputChange('facebookUrl')}
+									onChange={handleInputChange}
+									name="facebookUrl"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
@@ -210,7 +230,8 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="text"
 									value={formData.twitterUrl}
-									onChange={handleInputChange('twitterUrl')}
+									onChange={handleInputChange}
+									name="twitterUrl"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
@@ -220,11 +241,19 @@ function TempleGreetings({ campaignId, closeModal }) {
 								<input
 									type="text"
 									value={formData.instagramUrl}
-									onChange={handleInputChange('instagramUrl')}
+									onChange={handleInputChange}
+									name="instagramUrl"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 									required
 								/>
 							</div>
+							<button
+								className="flex items-center text-center justify-around py-1.5 px-4 rounded-md transition-all duration-300 ease-in-out text-white bg-blue-600 hover:bg-blue-700"
+								type="button"
+								onClick={() => setIsTemplateSelected(true)}
+							>
+								<FaRegEnvelope /> Select Template
+							</button>
 						</div>
 
 						<div className="flex gap-6 my-4 mb-6">
@@ -240,7 +269,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 									id="paypalQrCodeInput"
 									type="file"
 									accept="image/*"
-									onChange={handleFileChange('paypalQrCode')}
+									onChange={handleQRcode('paypalQrCode')}
 									className="hidden"
 									required
 								/>
@@ -258,7 +287,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 									id="zelleQrCodeInput"
 									type="file"
 									accept="image/*"
-									onChange={handleFileChange('zelleQrCode')}
+									onChange={handleQRcode('zelleQrCode')}
 									className="hidden"
 									required
 								/>
@@ -269,7 +298,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 									id="csvFileInput"
 									type="file"
 									accept=".csv"
-									onChange={(e) => {handleFileChange('csvFile')(e);toggleModal()}}
+									onChange={(e) => { handleFileChange(e); toggleModal() }}
 									className="hidden w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
 									required
 								/>
@@ -284,7 +313,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 							</div>
 						</div>
 
-						{/* Modal Popup */}
+						{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 						{isModalOpen && (
 							<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 								<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
