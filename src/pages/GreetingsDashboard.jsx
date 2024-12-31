@@ -158,8 +158,7 @@ const GreetingDashboard = () => {
 						{greetings.map((row) => {
 							const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
 							const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
-							console.log(row);
-
+							
 							return (
 								<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
 									<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>

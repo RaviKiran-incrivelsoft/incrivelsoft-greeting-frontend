@@ -7,12 +7,9 @@ import Template from "./Template";
 const MarriageDetails = ({ fetchGreetings, closeModal }) => {
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
-		husbandName: "",
-		wifeName: "",
-		email: "",
-		contact: "",
-		marriageDate: "",
-		postId: ""
+		title: "",
+		csvData: [],
+		postDetails: ""
 	});
 
 	const [isTemplateSelected, setIsTemplateSelected] = useState(false);

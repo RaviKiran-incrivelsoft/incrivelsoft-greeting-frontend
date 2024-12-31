@@ -6,13 +6,9 @@ import axios from "axios";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-function FestivalGreetings({ fetchGreetings, closeModal }) {
+function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 	const [formData, setFormData] = useState({
-		festivalName: "",
-		festivalDescription: "",
-		festivalDate: "",
-		from: "",
-		address: "",
+		title: "",
 		csvData: [],
 		postDetails: ""
 	});
@@ -21,7 +17,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 	const [loading, setLoading] = useState(false);
 	const [isTemplateSelected, setIsTemplateSelected] = useState(false);
 	const [userDetails, setUserDetails] = useState([
-		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
+		{ husband_name: "", wife_name: "", email: "", contact: "", marriagedate: "" },
 	]);
 
 	const handleUserInput = (e) => {
@@ -37,6 +33,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 			...formData,
 			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
 		}));
+
 	};
 
 	const handleInputChange = (e) => {
@@ -93,7 +90,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 	};
 
 	const downloadSampleCSV = () => {
-		const sampleCSV = `first_name,last_name,email,contact,birthdate\nmufasa,babu,mahesh@example.com,1234567890,dd-mm-yyyy`;
+		const sampleCSV = `husband_name,wife_name,email,contact,marriagedate\nMohan,Rashmika,mohan@example.com,1234567890,dd-mm-yyyy`;
 		const blob = new Blob([sampleCSV], { type: "text/csv" });
 		const link = document.createElement("a");
 		link.href = URL.createObjectURL(blob);
@@ -140,10 +137,8 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 		try {
 			const token = localStorage.getItem("token");
 
-			console.log("Token Retrieved:", token);
-
 			const response = await axios.post(
-				`${backendUrl}/festivals`,
+				`${backendUrl}/marriages`,
 				formData,
 				{
 					headers: {
@@ -159,8 +154,8 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 			});
 			console.log("Form submitted successfully:", response.data);
 
-			sessionStorage.clear(); // Ensure this doesn't unintentionally clear unrelated data
-			closeModal();
+			// sessionStorage.clear(); // Ensure this doesn't unintentionally clear unrelated data
+			// closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
 
@@ -185,60 +180,16 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 				className="bg-white p-6 rounded-lg w-1/2"
 				onClick={(e) => e.stopPropagation()}
 			>
-				<h2 className="text-xl font-bold text-center mb-5">Occasion Greetings</h2>
+				<h2 className="text-xl font-bold text-center mb-5">Anniversary Greetings</h2>
 				<form onSubmit={handleSubmit}>
 					<div className="grid grid-cols-3 items-start justify-center gap-4">
 						<div className="form-group">
-							<label className="block text-sm font-semibold mb-2">Occasion Name</label>
+							<label className="block text-sm font-semibold mb-2">Title</label>
 							<input
 								type="text"
-								value={formData.festivalName}
+								value={formData.title}
 								onChange={handleInputChange}
-								name="festivalName"
-								className="w-full border border-gray-300 rounded px-2 py-1"
-								required
-							/>
-						</div>
-						<div className="form-group">
-							<label className="block text-sm font-semibold mb-2">Occasion Date</label>
-							<input
-								type="date"
-								value={formData.festivalDate}
-								onChange={handleInputChange}
-								name="festivalDate"
-								className="w-full border border-gray-300 rounded px-2 py-1"
-								required
-							/>
-						</div>
-						<div className="form-group">
-							<label className="block text-sm font-semibold mb-2">Occasion Description</label>
-							<input
-								type="text"
-								value={formData.festivalDescription}
-								onChange={handleInputChange}
-								name="festivalDescription"
-								className="w-full border border-gray-300 rounded px-2 py-1"
-								required
-							/>
-						</div>
-						<div className="form-group">
-							<label className="block text-sm font-semibold mb-2">Address</label>
-							<input
-								type="text"
-								value={formData.address}
-								onChange={handleInputChange}
-								name="address"
-								className="w-full border border-gray-300 rounded px-2 py-1"
-								required
-							/>
-						</div>
-						<div className="form-group">
-							<label className="block text-sm font-semibold mb-2">From</label>
-							<input
-								type="text"
-								value={formData.from}
-								onChange={handleInputChange}
-								name="from"
+								name="title"
 								className="w-full border border-gray-300 rounded px-2 py-1"
 								required
 							/>
@@ -274,22 +225,22 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 					{userType === "single" && (
 						<div className="grid grid-cols-3 gap-4 mt-4">
 							<div className="form-group">
-								<label className="block text-sm font-semibold mb-2">First Name</label>
+								<label className="block text-sm font-semibold mb-2">Husband Name</label>
 								<input
 									type="text"
-									value={formData.csvData.first_name}
+									value={formData.csvData.husband_name}
 									onChange={handleUserInput}
-									name="first_name"
+									name="husband_name"
 									className="w-full border border-gray-300 rounded px-2 py-1"
 								/>
 							</div>
 							<div className="form-group">
-								<label className="block text-sm font-semibold mb-2">Last Name</label>
+								<label className="block text-sm font-semibold mb-2">Wife Name</label>
 								<input
 									type="text"
-									value={formData.csvData.last_name}
+									value={formData.csvData.wife_name}
 									onChange={handleUserInput}
-									name="last_name"
+									name="wife_name"
 									className="w-full border border-gray-300 rounded px-2 py-1"
 								/>
 							</div>
@@ -314,12 +265,12 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								/>
 							</div>
 							<div className="form-group">
-								<label className="block text-sm font-semibold mb-2">Birthdate</label>
+								<label className="block text-sm font-semibold mb-2">Married Date</label>
 								<input
 									type="date"
-									value={formData.csvData.birthdate}
+									value={formData.csvData.marriagedate}
 									onChange={handleUserInput}
-									name="birthdate"
+									name="marriagedate"
 									className="w-full border border-gray-300 rounded px-2 py-1"
 								/>
 							</div>
@@ -346,7 +297,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								<p className="mb-6">
 									Please ensure the CSV file contains the following fields: <br />
 									<span className="font-semibold">
-										first_name, last_name, email, contact, birthdate
+										husband_name, wife_name, email, contact, marriagedate
 									</span>
 								</p>
 								<div className="flex justify-end space-x-4">
@@ -397,4 +348,4 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 	);
 }
 
-export default FestivalGreetings;
+export default AnniversaryGreetings;
