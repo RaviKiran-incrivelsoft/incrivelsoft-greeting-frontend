@@ -151,6 +151,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 					},
 				}
 			);
+
 			fetchGreetings()
 			toast.success(response.data.message, {
 				position: "top-center",
@@ -276,7 +277,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								<label className="block text-sm font-semibold mb-2">First Name</label>
 								<input
 									type="text"
-									value={userDetails.first_name}
+									value={formData.csvData.first_name}
 									onChange={handleUserInput}
 									name="first_name"
 									className="w-full border border-gray-300 rounded px-2 py-1"
@@ -286,7 +287,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								<label className="block text-sm font-semibold mb-2">Last Name</label>
 								<input
 									type="text"
-									value={userDetails.last_name}
+									value={formData.csvData.last_name}
 									onChange={handleUserInput}
 									name="last_name"
 									className="w-full border border-gray-300 rounded px-2 py-1"
@@ -296,7 +297,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								<label className="block text-sm font-semibold mb-2">Email</label>
 								<input
 									type="email"
-									value={userDetails.email}
+									value={formData.csvData.email}
 									onChange={handleUserInput}
 									name="email"
 									className="w-full border border-gray-300 rounded px-2 py-1"
@@ -306,7 +307,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								<label className="block text-sm font-semibold mb-2">Contact</label>
 								<input
 									type="text"
-									value={userDetails.contact}
+									value={formData.csvData.contact}
 									onChange={handleUserInput}
 									name="contact"
 									className="w-full border border-gray-300 rounded px-2 py-1"
@@ -316,7 +317,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								<label className="block text-sm font-semibold mb-2">Birthdate</label>
 								<input
 									type="date"
-									value={userDetails.birthdate}
+									value={formData.csvData.birthdate}
 									onChange={handleUserInput}
 									name="birthdate"
 									className="w-full border border-gray-300 rounded px-2 py-1"

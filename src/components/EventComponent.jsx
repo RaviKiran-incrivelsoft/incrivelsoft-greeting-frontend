@@ -226,7 +226,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={userDetails.firstName}
+									value={formData.csvData.firstName}
 									onChange={handleUserInput}
 									name="firstName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -239,7 +239,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={userDetails.lastName}
+									value={formData.csvData.lastName}
 									onChange={handleUserInput}
 									name="lastName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -252,7 +252,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="email"
-									value={userDetails.email}
+									value={formData.csvData.email}
 									onChange={handleUserInput}
 									name="email"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -265,7 +265,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={userDetails.contact}
+									value={formData.csvData.contact}
 									onChange={handleUserInput}
 									name="contact"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -276,7 +276,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Birthdate</label>
 								<input
 									type="date"
-									value={userDetails.birthdate}
+									value={formData.csvData.birthdate}
 									onChange={handleUserInput}
 									name="birthdate"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"

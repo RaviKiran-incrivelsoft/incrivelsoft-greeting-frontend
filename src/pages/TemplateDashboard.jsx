@@ -1,18 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const images = [
-	{ image: "https://via.placeholder.com/300", title: "Happy Birthday", description: "Celebrate a joyous birthday with this special greeting!" },
-	{ image: "https://via.placeholder.com/300", title: "Festival Greetings", description: "Wishing you a festive season filled with joy and happiness!" },
-	{ image: "https://via.placeholder.com/300", title: "Marriage Blessings", description: "Wishing you a lifetime of love and happiness together." },
-	{ image: "https://via.placeholder.com/300", title: "Event Celebration", description: "Join us for a memorable event filled with fun and excitement!" },
-	{ image: "https://via.placeholder.com/300", title: "Temple Visit", description: "May your visit to the temple bring peace and blessings." },
-	{ image: "https://via.placeholder.com/300", title: "Corporate Greetings", description: "Wishing you success and prosperity in all your business endeavors." },
-];
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+const globalPostImages = {
+	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
+	anniversary: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140340_gozefj.png",
+	birthday: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140507_s1u7da.png",
+	event: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140427_kfzfam.png",
+};
 
 const TemplateDashboard = () => {
 	const navigate = useNavigate();
+	const [globalTemplates, setGlobalTemplates] = useState([]);
+	const [userPosts, setUserPosts] = useState([]);
+
+	// Fetch posts and templates
+	const fetchPosts = async () => {
+		try {
+			const token = localStorage.getItem("token");
+
+			// Fetch global and user-created posts
+			const response = await axios.get(`${backendUrl}/post`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			// Filter global posts based on type and isGlobal flag
+			const globalPosts = response.data.posts.filter((post) => post.isGlobal);
+
+			// Filter user-created posts for the active component
+			const userCreatedPosts = response.data.posts.filter(
+				(post) => !post.isGlobal
+			);
+
+			setGlobalTemplates(globalPosts);
+			setUserPosts(userCreatedPosts);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchPosts();
+	}, []);
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen flex flex-col items-center">
@@ -35,24 +69,49 @@ const TemplateDashboard = () => {
 					Create Template
 				</button>
 			</div>
-			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full">
-				{images.map((item, index) => (
+
+			{/* Global Templates */}
+			<h3 className="text-xl font-semibold mb-4">Preset Templates</h3>
+			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full mb-10">
+				{globalTemplates.map((item, index) => (
 					<div key={index} className="text-center">
 						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
 							<img
-								src={item.image}
-								alt={item.title}
+								src={
+									globalPostImages[item.type] || item.mediaURL
+								}
+								alt={item.postName}
 								className="w-full h-full object-cover"
 							/>
 							<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-								<p className="text-white text-center px-4">{item.description}</p>
+								<p className="text-white text-center px-4">{item.postDescription}</p>
 							</div>
 						</div>
-						<h3 className="text-lg font-semibold my-3">{item.title}</h3>
+						<h3 className="text-lg font-semibold my-3">{item.postName}</h3>
+					</div>
+				))}
+			</div>
+
+			{/* User-Created Templates */}
+			<h3 className="text-xl font-semibold mb-4">Your Custom Templates</h3>
+			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full">
+				{userPosts.map((item, index) => (
+					<div key={index} className="text-center">
+						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
+							<img
+								src={item.mediaURL}
+								alt={item.postName}
+								className="w-full h-full object-cover"
+							/>
+							<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+								<p className="text-white text-center px-4">{item.postDescription}</p>
+							</div>
+						</div>
+						<h3 className="text-lg font-semibold my-3">{item.postName}</h3>
 					</div>
 				))}
 				<div
-					onClick={() => navigate('/addpost')}
+					onClick={() => navigate("/addpost")}
 					className="w-72 h-72 cursor-pointer bg-white shadow-md rounded-lg border-dashed border-2 border-blue-500 flex flex-col justify-center items-center relative"
 				>
 					<div className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full text-4xl pb-2 font-bold">
