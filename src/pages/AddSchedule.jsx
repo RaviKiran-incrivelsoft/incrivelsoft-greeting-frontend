@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import convertToUTC from "../utils/convertToUTC.js";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const AddSchedule = ({ isOpen, onClose }) => {
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		schedule: "",
 		time: "",
@@ -44,12 +46,20 @@ const AddSchedule = ({ isOpen, onClose }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 		const { schedule, time, temple, mode } = formData;
-		const localDate = new Date(time); // Create a Date object in local timezone
-		const utcDate = new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000); // Convert to UTC
-        formData.time = utcDate;
 
-		if (!schedule || !time || !temple || !mode) {
+		// Only convert and include time if schedule is "schedule_later"
+		if (schedule === "schedule_later") {
+			formData.time = convertToUTC(time); // Convert to UTC only when necessary
+		} else {
+			formData.time = undefined; // Don't send time if not required
+		}
+
+		console.log("local time", time);
+		console.log("converted to utc", formData.time);
+
+		if (!schedule || !temple || !mode) {
 			toast.error("Please fill all fields.", {
 				position: "top-center",
 				theme: "colored",
@@ -64,17 +74,17 @@ const AddSchedule = ({ isOpen, onClose }) => {
 				formData,
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
-			setFormData({
-				schedule: "",
-				time: "",
-				temple: "",
-				mode: "",
-			})
 			toast.success(response.data.message || "Schedule created successfully!", {
 				position: "top-center",
 				theme: "colored",
 				autoClose: 3000,
 				onClose: () => {
+					setFormData({
+						schedule: "",
+						time: "",
+						temple: "",
+						mode: "",
+					});
 					onClose();
 				},
 			});
@@ -87,6 +97,8 @@ const AddSchedule = ({ isOpen, onClose }) => {
 				}
 			);
 			console.error("Error creating schedule:", error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -112,16 +124,19 @@ const AddSchedule = ({ isOpen, onClose }) => {
 						</select>
 					</div>
 
-					<div>
-						<label className="block text-sm font-medium mb-1">Time</label>
-						<input
-							type="datetime-local"
-							name="time"
-							value={formData.time}
-							onChange={handleChange}
-							className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
-						/>
-					</div>
+					{/* Show time input only if schedule type is "schedule_later" */}
+					{formData.schedule === "schedule_later" && (
+						<div>
+							<label className="block text-sm font-medium mb-1">Time</label>
+							<input
+								type="datetime-local"
+								name="time"
+								value={formData.time}
+								onChange={handleChange}
+								className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+							/>
+						</div>
+					)}
 
 					<div>
 						<label className="block text-sm font-medium mb-1">Temple</label>
@@ -159,15 +174,25 @@ const AddSchedule = ({ isOpen, onClose }) => {
 						<button
 							type="button"
 							onClick={onClose}
-							className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none"
+							className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
 						>
 							Cancel
 						</button>
 						<button
 							type="submit"
-							className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+							disabled={loading}
+							className={`h-10 flex items-center justify-center px-4 rounded text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+								}`}
 						>
-							Create
+							{loading ? (
+								<div className="flex space-x-1 p-1.5">
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+								</div>
+							) : (
+								"Create"
+							)}
 						</button>
 					</div>
 				</form>
