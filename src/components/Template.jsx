@@ -1,18 +1,15 @@
-import React, { useCallback, useEffect } from "react";
+import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const images = [
-	{ _id: "67735e3c713fd1cbbdc063b7", image: "https://via.placeholder.com/300", title: "Happy Birthday", description: "Celebrate a joyous birthday with this special greeting!" },
-	{ _id: "6773642054309c49c245823e", image: "https://via.placeholder.com/300", title: "Festival Greetings", description: "Wishing you a festive season filled with joy and happiness!" },
-	{ _id: "67738e0f9f864f3ef31fcd74", image: "https://via.placeholder.com/300", title: "Marriage Blessings", description: "Wishing you a lifetime of love and happiness together." },
-	// { _id: 103, image: "https://via.placeholder.com/300", title: "Event Celebration", description: "Join us for a memorable event filled with fun and excitement!" },
-	// { _id: 104, image: "https://via.placeholder.com/300", title: "Temple Visit", description: "May your visit to the temple bring peace and blessings." },
-	// { _id: 105, image: "https://via.placeholder.com/300", title: "Corporate Greetings", description: "Wishing you success and prosperity in all your business endeavors." },
-];
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const Template = ({ onSelect, closeModal }) => {
 	const navigate = useNavigate();
+	const [images, setImages] = useState([]);
 
 	const handleSelect = useCallback(
 		(id) => {
@@ -23,6 +20,27 @@ const Template = ({ onSelect, closeModal }) => {
 		[onSelect, closeModal]
 	);
 
+	const fetchPosts = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await axios.get(
+				`${backendUrl}/post`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			setImages(response.data.posts)
+		} catch (error) {
+			console.log(error);
+			toast.error(error.response.data.error, {
+				position: "top-center",
+				theme: "colored",
+			});
+		}
+	}
+
 	useEffect(() => {
 		const id = sessionStorage.getItem('customPostId');
 		if (id) {
@@ -30,6 +48,10 @@ const Template = ({ onSelect, closeModal }) => {
 			sessionStorage.removeItem('customPostId');
 		}
 	}, [handleSelect]);
+
+	useEffect(() => {
+		fetchPosts();
+	}, [])
 
 	return (
 		<div className="p-4">
@@ -41,22 +63,22 @@ const Template = ({ onSelect, closeModal }) => {
 					>
 						✕
 					</button>
-					<h2 className="text-2xl font-semibold mb-6 text-center">Select your Template</h2>
+					<h2 className="text-2xl font-semibold mb-6 text-center">Select your Post</h2>
 
 					<div className="grid grid-cols-3 gap-x-6 gap-y-4 overflow-y-auto max-h-[70vh] [&::-webkit-scrollbar]:w-0">
 						{images.map((item, index) => (
 							<div key={index} className="text-center">
 								<div onClick={() => handleSelect(item._id)} className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
 									<img
-										src={item.image}
-										alt={item.title}
+										src={item.mediaURL}
+										alt={item.postName}
 										className="w-full h-full object-cover"
 									/>
 									<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-										<p className="text-white text-center px-4">{item.description}</p>
+										<p className="text-white text-center px-4">{item.postDescription}</p>
 									</div>
 								</div>
-								<h3 className="text-lg font-semibold my-3">{item.title}</h3>
+								<h3 className="text-lg font-semibold my-3">{item.postName}</h3>
 							</div>
 						))}
 						<div
@@ -66,7 +88,7 @@ const Template = ({ onSelect, closeModal }) => {
 							<div className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full text-4xl pb-2 font-bold">
 								+
 							</div>
-							<p className="mt-4 text-blue-500 font-medium">Add Template</p>
+							<p className="mt-4 text-blue-500 font-medium">Add Post</p>
 						</div>
 					</div>
 				</div>
