@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { FaRegEnvelope } from "react-icons/fa";
@@ -17,26 +17,41 @@ const MarriageDetails = ({ closeModal }) => {
 
 	const [isTemplateSelected, setIsTemplateSelected] = useState(false);
 
-	const handlePostSelect = (id) => {
-		setFormData((prevData) => ({
-			...prevData,
-			postId: id,
-		}));
-	};
+	const handlePostSelect = useCallback(
+		(id) => {
+			setFormData((prevData) => {
+				const updatedData = {
+					...prevData,
+					postId: id,
+				};
+				sessionStorage.setItem('formData', JSON.stringify(updatedData));
+				return updatedData;
+			});
+		},
+		[]
+	);
 
 	useEffect(() => {
+		const id = sessionStorage.getItem('customPostId');
 		const storedData = sessionStorage.getItem('formData');
 		if (storedData) {
 			setFormData(JSON.parse(storedData));
 		}
-	}, []);
+		if (id) {
+			handlePostSelect(id);
+			sessionStorage.removeItem('customPostId');
+		}
+	}, [handlePostSelect]);
 
 	const handleInputChange = (field) => (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[field]: e.target.value,
 		}));
-		sessionStorage.setItem('formData', JSON.stringify(formData));
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			[e.target.name]: e.target.value,
+		}));
 	};
 
 	const handleSubmit = async (e) => {
@@ -55,6 +70,7 @@ const MarriageDetails = ({ closeModal }) => {
 				}
 			);
 
+			sessionStorage.clear();
 			toast.success("Marriage details submitted successfully!", {
 				position: "top-center",
 				theme: "colored",
@@ -70,6 +86,8 @@ const MarriageDetails = ({ closeModal }) => {
 			setLoading(false);
 		}
 	};
+
+
 
 	return (
 		<div

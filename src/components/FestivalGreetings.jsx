@@ -20,13 +20,6 @@ function FestivalGreetings({ closeModal }) {
 		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
 	]);
 
-	useEffect(() => {
-		const storedData = sessionStorage.getItem('formData');
-		if (storedData) {
-			setFormData(JSON.parse(storedData));
-		}
-	}, []);
-
 	const handleUserInput = (e) => {
 		setUserDetails((prevData) => ({
 			...prevData,
@@ -222,7 +215,7 @@ function FestivalGreetings({ closeModal }) {
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Recipient Type</label>
 							<select
-								onChange={(e) => setUserType(e.target.value)}
+								onChange={(e) => { setUserType(e.target.value); sessionStorage.setItem("userType", e.target.value) }}
 								className="w-full border border-gray-300 rounded px-2 py-1"
 								defaultValue=""
 								required

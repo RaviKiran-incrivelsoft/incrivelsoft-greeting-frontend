@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
@@ -21,16 +21,9 @@ function TempleGreetings({ campaignId, closeModal }) {
 		instagramUrl: "",
 		paypalQrCode: null,
 		zelleQrCode: null,
-		csvData: [],
+		csvData: null,
 		postId: ""
 	});
-
-	const handlePostSelect = (id) => {
-		setFormData((prevData) => ({
-			...prevData,
-			postId: id,
-		}));
-	};
 
 	const toggleModal = () => {
 		setIsModalOpen(!isModalOpen);
@@ -50,6 +43,10 @@ function TempleGreetings({ campaignId, closeModal }) {
 			...prevData,
 			[field]: e.target.files[0],
 		}));
+	};
+
+	const isFileUploaded = (field) => {
+		return formData[field] ? true : false;
 	};
 
 	const handleFileChange = (e) => {
@@ -77,6 +74,10 @@ function TempleGreetings({ campaignId, closeModal }) {
 				...prevData,
 				csvData: data,
 			}));
+			sessionStorage.setItem('formData', JSON.stringify({
+				...formData,
+				csvData: data,
+			}));
 		};
 
 		reader.onerror = (error) => {
@@ -87,24 +88,42 @@ function TempleGreetings({ campaignId, closeModal }) {
 		reader.readAsText(file);
 	};
 
-	const isFileUploaded = (field) => {
-		return formData[field] ? true : false;
-	};
-
-	useEffect(() => {
-		const storedData = sessionStorage.getItem('formData');
-		if (storedData) {
-			setFormData(JSON.parse(storedData));
-		}
-	}, []);
-
 	const handleInputChange = (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
-		sessionStorage.setItem('formData', JSON.stringify(formData));
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			[e.target.name]: e.target.value,
+		}));
 	};
+
+	const handlePostSelect = useCallback(
+		(id) => {
+			setFormData((prevData) => {
+				const updatedData = {
+					...prevData,
+					postId: id,
+				};
+				sessionStorage.setItem('formData', JSON.stringify(updatedData));
+				return updatedData;
+			});
+		},
+		[]
+	);
+
+	useEffect(() => {
+		const id = sessionStorage.getItem('customPostId');
+		const storedData = sessionStorage.getItem('formData');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+		}
+		if (id) {
+			handlePostSelect(id);
+			sessionStorage.removeItem('customPostId');
+		}
+	}, [handlePostSelect]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -319,7 +338,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 								>
 									Upload Devotee CSV
 								</button>
-								{isFileUploaded('csvFile') && <span className="block text-green-600">File uploaded</span>}
+								{isFileUploaded('csvData') && <span className="block text-green-600">File uploaded</span>}
 							</div>
 						</div>
 

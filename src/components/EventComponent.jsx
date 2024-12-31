@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
@@ -17,29 +17,6 @@ function EventComponent({ closeModal }) {
 	const [userType, setUserType] = useState(false);
 	const [isTemplateSelected, setIsTemplateSelected] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-	const handlePostSelect = (id) => {
-		setFormData((prevData) => ({
-			...prevData,
-			postId: id,
-		}));
-	};
-
-	useEffect(() => {
-		const storedData = sessionStorage.getItem('formData');
-		if (storedData) {
-			setFormData(JSON.parse(storedData));
-		}
-	}, []);
-
-	const handleInputChange = (e) => {
-		setFormData((prevData) => ({
-			...prevData,
-			[e.target.name]: e.target.value,
-		}));
-		sessionStorage.setItem('formData', JSON.stringify(formData));
-	};
 
 	const handleFileChange = (e) => {
 		const file = e.target.files[0];
@@ -66,6 +43,10 @@ function EventComponent({ closeModal }) {
 				...prevData,
 				csvData: data,
 			}));
+			sessionStorage.setItem('formData', JSON.stringify({
+				...formData,
+				csvData: data,
+			}));
 		};
 
 		reader.onerror = (error) => {
@@ -77,16 +58,61 @@ function EventComponent({ closeModal }) {
 	};
 
 	const handleUserInput = (e) => {
-		setUserDetails((prevData) => ({
+		setUserDetails([{
+			...userDetails[0],
+			[e.target.name]: e.target.value,
+		}]);
+		setFormData((prevData) => ({
+			...prevData,
+			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
+		}));
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
+		}));
+	};
+
+	const handleInputChange = (e) => {
+		setFormData((prevData) => ({
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
-		setFormData((prevData) => ({
-			...prevData,
-			csvData: userDetails,
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			[e.target.name]: e.target.value,
 		}));
-		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
+
+	const handlePostSelect = useCallback(
+		(id) => {
+			setFormData((prevData) => {
+				const updatedData = {
+					...prevData,
+					postId: id,
+				};
+				sessionStorage.setItem('formData', JSON.stringify(updatedData));
+				return updatedData;
+			});
+		},
+		[]
+	);
+
+	useEffect(() => {
+		const id = sessionStorage.getItem('customPostId');
+		const storedData = sessionStorage.getItem('formData');
+		const recipientType = sessionStorage.getItem('userType');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+			setUserDetails(JSON.parse(storedData).csvData)
+		}
+		if (id) {
+			handlePostSelect(id);
+			sessionStorage.removeItem('customPostId');
+		}
+		if (recipientType) {
+			setUserType(recipientType);
+		}
+	}, [handlePostSelect]);
 
 	const toggleModal = () => {
 		setIsModalOpen(!isModalOpen);
@@ -176,7 +202,7 @@ function EventComponent({ closeModal }) {
 								User Type
 							</label>
 							<select
-								onChange={(e) => setUserType(e.target.value)}
+								onChange={(e) => { setUserType(e.target.value); sessionStorage.setItem("userType", e.target.value) }}
 								defaultValue=""
 								className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 								required
@@ -260,7 +286,7 @@ function EventComponent({ closeModal }) {
 					)}
 
 					{userType === "multiple" && (
-						<div className="flex flex-col gap-4 w-1/3">
+						<div className="flex flex-col gap-2 w-1/4">
 							<button
 								type="button"
 								onClick={toggleModal}
