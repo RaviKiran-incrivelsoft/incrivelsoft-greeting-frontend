@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import Template from "./Template";
 import { toast } from "react-toastify";
@@ -20,6 +20,13 @@ function FestivalGreetings({ closeModal }) {
 		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
 	]);
 
+	useEffect(() => {
+		const storedData = sessionStorage.getItem('formData');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+		}
+	}, []);
+
 	const handleUserInput = (e) => {
 		setUserDetails((prevData) => ({
 			...prevData,
@@ -29,6 +36,7 @@ function FestivalGreetings({ closeModal }) {
 			...prevData,
 			csvData: userDetails,
 		}));
+		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
 
 	const handleInputChange = (e) => {
@@ -36,6 +44,7 @@ function FestivalGreetings({ closeModal }) {
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
+		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
 
 	const handleFileChange = (e) => {
@@ -109,7 +118,7 @@ function FestivalGreetings({ closeModal }) {
 			>
 				<h2 className="text-xl font-bold text-center mb-5">Festival Greetings</h2>
 				<form onSubmit={handleSubmit}>
-					<div className="grid grid-cols-3 items-center justify-center gap-4">
+					<div className="grid grid-cols-3 items-start justify-center gap-4">
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Festival Name</label>
 							<input
@@ -134,7 +143,8 @@ function FestivalGreetings({ closeModal }) {
 						</div>
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Festival Description</label>
-							<textarea
+							<input
+								type="text"
 								value={formData.festivalDescription}
 								onChange={handleInputChange}
 								name="festivalDescription"
@@ -144,7 +154,8 @@ function FestivalGreetings({ closeModal }) {
 						</div>
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Address</label>
-							<textarea
+							<input
+								type="text"
 								value={formData.address}
 								onChange={handleInputChange}
 								name="address"
@@ -171,7 +182,7 @@ function FestivalGreetings({ closeModal }) {
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-green-600">Template Selected</span> : <span className="block text-red-600">Please Select Template</span>}
+							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 						</div>
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Recipient Type</label>
@@ -192,7 +203,7 @@ function FestivalGreetings({ closeModal }) {
 
 					{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 					{userType === "single" && (
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+						<div className="grid grid-cols-3 gap-4 mt-4">
 							<div className="form-group">
 								<label className="block text-sm font-semibold mb-2">First Name</label>
 								<input
@@ -255,7 +266,7 @@ function FestivalGreetings({ closeModal }) {
 							>
 								Upload CSV
 							</button>
-							{formData.csvData ? <span className="block text-green-600">File uploaded</span> : <span className="block text-red-600">File required</span>}
+							{formData.csvData.length ? <span className="block text-green-600 text-sm">File uploaded</span> : <span className="block text-red-600 text-sm">File required</span>}
 						</div>
 					)}
 

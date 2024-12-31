@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const images = [
@@ -13,10 +13,23 @@ const images = [
 
 const Template = ({ onSelect, closeModal }) => {
 	const navigate = useNavigate();
-	const handleSelect = (id) => {
-		onSelect(id);
-		closeModal();
-	};
+
+	const handleSelect = useCallback(
+		(id) => {
+			console.log(id);
+			onSelect(id);
+			closeModal();
+		},
+		[onSelect, closeModal]
+	);
+
+	useEffect(() => {
+		const id = sessionStorage.getItem('customPostId');
+		if (id) {
+			handleSelect(id);
+			sessionStorage.removeItem('customPostId');
+		}
+	}, [handleSelect]);
 
 	return (
 		<div className="p-4">

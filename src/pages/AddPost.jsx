@@ -40,13 +40,14 @@ const AddPost = () => {
 				}
 			);
 
-			console.log("Campaign created successfully:", response.data);
+			console.log("Campaign created successfully:", response.data._id);
 			toast.success('Campaign created successfully', {
 				position: 'top-center',
 				autoClose: 3000,
 				theme: "colored",
 				onClose: () => {
-					navigate("/templates")
+					sessionStorage.setItem('customPostId', response.data._id);
+					navigate(-1);
 				}
 			})
 		} catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
@@ -26,11 +26,19 @@ function EventComponent({ closeModal }) {
 		}));
 	};
 
+	useEffect(() => {
+		const storedData = sessionStorage.getItem('formData');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+		}
+	}, []);
+
 	const handleInputChange = (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
+		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
 
 	const handleFileChange = (e) => {
@@ -67,7 +75,6 @@ function EventComponent({ closeModal }) {
 
 		reader.readAsText(file);
 	};
-console.log(formData);
 
 	const handleUserInput = (e) => {
 		setUserDetails((prevData) => ({
@@ -78,6 +85,7 @@ console.log(formData);
 			...prevData,
 			csvData: userDetails,
 		}));
+		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
 
 	const toggleModal = () => {
@@ -161,7 +169,7 @@ console.log(formData);
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-green-600">Template Selected</span> : <span className="block text-red-600">Please Select Template</span>}
+							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 						</div>
 						<div className="form-group">
 							<label className="block text-sm text-gray-700 font-semibold mb-2">

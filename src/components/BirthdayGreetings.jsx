@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Template from './Template';
 import { toast } from "react-toastify";
 import { FaRegEnvelope } from "react-icons/fa";
@@ -58,6 +58,10 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 				...prevData,
 				csvData: data,
 			}));
+			sessionStorage.setItem('formData', JSON.stringify({
+				...formData,
+				csvData: data,
+			}));
 		};
 
 		reader.onerror = (error) => {
@@ -68,14 +72,20 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 		reader.readAsText(file);
 	};
 
+	console.log(userDetails);
+
 	const handleUserInput = (e) => {
-		setUserDetails((prevData) => ({
-			...prevData,
+		setUserDetails([{
+			...userDetails[0],
 			[e.target.name]: e.target.value,
-		}));
+		}]);
 		setFormData((prevData) => ({
 			...prevData,
-			csvData: userDetails,
+			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
+		}));
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
 		}));
 	};
 
@@ -84,14 +94,42 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
-	};
-
-	const handlePostSelect = (id) => {
-		setFormData((prevData) => ({
-			...prevData,
-			postId: id,
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			[e.target.name]: e.target.value,
 		}));
 	};
+
+	const handlePostSelect = useCallback(
+		(id) => {
+			setFormData((prevData) => {
+				const updatedData = {
+					...prevData,
+					postId: id,
+				};
+				sessionStorage.setItem('formData', JSON.stringify(updatedData));
+				return updatedData;
+			});
+		},
+		[]
+	);
+
+	useEffect(() => {
+		const id = sessionStorage.getItem('customPostId');
+		const storedData = sessionStorage.getItem('formData');
+		const recipientType = sessionStorage.getItem('userType');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+			setUserDetails(JSON.parse(storedData).csvData)
+		}
+		if (id) {
+			handlePostSelect(id);
+			sessionStorage.removeItem('customPostId');
+		}
+		if (recipientType) {
+			setUserType(recipientType);
+		}
+	}, [handlePostSelect]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -124,6 +162,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 				theme: "colored",
 			});
 			console.log("Form submitted successfully:", response.data);
+			sessionStorage.clear();
 			closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
@@ -174,7 +213,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 						<div>
 							<label className="block text-sm text-gray-700 font-semibold mb-2">Send To</label>
 							<select
-								onChange={(e) => setUserType(e.target.value)}
+								onChange={(e) => { setUserType(e.target.value); sessionStorage.setItem("userType", e.target.value) }}
 								className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
 								defaultValue=""
 								required
@@ -192,7 +231,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-green-600">Template Selected</span> : <span className="block text-red-600">Please Select Template</span>}
+							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 						</div>
 					</div>
 
@@ -203,7 +242,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">First Name</label>
 								<input
 									type="text"
-									value={userDetails.first_name}
+									value={formData.csvData[0]?.first_name}
 									onChange={handleUserInput}
 									name="first_name"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -214,7 +253,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Last Name</label>
 								<input
 									type="text"
-									value={userDetails.last_name}
+									value={formData.csvData[0]?.last_name}
 									onChange={handleUserInput}
 									name="last_name"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -224,7 +263,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Email</label>
 								<input
 									type="email"
-									value={userDetails.email}
+									value={formData.csvData[0]?.email}
 									onChange={handleUserInput}
 									name="email"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -235,7 +274,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Contact</label>
 								<input
 									type="text"
-									value={userDetails.contact}
+									value={formData.csvData[0]?.contact}
 									onChange={handleUserInput}
 									name="contact"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -245,7 +284,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Birthdate</label>
 								<input
 									type="date"
-									value={userDetails.birthdate}
+									value={formData.csvData[0]?.birthdate}
 									onChange={handleUserInput}
 									name="birthdate"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -263,7 +302,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 							>
 								Upload CSV
 							</button>
-							{formData.csvData ? <span className="block text-green-600">File uploaded</span> : <span className="block text-red-600">File required</span>}
+							{formData.csvData.length ? <span className="block text-green-600 text-sm">File uploaded</span> : <span className="block text-red-600 text-sm">File required</span>}
 							{isModalOpen && (
 								<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 									<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
@@ -309,7 +348,14 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 						</div>
 					}
 
-					<div className="flex justify-center mt-6">
+					<div className="flex justify-end mt-6 gap-4">
+						<button
+							type="button"
+							onClick={closeModal}
+							className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+						>
+							Close
+						</button>
 						<button
 							type="submit"
 							disabled={loading}

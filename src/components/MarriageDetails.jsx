@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { FaRegEnvelope } from "react-icons/fa";
@@ -24,11 +24,19 @@ const MarriageDetails = ({ closeModal }) => {
 		}));
 	};
 
+	useEffect(() => {
+		const storedData = sessionStorage.getItem('formData');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+		}
+	}, []);
+
 	const handleInputChange = (field) => (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[field]: e.target.value,
 		}));
+		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
 
 	const handleSubmit = async (e) => {
@@ -132,7 +140,7 @@ const MarriageDetails = ({ closeModal }) => {
 						>
 							<FaRegEnvelope /> Select Template
 						</button>
-						{formData.postId ? <span className="block text-green-600">Template Selected</span> : <span className="block text-red-600">Please Select Template</span>}
+						{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 					</div>
 					<div className="md:col-span-3 flex justify-center mt-2">
 						<button

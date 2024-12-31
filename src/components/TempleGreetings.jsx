@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
@@ -91,11 +91,19 @@ function TempleGreetings({ campaignId, closeModal }) {
 		return formData[field] ? true : false;
 	};
 
+	useEffect(() => {
+		const storedData = sessionStorage.getItem('formData');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+		}
+	}, []);
+
 	const handleInputChange = (e) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
+		sessionStorage.setItem('formData', JSON.stringify(formData));
 	};
 
 	const handleSubmit = async (e) => {
@@ -247,15 +255,17 @@ function TempleGreetings({ campaignId, closeModal }) {
 									required
 								/>
 							</div>
-							<button
-								className="flex items-center text-center justify-around py-1.5 px-4 rounded-md transition-all duration-300 ease-in-out text-white bg-blue-600 hover:bg-blue-700"
-								type="button"
-								onClick={() => setIsTemplateSelected(true)}
-							>
-								<FaRegEnvelope /> Select Template
-							</button>
+							<div>
+								<button
+									className="flex items-center mb-2 w-4/5 text-center justify-around py-1.5 px-4 rounded-md transition-all duration-300 ease-in-out text-white bg-blue-600 hover:bg-blue-700"
+									type="button"
+									onClick={() => setIsTemplateSelected(true)}
+								>
+									<FaRegEnvelope /> Select Template
+								</button>
+								{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+							</div>
 						</div>
-
 						<div className="flex gap-6 my-4 mb-6">
 							<div>
 								<button
