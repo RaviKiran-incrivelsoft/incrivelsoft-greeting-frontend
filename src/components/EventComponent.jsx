@@ -3,7 +3,7 @@ import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
 
-function EventComponent({ closeModal }) {
+function EventComponent({ fetchGreetings, closeModal }) {
 	const [formData, setFormData] = useState({
 		eventName: "",
 		eventDate: "",
@@ -129,6 +129,7 @@ function EventComponent({ closeModal }) {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		fetchGreetings();
 		toast.success("Event details submitted successfully!", {
 			position: "top-center",
 			theme: "colored",

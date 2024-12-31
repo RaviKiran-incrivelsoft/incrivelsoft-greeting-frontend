@@ -6,7 +6,7 @@ import { FaRegEnvelope } from "react-icons/fa";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-function BirthdayGreetings({ closeModal }) {
+function BirthdayGreetings({ closeModal, fetchGreetings }) {
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		title: "",
@@ -145,7 +145,7 @@ function BirthdayGreetings({ closeModal }) {
 					},
 				}
 			);
-
+			fetchGreetings();
 			toast.success("Birthday Greeting Scheduled", {
 				position: "top-center",
 				theme: "colored",

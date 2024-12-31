@@ -43,7 +43,7 @@ const Navbar = ({ onLoginClick }) => {
 						</Link>
 						{token &&
 							<Link
-								to="/campaign"
+								to="/greetings"
 								className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
 							>
 								Dashboard

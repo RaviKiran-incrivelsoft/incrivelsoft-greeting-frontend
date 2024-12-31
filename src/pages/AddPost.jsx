@@ -8,9 +8,9 @@ const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const AddPost = () => {
 	const navigate = useNavigate();
-	const [title, setTitle] = useState("");
+	const [postName, setPostName] = useState("");
 	const [media, setMedia] = useState(null);
-	const [paragraph, setParagraph] = useState("");
+	const [postDescription, setPostDescription] = useState("");
 	const [loading, setLoading] = useState(false);
 
 	const handleMediaUpload = (file) => {
@@ -20,8 +20,8 @@ const AddPost = () => {
 	const handleSubmit = async () => {
 		setLoading(true)
 		const formData = new FormData();
-		formData.append("campaignName", title);
-		formData.append("campaignDescription", paragraph);
+		formData.append("postName", postName);
+		formData.append("postDescription", postDescription);
 		if (media) {
 			formData.append("media", media.file);
 		}
@@ -30,7 +30,7 @@ const AddPost = () => {
 			const token = localStorage.getItem("token");
 
 			const response = await axios.post(
-				`${backendUrl}/campaigns`,
+				`${backendUrl}/post`,
 				formData,
 				{
 					headers: {
@@ -68,8 +68,8 @@ const AddPost = () => {
 				<input
 					type="text"
 					placeholder="Add Title"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
+					value={postName}
+					onChange={(e) => setPostName(e.target.value)}
 					className="w-full px-3 py-2 text-2xl font-semibold outline-none placeholder-gray-400 bg-[#f5f5f5]"
 				/>
 			</div>
@@ -113,8 +113,8 @@ const AddPost = () => {
 			<div className="mb-4">
 				<textarea
 					placeholder="Enter paragraph"
-					value={paragraph}
-					onChange={(e) => setParagraph(e.target.value)}
+					value={postDescription}
+					onChange={(e) => setPostDescription(e.target.value)}
 					className="w-full px-3 py-2 text-gray-700 outline-none placeholder-gray-400 bg-[#f5f5f5] resize-none"
 					rows={4}
 				></textarea>

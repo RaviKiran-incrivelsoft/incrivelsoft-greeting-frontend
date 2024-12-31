@@ -6,7 +6,7 @@ import axios from "axios";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-function FestivalGreetings({ closeModal }) {
+function FestivalGreetings({ fetchGreetings, closeModal }) {
 	const [formData, setFormData] = useState({
 		festivalName: "",
 		festivalDescription: "",
@@ -136,16 +136,11 @@ function FestivalGreetings({ closeModal }) {
 		e.preventDefault();
 		setLoading(true);
 
-		const formDataToSubmit = new FormData();
-
-		for (const key in formData) {
-			if (formData[key]) {
-				formDataToSubmit.append(key, formData[key]);
-			}
-		}
 
 		try {
 			const token = localStorage.getItem("token");
+
+			console.log("Token Retrieved:", token);
 
 			const response = await axios.post(
 				`${backendUrl}/festivals`,
@@ -156,25 +151,29 @@ function FestivalGreetings({ closeModal }) {
 					},
 				}
 			);
-
+			fetchGreetings()
 			toast.success(response.data.message, {
 				position: "top-center",
 				theme: "colored",
 			});
 			console.log("Form submitted successfully:", response.data);
-			sessionStorage.clear();
+
+			sessionStorage.clear(); // Ensure this doesn't unintentionally clear unrelated data
 			closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
+
+			// Extract and display the error message
 			const errorMessage = error.response?.data?.error || "Failed to submit form";
 			toast.error(errorMessage, {
 				position: "top-center",
 				theme: "colored",
 			});
 		} finally {
-			setLoading(false);
+			setLoading(false); // Ensure loading spinner is disabled
 		}
 	};
+
 
 	return (
 		<div

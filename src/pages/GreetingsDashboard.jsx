@@ -26,7 +26,7 @@ const GreetingDashboard = () => {
 	const [scheduleTime, setScheduleTime] = useState('');
 	const [mediaOption, setMediaOption] = useState('');
 
-	useEffect(() => {
+	const fetchGreetings = () => {
 		const token = localStorage.getItem("token");
 
 		axios.get(`${backendUrl}/schedule`, { headers: { Authorization: `Bearer ${token}` } })
@@ -40,6 +40,9 @@ const GreetingDashboard = () => {
 					theme: "colored"
 				})
 			});
+	}
+	useEffect(() => {
+		fetchGreetings();
 	}, []);
 
 	const handlePopupToggle = () => {
@@ -61,7 +64,7 @@ const GreetingDashboard = () => {
 		setScheduleId(row._id);
 		handlePopupToggle();
 		setSelectedOption(row.schedule);
-		setMediaOption(row.mode);	
+		setMediaOption(row.mode);
 	}
 
 	const handleScheduleSubmit = async () => {
@@ -88,6 +91,7 @@ const GreetingDashboard = () => {
 			);
 			if (response.status === 200) {
 				console.log("Schedule updated successfully:", response.data);
+				fetchGreetings();
 				toast.success('Schedule updated successfully', {
 					position: 'top-center',
 					theme: "colored"
@@ -116,7 +120,7 @@ const GreetingDashboard = () => {
 				<h2 className="text-3xl font-semibold text-gray-800">Greeting Dashboard</h2>
 			</div>
 			<div className="mb-4 flex items-center gap-2">
-				<Dropdown />
+				<Dropdown fetchData={fetchGreetings}/>
 				<button
 					onClick={() => navigate('/templates')}
 					className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
@@ -155,7 +159,7 @@ const GreetingDashboard = () => {
 							const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
 							const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
 							console.log(row);
-							
+
 							return (
 								<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
 									<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>

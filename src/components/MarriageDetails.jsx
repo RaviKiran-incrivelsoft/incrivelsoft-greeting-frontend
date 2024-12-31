@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaRegEnvelope } from "react-icons/fa";
 import Template from "./Template";
 
-const MarriageDetails = ({ closeModal }) => {
+const MarriageDetails = ({ fetchGreetings, closeModal }) => {
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		husbandName: "",
@@ -69,7 +69,7 @@ const MarriageDetails = ({ closeModal }) => {
 					},
 				}
 			);
-
+			fetchGreetings();
 			sessionStorage.clear();
 			toast.success("Marriage details submitted successfully!", {
 				position: "top-center",

@@ -10,9 +10,9 @@ import FestivalGreetings from "./FestivalGreetings";
 import MarriageDetails from "./MarriageDetails";
 import EventComponent from "./EventComponent";
 import TempleGreetings from "./TempleGreetings";
-import CompanyDetails from "./CompanyPopup";
+// import CompanyDetails from "./CompanyPopup";
 
-const Dropdown = ({ togglePost }) => {
+const Dropdown = ({ fetchData }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [activeComponent, setActiveComponent] = useState(null);
 
@@ -34,12 +34,12 @@ const Dropdown = ({ togglePost }) => {
 	}
 
 	const componentMap = {
-		Birthday: <BirthdayGreetings closeModal={toggleGreeting} AddPost={togglePost} />,
-		Festival: <FestivalGreetings closeModal={toggleGreeting} AddPost={togglePost} />,
-		Marriage: <MarriageDetails closeModal={toggleGreeting} AddPost={togglePost} />,
-		Events: <EventComponent closeModal={toggleGreeting} AddPost={togglePost} />,
-		Temple: <TempleGreetings closeModal={toggleGreeting} AddPost={togglePost} />,
-		Company: <CompanyDetails closeModal={toggleGreeting} AddPost={togglePost} />,
+		Birthday: <BirthdayGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		Festival: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		Marriage: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		Events: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		Temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		// Company: <CompanyDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 	};
 
 	return (
@@ -48,7 +48,7 @@ const Dropdown = ({ togglePost }) => {
 			onMouseEnter={() => { setIsOpen(true); sessionStorage.setItem("greetingsPopup", true); }}
 		>
 			<button
-				onMouseLeave={() => { setIsOpen(false);}}
+				onMouseLeave={() => { setIsOpen(false); sessionStorage.setItem("greetingsPopup", false); }}
 				type="button"
 				className="flex items-center mr-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
 				aria-haspopup="menu"
@@ -127,7 +127,7 @@ const Dropdown = ({ togglePost }) => {
 						>
 							<MdOutlineTempleHindu /> Temple
 						</span>
-						<span
+						{/* <span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
 								setActiveComponent("Company");
@@ -135,7 +135,7 @@ const Dropdown = ({ togglePost }) => {
 							}}
 						>
 							<PiBuildingOffice /> Company
-						</span>
+						</span> */}
 					</div>
 
 					{/* Render the Selected Component */}
