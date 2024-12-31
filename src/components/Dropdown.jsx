@@ -39,7 +39,7 @@ const Dropdown = ({ fetchData }) => {
 		occasion: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		// anniversary: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		anniversary: <AnniversaryGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		events: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		event: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		// Company: <CompanyDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 	};
@@ -47,10 +47,10 @@ const Dropdown = ({ fetchData }) => {
 	return (
 		<div
 			className="relative inline-flex"
-			onMouseEnter={() => { setIsOpen(true); sessionStorage.setItem("greetingsPopup", true); }}
 		>
 			<button
-				onMouseLeave={() => { setIsOpen(false); sessionStorage.setItem("greetingsPopup", false); }}
+				onMouseLeave={() => { setIsOpen(false); sessionStorage.removeItem("greetingsPopup"); }}
+				onMouseEnter={() => { setIsOpen(true); sessionStorage.setItem("greetingsPopup", true); }}
 				type="button"
 				className="flex items-center mr-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
 				aria-haspopup="menu"
@@ -114,8 +114,8 @@ const Dropdown = ({ fetchData }) => {
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("events");
-								sessionStorage.setItem("activeComponent", "events");
+								setActiveComponent("event");
+								sessionStorage.setItem("activeComponent", "event");
 							}}
 						>
 							<BsEnvelope /> Events
