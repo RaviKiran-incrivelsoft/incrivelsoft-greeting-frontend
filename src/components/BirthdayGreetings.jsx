@@ -133,23 +133,14 @@ function BirthdayGreetings({ closeModal }) {
 		e.preventDefault();
 		setLoading(true);
 		
-		const formDataToSubmit = new FormData();
-		
-		for (const key in formData) {
-			if (formData[key]) {
-				formDataToSubmit.append(key, formData[key]);
-			}
-		}
-		
 		try {
 			const token = localStorage.getItem("token");
 
 			const response = await axios.post(
 				`${backendUrl}/birthdays`,
-				formDataToSubmit,
+				formData,
 				{
 					headers: {
-						"Content-Type": "multipart/form-data",
 						Authorization: `Bearer ${token}`,
 					},
 				}

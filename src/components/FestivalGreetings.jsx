@@ -149,7 +149,7 @@ function FestivalGreetings({ closeModal }) {
 
 			const response = await axios.post(
 				`${backendUrl}/festivals`,
-				formDataToSubmit,
+				formData,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,

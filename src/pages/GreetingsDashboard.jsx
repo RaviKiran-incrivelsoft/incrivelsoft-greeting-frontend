@@ -4,6 +4,7 @@ import Dropdown from '../components/Dropdown';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import convertToUTC from "../utils/convertToUTC.js";
 
 const options = {
 	day: '2-digit',
@@ -18,7 +19,12 @@ const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
-	const [greetings, setGreetings] = useState([])
+	const [greetings, setGreetings] = useState([]);
+	const [scheduleId, setScheduleId] = useState(null);
+	const [popupVisible, setPopupVisible] = useState(false);
+	const [selectedOption, setSelectedOption] = useState('');
+	const [scheduleTime, setScheduleTime] = useState('');
+	const [mediaOption, setMediaOption] = useState('');
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -35,6 +41,74 @@ const GreetingDashboard = () => {
 				})
 			});
 	}, []);
+
+	const handlePopupToggle = () => {
+		setPopupVisible(!popupVisible);
+		setSelectedOption('');
+		setMediaOption('');
+		setScheduleTime('');
+	};
+
+	const handleDropdownChange = (e) => {
+		setSelectedOption(e.target.value);
+	};
+
+	const handleMediaChange = (e) => {
+		setMediaOption(e.target.value);
+	};
+
+	const handleSchedule = (row) => {
+		setScheduleId(row._id);
+		handlePopupToggle();
+		setSelectedOption(row.schedule);
+		setMediaOption(row.mode);	
+	}
+
+	const handleScheduleSubmit = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const data = {
+				schedule: selectedOption,
+				mode: mediaOption,
+				time: scheduleTime
+			};
+
+			if (selectedOption === "schedule_later" && scheduleTime) {
+				data.time = convertToUTC(scheduleTime);
+			} else {
+				data.time = convertToUTC(new Date());
+			}
+
+			const response = await axios.put(
+				`${backendUrl}/schedule/${scheduleId}`,
+				data,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+			if (response.status === 200) {
+				console.log("Schedule updated successfully:", response.data);
+				toast.success('Schedule updated successfully', {
+					position: 'top-center',
+					theme: "colored"
+				})
+			} else {
+				console.error("Error updating schedule:", response.data);
+				toast.error('Failed to schedule', {
+					position: 'top-center',
+					theme: "colored"
+				})
+			}
+
+			handlePopupToggle();
+		} catch (error) {
+			console.error("Error in handleScheduleSubmit:", error);
+			toast.error('Error while scheduling', {
+				position: 'top-center',
+				theme: "colored"
+			})
+		}
+	};
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
@@ -80,7 +154,7 @@ const GreetingDashboard = () => {
 						{greetings.map((row) => {
 							const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
 							const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
-							console.log(row.schedule);
+							console.log(row);
 							
 							return (
 								<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
@@ -98,15 +172,16 @@ const GreetingDashboard = () => {
 										</button>
 									</td>
 									<td className="py-4 px-6 text-center">
-										{row.schedule === "paused" && (
+										{row.schedule === "pause" && (
 											<button
 												className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 												title="Schedule Greeting"
+												onClick={() => handleSchedule(row)}
 											>
 												<FaCalendarAlt className="mr-2" /> Schedule
 											</button>
 										)}
-										{row.schedule === "active" && (
+										{row.schedule === "schedule_later" && (
 											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
 										)}
 										{row.schedule === "automate" && (
@@ -121,6 +196,88 @@ const GreetingDashboard = () => {
 						})}
 					</tbody>
 				</table>
+				{popupVisible && (
+					<div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+						<div className="bg-white p-8 rounded-lg shadow-xl w-96">
+							<h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Schedule Action</h2>
+
+							<div className="mb-4">
+								<label className="block text-sm font-medium text-gray-700">Select Action</label>
+								<select
+									value={selectedOption}
+									onChange={handleDropdownChange}
+									className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+								>
+									<option value="" disabled>Select action</option>
+									<option value="automate">Automate</option>
+									<option value="schedule_now">Schedule Now</option>
+									<option value="schedule_later">Schedule Later</option>
+									<option value="pause">Pause</option>
+								</select>
+							</div>
+							<div className="mb-6">
+								<label className="block text-sm font-medium text-gray-700">Send Via</label>
+								<select
+									value={mediaOption}
+									onChange={handleMediaChange}
+									className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+								>
+									<option value="" disabled>Select mode</option>
+									<option value="whatsapp">WhatsApp</option>
+									<option value="email">Email</option>
+									<option value="both">Both</option>
+								</select>
+							</div>
+							{/* Conditional input fields based on selected option */}
+							{selectedOption === 'schedule_later' && (
+								<div className="mb-6">
+									<label className="block text-sm font-medium text-gray-700">Date & Time</label>
+									<input
+										type="datetime-local"
+										value={scheduleTime}
+										onChange={(e) => setScheduleTime(e.target.value)}
+										className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+									/>
+								</div>
+							)}
+
+							{/* Action Buttons */}
+							<div className="flex justify-between items-center">
+								<button
+									onClick={handlePopupToggle}
+									className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-all duration-300"
+								>
+									Close
+								</button>
+
+								{selectedOption === 'schedule_now' && (
+									<button
+										onClick={handleScheduleSubmit}
+										className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
+									>
+										Schedule
+									</button>
+								)}
+								{selectedOption === 'schedule_later' && (
+									<button
+										onClick={handleScheduleSubmit}
+										className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
+									>
+										Schedule
+									</button>
+								)}
+								{selectedOption === 'pause' && (
+									<button
+										onClick={handleScheduleSubmit}
+										className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
+									>
+										Submit
+									</button>
+								)}
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);
