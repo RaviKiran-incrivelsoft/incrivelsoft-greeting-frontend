@@ -3,6 +3,13 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
+	const [loading, setLoading] = useState(false);
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+	const togglePasswordVisibility = () => {
+		setIsPasswordVisible(!isPasswordVisible);
+	};
+
 	const handleOutsideClick = (e) => {
 		if (e.target.id === 'modal-container') {
 			onClose();
@@ -28,23 +35,24 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	// Handle form submission
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true)
 		try {
 			const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/users/register`, formData);
 			console.log(response.data.message);
 
 			toast.success(response.data.message, {
 				position: 'top-center',
-				theme: "colored",
-				onClose: () => {
-					onSwitchToLogin();
-				}
+				theme: "colored"
 			})
+			onSwitchToLogin();
 		} catch (err) {
 			console.error('Error registering user:', err);
-			toast.error(err.response.data.message, {
+			toast.error(err.response?.data?.message || "Failed to Register", {
 				position: 'top-center',
-				theme: "colored" 
+				theme: "colored"
 			})
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -100,7 +108,7 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 											required
 											value={formData.first_name}
 											onChange={handleChange}
-											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+											className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
 											placeholder="First Name"
 										/>
 										<input
@@ -110,7 +118,7 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 											required
 											value={formData.last_name}
 											onChange={handleChange}
-											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+											className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
 											placeholder="Last Name"
 										/>
 										<input
@@ -120,35 +128,97 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 											required
 											value={formData.email}
 											onChange={handleChange}
-											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+											className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
 											placeholder="Email address"
 										/>
-										<input
-											id="password"
-											name="password"
-											type="password"
-											required
-											value={formData.password}
-											onChange={handleChange}
-											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
-											placeholder="Password"
-										/>
-										<input
-											id="confirm-password"
-											name="confirm_password"
-											type="password"
-											required
-											value={formData.confirm_password}
-											onChange={handleChange}
-											className="block w-full px-4 py-2 border border-gray-300 rounded-md"
-											placeholder="Confirm Password"
-										/>
+										<div className="relative">
+											<input
+												id="password"
+												name="password"
+												type={isPasswordVisible ? 'text' : 'password'}
+												className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+												placeholder="Enter password"
+												value={formData.password}
+												onChange={handleChange}
+												required
+											/>
+											<button
+												type="button"
+												onClick={togglePasswordVisibility}
+												className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-blue-600 dark:text-neutral-600 dark:focus:text-blue-500"
+											>
+												<svg
+													className="shrink-0 size-3.5"
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+												>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+													<line className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} x1="2" x2="22" y1="2" y2="22"></line>
+													<path className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+													<circle className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} cx="12" cy="12" r="3"></circle>
+												</svg>
+											</button>
+										</div>
+										<div className="relative">
+											<input
+												id="confirm-password"
+												name="confirm_password"
+												type={isPasswordVisible ? 'text' : 'password'}
+												className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+												placeholder="Enter confirm password"
+												value={formData.confirm_password}
+												onChange={handleChange}
+												required
+											/>
+											<button
+												type="button"
+												onClick={togglePasswordVisibility}
+												className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-blue-600 dark:text-neutral-600 dark:focus:text-blue-500"
+											>
+												<svg
+													className="shrink-0 size-3.5"
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+												>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+													<path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+													<line className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} x1="2" x2="22" y1="2" y2="22"></line>
+													<path className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+													<circle className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} cx="12" cy="12" r="3"></circle>
+												</svg>
+											</button>
+										</div>
 									</div>
 									<button
 										type="submit"
-										className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+										disabled={loading}
+										className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+											}`}
 									>
-										Register
+										{loading ? (
+											<div className="flex space-x-1">
+												<span className="dot bg-white"></span>
+												<span className="dot bg-white"></span>
+												<span className="dot bg-white"></span>
+											</div>
+										) : (
+											"Register"
+										)}
 									</button>
 								</form>
 							</>

@@ -78,7 +78,7 @@ const ServicePage = () => {
 
 					<div className="flex justify-center mt-8">
 						<button
-							onClick={()=>navigate('/campaign')}
+							onClick={()=>navigate('/greetings')}
 							className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
 						>
 							Create Campaign

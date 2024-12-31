@@ -1,19 +1,24 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
-import LoginModal from './LoginModal';
-import RegisterPopup from './RegisterPopup';
 
-const Navbar = () => {
+const Navbar = ({ onLoginClick }) => {
 	const navigate = useNavigate();
-	const [activeModal, setActiveModal] = useState(null);
+	const [profileImage, setProfileImage] = useState('/avatars/cat.png');
 
-	const openModal = (modal) => setActiveModal(modal);
-	const closeModal = () => setActiveModal(null);
+	const images = [
+		"bear", "cat", "chicken", "deer", "dog",
+		"eagle", "giraffe", "meerkat", "panda", "sealion",
+		"lion", "cow", "dragon", "duck", "hippopotamus",
+		"koala", "wolf", "fox", "rabbit", "monkey", "fish", "wrabbit"
+	];
 
+	function getRandomImage() {
+		const randomIndex = Math.floor(Math.random() * images.length);
+		setProfileImage(`/avatars/${images[randomIndex]}.png`);
+	}
 	const token = localStorage.getItem('token');
 	const userName = localStorage.getItem('userName');
 
-	const profileImage = 'https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-1024.png';
 
 	const handleLogout = () => {
 		localStorage.removeItem('token');
@@ -23,12 +28,6 @@ const Navbar = () => {
 
 	return (
 		<>
-			{activeModal === 'login' && (
-				<LoginModal onClose={closeModal} onSwitchToRegister={() => openModal('register')} />
-			)}
-			{activeModal === 'register' && (
-				<RegisterPopup onClose={closeModal} onSwitchToLogin={() => openModal('login')} />
-			)}
 			<nav className="bg-white">
 				<div className="px-10 py-4 flex items-center justify-between">
 					{/* Logo */}
@@ -42,6 +41,13 @@ const Navbar = () => {
 						>
 							Home
 						</Link>
+						{token &&
+							<Link
+								to="/greetings"
+								className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
+							>
+								Dashboard
+							</Link>}
 						<Link
 							to="/service"
 							className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
@@ -76,7 +82,7 @@ const Navbar = () => {
 						</div>
 					) : (
 						< button
-							onClick={() => openModal('login')}
+							onClick={() => { getRandomImage(); onLoginClick() }}
 							className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-black rounded-lg group bg-white border border-black hover:bg-gradient-to-br hover:from-gray-700 hover:to-gray-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-gray-300"
 						>
 							<span className="relative uppercase px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
