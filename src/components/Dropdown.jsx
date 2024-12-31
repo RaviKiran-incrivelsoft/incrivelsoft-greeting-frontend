@@ -4,7 +4,7 @@ import { FaPlus } from "react-icons/fa";
 import { GiBigDiamondRing } from "react-icons/gi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { MdOutlineEventNote, MdOutlineTempleHindu } from "react-icons/md";
-import { PiBuildingOffice } from "react-icons/pi";
+// import { PiBuildingOffice } from "react-icons/pi";
 import BirthdayGreetings from "./BirthdayGreetings";
 import FestivalGreetings from "./FestivalGreetings";
 import MarriageDetails from "./MarriageDetails";
@@ -34,11 +34,11 @@ const Dropdown = ({ fetchData }) => {
 	}
 
 	const componentMap = {
-		Birthday: <BirthdayGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		Festival: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		Marriage: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		Events: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		Temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		birthday: <BirthdayGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		occasion: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		anniversary: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		events: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		// Company: <CompanyDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 	};
 
@@ -85,8 +85,8 @@ const Dropdown = ({ fetchData }) => {
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("Birthday");
-								sessionStorage.setItem("activeComponent", "Birthday");
+								setActiveComponent("birthday");
+								sessionStorage.setItem("activeComponent", "birthday");
 							}}
 						>
 							<LiaBirthdayCakeSolid /> Birthday
@@ -94,26 +94,26 @@ const Dropdown = ({ fetchData }) => {
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("Festival");
-								sessionStorage.setItem("activeComponent", "Festival");
+								setActiveComponent("occasion");
+								sessionStorage.setItem("activeComponent", "occasion");
 							}}
 						>
-							<MdOutlineEventNote /> Festival
+							<MdOutlineEventNote /> Occasion
 						</span>
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("Marriage");
-								sessionStorage.setItem("activeComponent", "Marriage");
+								setActiveComponent("anniversary");
+								sessionStorage.setItem("activeComponent", "anniversary");
 							}}
 						>
-							<GiBigDiamondRing /> Marriage
+							<GiBigDiamondRing /> Anniversary
 						</span>
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("Events");
-								sessionStorage.setItem("activeComponent", "Events");
+								setActiveComponent("events");
+								sessionStorage.setItem("activeComponent", "events");
 							}}
 						>
 							<BsEnvelope /> Events
@@ -121,8 +121,8 @@ const Dropdown = ({ fetchData }) => {
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("Temple");
-								sessionStorage.setItem("activeComponent", "Temple");
+								setActiveComponent("temple");
+								sessionStorage.setItem("activeComponent", "temple");
 							}}
 						>
 							<MdOutlineTempleHindu /> Temple

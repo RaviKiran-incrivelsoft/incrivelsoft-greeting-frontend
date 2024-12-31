@@ -60,8 +60,10 @@ const MarriageDetails = ({ fetchGreetings, closeModal }) => {
 
 		try {
 			const token = localStorage.getItem("token");
+			console.log(formData);
+			
 			await axios.post(
-				`${process.env.REACT_APP_BACKEND_URL}/marriage`,
+				`${process.env.REACT_APP_BACKEND_URL}/marriages`,
 				formData,
 				{
 					headers: {

@@ -22,6 +22,7 @@ const AddPost = () => {
 		const formData = new FormData();
 		formData.append("postName", postName);
 		formData.append("postDescription", postDescription);
+		formData.append("type", sessionStorage.getItem("activeComponent"));
 		if (media) {
 			formData.append("media", media.file);
 		}

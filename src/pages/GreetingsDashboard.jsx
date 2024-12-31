@@ -185,7 +185,7 @@ const GreetingDashboard = () => {
 												<FaCalendarAlt className="mr-2" /> Schedule
 											</button>
 										)}
-										{row.schedule === "schedule_later" && (
+										{(row.schedule === "schedule_later" || row.schedule === "schedule_now") && (
 											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
 										)}
 										{row.schedule === "automate" && (
