@@ -12,6 +12,7 @@ const AddPost = () => {
 	const [media, setMedia] = useState(null);
 	const [postDescription, setPostDescription] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [type, setType] = useState(sessionStorage.getItem("activeComponent"));
 
 	const handleMediaUpload = (file) => {
 		setMedia({ file, type: file.type.startsWith("video") ? "video" : "image" });
