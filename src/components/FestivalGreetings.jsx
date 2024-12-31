@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import Template from "./Template";
 import { toast } from "react-toastify";
@@ -34,9 +34,12 @@ function FestivalGreetings({ closeModal }) {
 		}));
 		setFormData((prevData) => ({
 			...prevData,
-			csvData: userDetails,
+			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
 		}));
-		sessionStorage.setItem('formData', JSON.stringify(formData));
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			csvData: [{ ...userDetails[0], [e.target.name]: e.target.value }],
+		}));
 	};
 
 	const handleInputChange = (e) => {
@@ -44,7 +47,10 @@ function FestivalGreetings({ closeModal }) {
 			...prevData,
 			[e.target.name]: e.target.value,
 		}));
-		sessionStorage.setItem('formData', JSON.stringify(formData));
+		sessionStorage.setItem('formData', JSON.stringify({
+			...formData,
+			[e.target.name]: e.target.value,
+		}));
 	};
 
 	const handleFileChange = (e) => {
@@ -72,6 +78,10 @@ function FestivalGreetings({ closeModal }) {
 				...prevData,
 				csvData: data,
 			}));
+			sessionStorage.setItem('formData', JSON.stringify({
+				...formData,
+				csvData: data,
+			}));
 		};
 		reader.onerror = (error) => {
 			console.error("Error reading file:", error);
@@ -94,17 +104,42 @@ function FestivalGreetings({ closeModal }) {
 		link.click();
 	};
 
-	const handlePostSelect = (id) => {
-		setFormData((prevData) => ({
-			...prevData,
-			postId: id,
-		}));
-	};
+	const handlePostSelect = useCallback(
+		(id) => {
+			setFormData((prevData) => {
+				const updatedData = {
+					...prevData,
+					postId: id,
+				};
+				sessionStorage.setItem('formData', JSON.stringify(updatedData));
+				return updatedData;
+			});
+		},
+		[]
+	);
+
+	useEffect(() => {
+		const id = sessionStorage.getItem('customPostId');
+		const storedData = sessionStorage.getItem('formData');
+		const recipientType = sessionStorage.getItem('userType');
+		if (storedData) {
+			setFormData(JSON.parse(storedData));
+			setUserDetails(JSON.parse(storedData).csvData)
+		}
+		if (id) {
+			handlePostSelect(id);
+			sessionStorage.removeItem('customPostId');
+		}
+		if (recipientType) {
+			setUserType(recipientType);
+		}
+	}, [handlePostSelect]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		// Add submission logic here
 		console.log("Form data submitted", formData);
+		sessionStorage.clear();
 	};
 
 	return (

@@ -72,8 +72,6 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 		reader.readAsText(file);
 	};
 
-	console.log(userDetails);
-
 	const handleUserInput = (e) => {
 		setUserDetails([{
 			...userDetails[0],
