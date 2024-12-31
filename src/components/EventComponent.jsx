@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Template from "./Template";
 
 function EventComponent({ fetchGreetings, closeModal }) {
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		eventName: "",
 		eventDate: "",
@@ -129,12 +130,19 @@ function EventComponent({ fetchGreetings, closeModal }) {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		fetchGreetings();
-		toast.success("Event details submitted successfully!", {
-			position: "top-center",
-			theme: "colored",
-		});
-		closeModal();
+		setLoading(true)
+		try {
+			fetchGreetings();
+			toast.success("Event details submitted successfully!", {
+				position: "top-center",
+				theme: "colored",
+			});
+			closeModal();
+		} catch (error) {
+			
+		} finally {
+			setLoading(false)
+		}
 	};
 
 	return (
@@ -226,7 +234,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={formData.csvData.firstName}
+									value={userDetails.firstName}
 									onChange={handleUserInput}
 									name="firstName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -239,7 +247,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={formData.csvData.lastName}
+									value={userDetails.lastName}
 									onChange={handleUserInput}
 									name="lastName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -252,7 +260,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="email"
-									value={formData.csvData.email}
+									value={userDetails.email}
 									onChange={handleUserInput}
 									name="email"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -265,7 +273,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={formData.csvData.contact}
+									value={userDetails.contact}
 									onChange={handleUserInput}
 									name="contact"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -276,7 +284,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Birthdate</label>
 								<input
 									type="date"
-									value={formData.csvData.birthdate}
+									value={userDetails.birthdate}
 									onChange={handleUserInput}
 									name="birthdate"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -340,12 +348,28 @@ function EventComponent({ fetchGreetings, closeModal }) {
 						</div>
 					)}
 
-					<div className="flex justify-center mt-6">
+					<div className="flex justify-end mt-6 gap-4">
 						<button
-							type="submit"
-							className="h-10 flex items-center justify-center px-4 rounded text-white bg-blue-600 hover:bg-blue-700"
+							type="button"
+							onClick={closeModal}
+							className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
 						>
-							Submit
+							Close
+						</button><button
+							type="submit"
+							disabled={loading}
+							className={`h-10 flex items-center justify-center px-4 rounded text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+								}`}
+						>
+							{loading ? (
+								<div className="flex space-x-1 p-1.5">
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+								</div>
+							) : (
+								"Create"
+							)}
 						</button>
 					</div>
 				</form>

@@ -81,6 +81,7 @@ const Dropdown = ({ fetchData }) => {
 					className="absolute top-10 z-10 transition-opacity opacity-100 min-w-[180px] bg-white shadow-md rounded-lg"
 					role="menu"
 					onMouseEnter={() => setIsOpen(true)}
+					onMouseLeave={() => setIsOpen(false)}
 					aria-orientation="vertical"
 				>
 					<div className="p-1 space-y-0.5">

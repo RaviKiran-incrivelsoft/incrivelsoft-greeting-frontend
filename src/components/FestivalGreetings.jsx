@@ -382,7 +382,14 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 						</div>
 					)}
 
-					<div className="flex justify-center mt-4">
+					<div className="flex justify-end mt-6 gap-4">
+						<button
+							type="button"
+							onClick={closeModal}
+							className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+						>
+							Close
+						</button>
 						<button
 							type="submit"
 							disabled={loading}
