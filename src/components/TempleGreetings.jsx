@@ -22,7 +22,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 		paypalQrCode: null,
 		zelleQrCode: null,
 		csvData: null,
-		postId: ""
+		postDetails: ""
 	});
 
 	const toggleModal = () => {
@@ -104,7 +104,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 			setFormData((prevData) => {
 				const updatedData = {
 					...prevData,
-					postId: id,
+					postDetails: id,
 				};
 				sessionStorage.setItem('formData', JSON.stringify(updatedData));
 				return updatedData;
@@ -127,23 +127,27 @@ function TempleGreetings({ campaignId, closeModal }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setLoading(true)
-
+		setLoading(true);
+	
 		const formDataToSubmit = new FormData();
-
+	
 		for (const key in formData) {
 			if (formData[key]) {
-				if (formData[key] instanceof File) {
+				if (key === "csvData") {
+					// Serialize csvData as a JSON string
+					formDataToSubmit.append(key, JSON.stringify(formData[key]));
+				} else if (formData[key] instanceof File) {
 					formDataToSubmit.append(key, formData[key]);
 				} else {
 					formDataToSubmit.append(key, formData[key]);
 				}
 			}
 		}
-
+	
 		try {
 			const token = localStorage.getItem("token");
-
+			console.log("Serialized Form Data:", formDataToSubmit);
+	
 			const response = await axios.post(
 				`${backendUrl}/temple?campaign=${campaignId}`,
 				formDataToSubmit,
@@ -154,24 +158,25 @@ function TempleGreetings({ campaignId, closeModal }) {
 					},
 				}
 			);
-
-			toast.success('Temple Details added', {
-				position: 'top-center',
-				theme: "colored"
-			})
+	
+			toast.success("Temple Details added", {
+				position: "top-center",
+				theme: "colored",
+			});
 			console.log("Form submitted successfully:", response.data);
 			closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
 			const errorMessage = error.response?.data?.error || "Failed to submit form";
 			toast.error(errorMessage, {
-				position: 'top-center',
-				theme: "colored"
-			})
+				position: "top-center",
+				theme: "colored",
+			});
 		} finally {
-			setLoading(false)
+			setLoading(false);
 		}
 	};
+	
 
 	return (
 		<div
@@ -282,7 +287,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 								>
 									<FaRegEnvelope /> Select Template
 								</button>
-								{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+								{formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 							</div>
 						</div>
 						<div className="flex gap-6 my-4 mb-6">
