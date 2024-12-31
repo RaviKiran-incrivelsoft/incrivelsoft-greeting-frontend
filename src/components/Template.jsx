@@ -2,12 +2,12 @@ import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const images = [
-	{ _id: 100, image: "https://via.placeholder.com/300", title: "Happy Birthday", description: "Celebrate a joyous birthday with this special greeting!" },
-	{ _id: 101, image: "https://via.placeholder.com/300", title: "Festival Greetings", description: "Wishing you a festive season filled with joy and happiness!" },
-	{ _id: 102, image: "https://via.placeholder.com/300", title: "Marriage Blessings", description: "Wishing you a lifetime of love and happiness together." },
-	{ _id: 103, image: "https://via.placeholder.com/300", title: "Event Celebration", description: "Join us for a memorable event filled with fun and excitement!" },
-	{ _id: 104, image: "https://via.placeholder.com/300", title: "Temple Visit", description: "May your visit to the temple bring peace and blessings." },
-	{ _id: 105, image: "https://via.placeholder.com/300", title: "Corporate Greetings", description: "Wishing you success and prosperity in all your business endeavors." },
+	{ _id: "67735e3c713fd1cbbdc063b7", image: "https://via.placeholder.com/300", title: "Happy Birthday", description: "Celebrate a joyous birthday with this special greeting!" },
+	{ _id: "6773642054309c49c245823e", image: "https://via.placeholder.com/300", title: "Festival Greetings", description: "Wishing you a festive season filled with joy and happiness!" },
+	{ _id: "67738e0f9f864f3ef31fcd74", image: "https://via.placeholder.com/300", title: "Marriage Blessings", description: "Wishing you a lifetime of love and happiness together." },
+	// { _id: 103, image: "https://via.placeholder.com/300", title: "Event Celebration", description: "Join us for a memorable event filled with fun and excitement!" },
+	// { _id: 104, image: "https://via.placeholder.com/300", title: "Temple Visit", description: "May your visit to the temple bring peace and blessings." },
+	// { _id: 105, image: "https://via.placeholder.com/300", title: "Corporate Greetings", description: "Wishing you success and prosperity in all your business endeavors." },
 ];
 
 

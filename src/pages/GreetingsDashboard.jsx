@@ -1,35 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCalendarAlt, FaEye, FaRegEnvelope } from 'react-icons/fa';
 import Dropdown from '../components/Dropdown';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-const rows = [
-	{
-		greeting: "Welcome Greeting",
-		recipientCount: 50,
-		createdAt: "01/01/2024, 10:00 AM",
-		status: "Active",
-		template: "Template 1",
-	},
-	{
-		greeting: "Holiday Greetings",
-		recipientCount: 30,
-		createdAt: "01/02/2024, 11:00 AM",
-		status: "Pending",
-		template: "Template 2",
-	},
-	{
-		greeting: "Event Greetings",
-		recipientCount: 100,
-		createdAt: "01/03/2024, 12:00 PM",
-		status: "Completed",
-		template: "Template 3",
-	},
-];
+const options = {
+	day: '2-digit',
+	month: '2-digit',
+	year: 'numeric',
+	hour: '2-digit',
+	minute: '2-digit',
+	hour12: true,
+};
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
+	const [greetings, setGreetings] = useState([])
+
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+
+		axios.get(`${backendUrl}/schedule`, { headers: { Authorization: `Bearer ${token}` } })
+			.then(response => {
+				setGreetings(response.data.schedules);
+			})
+			.catch(error => {
+				console.error('Error fetching campaigns:', error);
+				toast.error('Failed to fetch campaigns', {
+					position: 'top-center',
+					theme: "colored"
+				})
+			});
+	}, []);
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
@@ -72,39 +77,48 @@ const GreetingDashboard = () => {
 						</tr>
 					</thead>
 					<tbody className="text-gray-700">
-						{rows.map((row, index) => (
-							<tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
-								<td className="py-4 px-6 text-center">{row.greeting}</td>
-								<td className="py-4 px-6 text-center">{row.recipientCount}</td>
-								<td className="py-4 px-6 text-center">{row.createdAt}</td>
-								<td className="py-4 px-6 text-center">{row.status}</td>
-								<td className="py-4 px-6 text-center">
-									<button
-										onClick={() => setIsPopupOpen(true)}
-										className="text-blue-600"
-										title="View Template"
-									>
-										<FaEye className="text-lg" />
-									</button>
-								</td>
-								<td className="py-4 px-6 text-center">
-									{row.status === "Pending" && (
+						{greetings.map((row) => {
+							const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
+							const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
+							console.log(row.schedule);
+							
+							return (
+								<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
+									<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>
+									<td className="py-4 px-6 text-center">{row[key].csvData.length}</td>
+									<td className="py-4 px-6 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
+									<td className="py-4 px-6 text-center">{row.schedule}</td>
+									<td className="py-4 px-6 text-center">
 										<button
-											className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
-											title="Schedule Greeting"
+											onClick={() => setIsPopupOpen(true)}
+											className="text-blue-600"
+											title="View Template"
 										>
-											<FaCalendarAlt className="mr-2" /> Schedule
+											<FaEye className="text-lg" />
 										</button>
-									)}
-									{row.status === "Active" && (
-										<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
-									)}
-									{row.status === "Completed" && (
-										<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Send</span>
-									)}
-								</td>
-							</tr>
-						))}
+									</td>
+									<td className="py-4 px-6 text-center">
+										{row.schedule === "paused" && (
+											<button
+												className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+												title="Schedule Greeting"
+											>
+												<FaCalendarAlt className="mr-2" /> Schedule
+											</button>
+										)}
+										{row.schedule === "active" && (
+											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
+										)}
+										{row.schedule === "automate" && (
+											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Automate</span>
+										)}
+										{row.schedule === "completed" && (
+											<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Send</span>
+										)}
+									</td>
+								</tr>
+							)
+						})}
 					</tbody>
 				</table>
 			</div>

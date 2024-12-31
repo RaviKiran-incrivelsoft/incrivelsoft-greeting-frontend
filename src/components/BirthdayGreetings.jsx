@@ -6,13 +6,13 @@ import { FaRegEnvelope } from "react-icons/fa";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-function BirthdayGreetings({ campaignId, closeModal }) {
+function BirthdayGreetings({ closeModal }) {
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		title: "",
 		from: "",
 		csvData: [],
-		postId: ""
+		postDetails: ""
 	});
 	const [userDetails, setUserDetails] = useState([
 		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
@@ -103,7 +103,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 			setFormData((prevData) => {
 				const updatedData = {
 					...prevData,
-					postId: id,
+					postDetails: id,
 				};
 				sessionStorage.setItem('formData', JSON.stringify(updatedData));
 				return updatedData;
@@ -132,20 +132,20 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-
+		
 		const formDataToSubmit = new FormData();
-
+		
 		for (const key in formData) {
 			if (formData[key]) {
 				formDataToSubmit.append(key, formData[key]);
 			}
 		}
-
+		
 		try {
 			const token = localStorage.getItem("token");
 
 			const response = await axios.post(
-				`${backendUrl}/birthday?campaign=${campaignId}`,
+				`${backendUrl}/birthdays`,
 				formDataToSubmit,
 				{
 					headers: {
@@ -229,7 +229,7 @@ function BirthdayGreetings({ campaignId, closeModal }) {
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+							{formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 						</div>
 					</div>
 

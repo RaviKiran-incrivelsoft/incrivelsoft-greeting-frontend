@@ -2,6 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import Template from "./Template";
 import { toast } from "react-toastify";
+import axios from "axios";
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function FestivalGreetings({ closeModal }) {
 	const [formData, setFormData] = useState({
@@ -11,10 +14,11 @@ function FestivalGreetings({ closeModal }) {
 		from: "",
 		address: "",
 		csvData: [],
-		postId: ""
+		postDetails: ""
 	});
 	const [userType, setUserType] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [isTemplateSelected, setIsTemplateSelected] = useState(false);
 	const [userDetails, setUserDetails] = useState([
 		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
@@ -102,7 +106,7 @@ function FestivalGreetings({ closeModal }) {
 			setFormData((prevData) => {
 				const updatedData = {
 					...prevData,
-					postId: id,
+					postDetails: id,
 				};
 				sessionStorage.setItem('formData', JSON.stringify(updatedData));
 				return updatedData;
@@ -128,11 +132,48 @@ function FestivalGreetings({ closeModal }) {
 		}
 	}, [handlePostSelect]);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// Add submission logic here
-		console.log("Form data submitted", formData);
-		sessionStorage.clear();
+		setLoading(true);
+
+		const formDataToSubmit = new FormData();
+
+		for (const key in formData) {
+			if (formData[key]) {
+				formDataToSubmit.append(key, formData[key]);
+			}
+		}
+
+		try {
+			const token = localStorage.getItem("token");
+
+			const response = await axios.post(
+				`${backendUrl}/festivals`,
+				formDataToSubmit,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			toast.success(response.data.message, {
+				position: "top-center",
+				theme: "colored",
+			});
+			console.log("Form submitted successfully:", response.data);
+			sessionStorage.clear();
+			closeModal();
+		} catch (error) {
+			console.error("Error submitting form:", error);
+			const errorMessage = error.response?.data?.error || "Failed to submit form";
+			toast.error(errorMessage, {
+				position: "top-center",
+				theme: "colored",
+			});
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -210,7 +251,7 @@ function FestivalGreetings({ closeModal }) {
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+							{formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 						</div>
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Recipient Type</label>
@@ -344,9 +385,10 @@ function FestivalGreetings({ closeModal }) {
 					<div className="flex justify-center mt-4">
 						<button
 							type="submit"
+							disabled={loading}
 							className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700"
 						>
-							Submit
+							{loading ? "Submitting..." : "Submit"}
 						</button>
 					</div>
 				</form>
