@@ -2,6 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
+import axios from "axios";
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function EventComponent({ fetchGreetings, closeModal }) {
 	const [loading, setLoading] = useState(false);
@@ -10,7 +13,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 		eventDate: "",
 		address: "",
 		csvData: [],
-		postId: ""
+		postDetails: ""
 	});
 	const [userDetails, setUserDetails] = useState([
 		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
@@ -89,7 +92,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 			setFormData((prevData) => {
 				const updatedData = {
 					...prevData,
-					postId: id,
+					postDetails: id,
 				};
 				sessionStorage.setItem('formData', JSON.stringify(updatedData));
 				return updatedData;
@@ -128,18 +131,40 @@ function EventComponent({ fetchGreetings, closeModal }) {
 		link.click();
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true)
 		try {
-			fetchGreetings();
-			toast.success("Event details submitted successfully!", {
+			const token = localStorage.getItem("token");
+
+			const response = await axios.post(
+				`${backendUrl}/events`,
+				formData,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			fetchGreetings()
+			toast.success(response.data.message, {
 				position: "top-center",
 				theme: "colored",
 			});
+			console.log("Form submitted successfully:", response.data);
+
+			sessionStorage.clear();
 			closeModal();
 		} catch (error) {
-			
+			console.error("Error submitting form:", error);
+
+			// Extract and display the error message
+			const errorMessage = error.response?.data?.error || "Failed to submit form";
+			toast.error(errorMessage, {
+				position: "top-center",
+				theme: "colored",
+			});			
 		} finally {
 			setLoading(false)
 		}
@@ -204,7 +229,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+							{formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
 						</div>
 						<div className="form-group">
 							<label className="block text-sm text-gray-700 font-semibold mb-2">
@@ -303,7 +328,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 							>
 								Upload CSV
 							</button>
-							{formData.csvFile ? <span className="block text-green-600">File uploaded</span> : <span className="block text-red-600">File required</span>}
+							{formData.csvData.length ? <span className="block text-green-600">File uploaded</span> : <span className="block text-red-600">File required</span>}
 						</div>
 					)}
 

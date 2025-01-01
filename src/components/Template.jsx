@@ -5,14 +5,6 @@ import { toast } from "react-toastify";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-// const images = [
-// { _id: "67735e3c713fd1cbbdc063b7", image: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png", title: "Happy Birthday", description: "Celebrate a joyous birthday with this special greeting!" },
-// { _id: "6773642054309c49c245823e", image: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140340_gozefj.png", title: "Festival Greetings", description: "Wishing you a festive season filled with joy and happiness!" },
-// { _id: "67738e0f9f864f3ef31fcd74", image: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140507_s1u7da.png", title: "Marriage Blessings", description: "Wishing you a lifetime of love and happiness together." },
-// { _id: "67738e0f9f864f3ef31fcd74", image: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140427_kfzfam.png", title: "Event Celebration", description: "Join us for a memorable event filled with fun and excitement!" },
-// { _id: 104, image: "https://via.placeholder.com/300", title: "Temple Visit", description: "May your visit to the temple bring peace and blessings." },
-// { _id: 105, image: "https://via.placeholder.com/300", title: "Corporate Greetings", description: "Wishing you success and prosperity in all your business endeavors." },
-// ];
 const globalPostImages = {
 	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
 	anniversary: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140340_gozefj.png",

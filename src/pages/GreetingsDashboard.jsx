@@ -34,8 +34,8 @@ const GreetingDashboard = () => {
 				setGreetings(response.data.schedules);
 			})
 			.catch(error => {
-				console.error('Error fetching campaigns:', error);
-				toast.error('Failed to fetch campaigns', {
+				console.error('Error fetching greetings:', error);
+				toast.error('Failed to fetch greetings', {
 					position: 'top-center',
 					theme: "colored"
 				})
@@ -112,9 +112,7 @@ const GreetingDashboard = () => {
 				theme: "colored"
 			})
 		}
-	};
-	console.log(greetings.length);
-	
+	};	
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
