@@ -214,13 +214,13 @@ function BirthdayGreetings({ closeModal, fetchGreetings }) {
 						</div>
 						<div>
 							<button
-								className="flex w-full mb-2 items-center text-center justify-around py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+								className="flex w-full mt-5 items-center text-center justify-around py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 								type="button"
 								onClick={() => setIsTemplateSelected(true)}
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+							{/* {formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>} */}
 						</div>
 					</div>
 

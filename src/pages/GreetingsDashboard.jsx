@@ -34,8 +34,8 @@ const GreetingDashboard = () => {
 				setGreetings(response.data.schedules);
 			})
 			.catch(error => {
-				console.error('Error fetching campaigns:', error);
-				toast.error('Failed to fetch campaigns', {
+				console.error('Error fetching greetings:', error);
+				toast.error('Failed to fetch greetings', {
 					position: 'top-center',
 					theme: "colored"
 				})
@@ -112,7 +112,7 @@ const GreetingDashboard = () => {
 				theme: "colored"
 			})
 		}
-	};
+	};	
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
@@ -120,7 +120,7 @@ const GreetingDashboard = () => {
 				<h2 className="text-3xl font-semibold text-gray-800">Greeting Dashboard</h2>
 			</div>
 			<div className="mb-4 flex items-center gap-2">
-				<Dropdown fetchData={fetchGreetings}/>
+				<Dropdown fetchData={fetchGreetings} />
 				<button
 					onClick={() => navigate('/templates')}
 					className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
@@ -155,10 +155,31 @@ const GreetingDashboard = () => {
 						</tr>
 					</thead>
 					<tbody className="text-gray-700">
-						{greetings.map((row) => {
+						{greetings.length === 0 ? (
+							<tr>
+								<td colSpan="6" className="py-12 text-center text-sm text-gray-500">
+									<div className="flex flex-col items-center justify-center space-y-4">
+										<svg
+											className="w-12 h-12 text-gray-300"
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										>
+											<circle cx="12" cy="12" r="10"></circle>
+											<path d="M12 6v6l4 2"></path>
+										</svg>
+										<p className='font-semibold text-lg text-gray-400'>No Greetings available</p>
+									</div>
+								</td>
+							</tr>
+						) : (greetings.map((row) => {
 							const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
 							const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
-							
+
 							return (
 								<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
 									<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>
@@ -196,7 +217,7 @@ const GreetingDashboard = () => {
 									</td>
 								</tr>
 							)
-						})}
+						}))}
 					</tbody>
 				</table>
 				{popupVisible && (
