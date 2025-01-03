@@ -31,20 +31,19 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 			if (response.data.token) {
 				console.log("Login successful:", response.data);
-				toast.success('Login successful', {
-					position: 'top-center',
-					theme: "colored"
-				})
 
 				// Save token to localStorage
 				localStorage.setItem("token", response.data.token);
 				localStorage.setItem("userName", response.data.userName);
 
-				// Redirect to home
-				navigate("/");
-
 				// Close modal
 				onClose();
+				window.location.reload();
+
+				toast.success('Login successful', {
+					position: 'top-center',
+					theme: "colored"
+				})
 			} else {
 				console.error("Login Failed");
 				toast.error('Login Failed', {

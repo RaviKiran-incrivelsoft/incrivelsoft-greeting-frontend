@@ -115,7 +115,7 @@ const Dropdown = ({ fetchData }) => {
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
 								setActiveComponent("events");
-								sessionStorage.setItem("activeComponent", "events");
+								sessionStorage.setItem("activeComponent", "event");
 							}}
 						>
 							<BsEnvelope /> Events
