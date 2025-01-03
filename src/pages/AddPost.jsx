@@ -1,6 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { BsEnvelope } from "react-icons/bs";
 import { FaUpload, FaRedo } from "react-icons/fa";
+import { GiBigDiamondRing } from "react-icons/gi";
+import { LiaBirthdayCakeSolid } from "react-icons/lia";
+import { MdOutlineEventNote, MdOutlineTempleHindu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -12,6 +16,51 @@ const AddPost = () => {
 	const [media, setMedia] = useState(null);
 	const [postDescription, setPostDescription] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [type, setType] = useState(sessionStorage.getItem("activeComponent"));
+	const [showPopup, setShowPopup] = useState(!type);
+
+	const postTypes = [
+		{
+			id: "birthday",
+			name: "Birthday",
+			icon: <LiaBirthdayCakeSolid />,
+			bgColor: "bg-pink-500",
+		},
+		{
+			id: "occasion",
+			name: "Occasion",
+			icon: <BsEnvelope />,
+			bgColor: "bg-purple-500",
+		},
+		{
+			id: "anniversary",
+			name: "Anniversary",
+			icon: <GiBigDiamondRing />,
+			bgColor: "bg-yellow-500",
+		},
+		{
+			id: "event",
+			name: "Event",
+			icon: <MdOutlineEventNote />,
+			bgColor: "bg-green-500",
+		},
+		{
+			id: "temple",
+			name: "Temple",
+			icon: <MdOutlineTempleHindu />,
+			bgColor: "bg-blue-500",
+		},
+	];
+
+	const handleSelect = (type) => {
+		setType(type);
+		sessionStorage.setItem("activeComponent", type);
+		setShowPopup(false);
+	};
+
+	useEffect(() => {
+		setShowPopup(!type);
+	}, [type]);
 
 	const handleMediaUpload = (file) => {
 		setMedia({ file, type: file.type.startsWith("video") ? "video" : "image" });
@@ -22,7 +71,7 @@ const AddPost = () => {
 		const formData = new FormData();
 		formData.append("postName", postName);
 		formData.append("postDescription", postDescription);
-		formData.append("type", sessionStorage.getItem("activeComponent"));
+		formData.append("type", type);
 		if (media) {
 			formData.append("media", media.file);
 		}
@@ -48,6 +97,7 @@ const AddPost = () => {
 				theme: "colored",
 				onClose: () => {
 					sessionStorage.setItem('customPostId', response.data._id);
+					sessionStorage.removeItem('activeComponent')
 					navigate(-1);
 				}
 			})
@@ -64,6 +114,31 @@ const AddPost = () => {
 
 	return (
 		<div className="mx-48 px-16 py-6 bg-[#f5f5f5]">
+			{showPopup &&
+				<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+					<div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
+						<h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+							Select Post Type
+						</h2>
+						<div className="grid grid-cols-3 gap-4">
+							{postTypes.map((post) => (
+								<button
+									key={post.id}
+									className="flex items-center gap-4 p-2 bg-gray-100 hover:bg-gray-200 transition-colors duration-200 rounded-full shadow-md text-gray-800"
+									onClick={() => handleSelect(post.id)}
+								>
+									<div
+										className={`text-2xl p-3 self-start flex items-center justify-center rounded-full text-white ${post.bgColor}`}
+									>
+										{post.icon}
+									</div>
+									<span className="font-semibold">{post.name}</span>
+								</button>
+							))}
+						</div>
+					</div>
+				</div>
+			}
 			{/* Title Input */}
 			<div className="mb-4">
 				<input

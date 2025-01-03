@@ -2,14 +2,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FaRegEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Template from "./Template";
+import axios from "axios";
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function EventComponent({ fetchGreetings, closeModal }) {
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		eventName: "",
 		eventDate: "",
 		address: "",
 		csvData: [],
-		postId: ""
+		postDetails: ""
 	});
 	const [userDetails, setUserDetails] = useState([
 		{ first_name: "", last_name: "", email: "", contact: "", birthdate: "" },
@@ -88,7 +92,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 			setFormData((prevData) => {
 				const updatedData = {
 					...prevData,
-					postId: id,
+					postDetails: id,
 				};
 				sessionStorage.setItem('formData', JSON.stringify(updatedData));
 				return updatedData;
@@ -127,14 +131,43 @@ function EventComponent({ fetchGreetings, closeModal }) {
 		link.click();
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		fetchGreetings();
-		toast.success("Event details submitted successfully!", {
-			position: "top-center",
-			theme: "colored",
-		});
-		closeModal();
+		setLoading(true)
+		try {
+			const token = localStorage.getItem("token");
+
+			const response = await axios.post(
+				`${backendUrl}/events`,
+				formData,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			fetchGreetings()
+			toast.success(response.data.message, {
+				position: "top-center",
+				theme: "colored",
+			});
+			console.log("Form submitted successfully:", response.data);
+
+			sessionStorage.clear();
+			closeModal();
+		} catch (error) {
+			console.error("Error submitting form:", error);
+
+			// Extract and display the error message
+			const errorMessage = error.response?.data?.error || "Failed to submit form";
+			toast.error(errorMessage, {
+				position: "top-center",
+				theme: "colored",
+			});			
+		} finally {
+			setLoading(false)
+		}
 	};
 
 	return (
@@ -190,13 +223,13 @@ function EventComponent({ fetchGreetings, closeModal }) {
 						</div>
 						<div>
 							<button
-								className="flex w-full mb-2 items-center text-center justify-around py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+								className="flex w-full mt-5 items-center text-center justify-around py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 								type="button"
 								onClick={() => setIsTemplateSelected(true)}
 							>
 								<FaRegEnvelope /> Select Template
 							</button>
-							{formData.postId ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+							{/* {formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>} */}
 						</div>
 						<div className="form-group">
 							<label className="block text-sm text-gray-700 font-semibold mb-2">
@@ -226,7 +259,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={formData.csvData.firstName}
+									value={userDetails.firstName}
 									onChange={handleUserInput}
 									name="firstName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -239,7 +272,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={formData.csvData.lastName}
+									value={userDetails.lastName}
 									onChange={handleUserInput}
 									name="lastName"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -252,7 +285,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="email"
-									value={formData.csvData.email}
+									value={userDetails.email}
 									onChange={handleUserInput}
 									name="email"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -265,7 +298,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								</label>
 								<input
 									type="text"
-									value={formData.csvData.contact}
+									value={userDetails.contact}
 									onChange={handleUserInput}
 									name="contact"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -276,7 +309,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Birthdate</label>
 								<input
 									type="date"
-									value={formData.csvData.birthdate}
+									value={userDetails.birthdate}
 									onChange={handleUserInput}
 									name="birthdate"
 									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-sm py-1 px-2 bg-gray-50"
@@ -295,7 +328,7 @@ function EventComponent({ fetchGreetings, closeModal }) {
 							>
 								Upload CSV
 							</button>
-							{formData.csvFile ? <span className="block text-green-600">File uploaded</span> : <span className="block text-red-600">File required</span>}
+							{formData.csvData.length ? <span className="block text-green-600">File uploaded</span> : <span className="block text-red-600">File required</span>}
 						</div>
 					)}
 
@@ -340,12 +373,28 @@ function EventComponent({ fetchGreetings, closeModal }) {
 						</div>
 					)}
 
-					<div className="flex justify-center mt-6">
+					<div className="flex justify-end mt-6 gap-4">
 						<button
-							type="submit"
-							className="h-10 flex items-center justify-center px-4 rounded text-white bg-blue-600 hover:bg-blue-700"
+							type="button"
+							onClick={closeModal}
+							className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
 						>
-							Submit
+							Close
+						</button><button
+							type="submit"
+							disabled={loading}
+							className={`h-10 flex items-center justify-center px-4 rounded text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+								}`}
+						>
+							{loading ? (
+								<div className="flex space-x-1 p-1.5">
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+									<span className="dot bg-white"></span>
+								</div>
+							) : (
+								"Create"
+							)}
 						</button>
 					</div>
 				</form>

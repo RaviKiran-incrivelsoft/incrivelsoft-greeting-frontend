@@ -128,9 +128,9 @@ function TempleGreetings({ campaignId, closeModal }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-	
+
 		const formDataToSubmit = new FormData();
-	
+
 		for (const key in formData) {
 			if (formData[key]) {
 				if (key === "csvData") {
@@ -143,11 +143,11 @@ function TempleGreetings({ campaignId, closeModal }) {
 				}
 			}
 		}
-	
+
 		try {
 			const token = localStorage.getItem("token");
 			console.log("Serialized Form Data:", formDataToSubmit);
-	
+
 			const response = await axios.post(
 				`${backendUrl}/temple?campaign=${campaignId}`,
 				formDataToSubmit,
@@ -158,7 +158,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 					},
 				}
 			);
-	
+
 			toast.success("Temple Details added", {
 				position: "top-center",
 				theme: "colored",
@@ -176,7 +176,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 			setLoading(false);
 		}
 	};
-	
+
 
 	return (
 		<div
@@ -281,13 +281,14 @@ function TempleGreetings({ campaignId, closeModal }) {
 							</div>
 							<div>
 								<button
-									className="flex items-center mb-2 w-4/5 text-center justify-around py-1.5 px-4 rounded-md transition-all duration-300 ease-in-out text-white bg-blue-600 hover:bg-blue-700"
+									className="flex items-center mt-5 w-4/5 text-center justify-around py-1.5 px-4 rounded-md transition-all duration-300 ease-in-out text-white bg-blue-600 hover:bg-blue-700"
 									type="button"
 									onClick={() => setIsTemplateSelected(true)}
+									
 								>
 									<FaRegEnvelope /> Select Template
 								</button>
-								{formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>}
+								{/* {formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>} */}
 							</div>
 						</div>
 						<div className="flex gap-6 my-4 mb-6">
@@ -384,7 +385,14 @@ function TempleGreetings({ campaignId, closeModal }) {
 							</div>
 						)}
 
-						<div className="flex justify-center">
+						<div className="flex justify-end mt-6 gap-4">
+							<button
+								type="button"
+								onClick={closeModal}
+								className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+							>
+								Close
+							</button>
 							<button
 								type="submit"
 								disabled={loading}

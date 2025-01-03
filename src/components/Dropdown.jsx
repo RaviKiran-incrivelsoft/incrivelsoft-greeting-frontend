@@ -39,7 +39,7 @@ const Dropdown = ({ fetchData }) => {
 		occasion: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		// anniversary: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		anniversary: <AnniversaryGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		events: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
+		event: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		// Company: <CompanyDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 	};
@@ -114,7 +114,7 @@ const Dropdown = ({ fetchData }) => {
 						<span
 							className="flex items-center gap-x-3.5 py-2 px-3 cursor-pointer rounded-lg text-gray-800 hover:bg-sky-100 focus:outline-none focus:bg-gray-100"
 							onClick={() => {
-								setActiveComponent("events");
+								setActiveComponent("event");
 								sessionStorage.setItem("activeComponent", "event");
 							}}
 						>
