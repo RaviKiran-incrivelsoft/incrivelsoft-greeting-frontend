@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
 const ConfirmationPopup = ({ isOpen, onClose, onConfirm }) => {
+	const [delLoading, setDelLoading] = useState(false);
 	if (!isOpen) return null;
 
 	return (
@@ -16,10 +17,22 @@ const ConfirmationPopup = ({ isOpen, onClose, onConfirm }) => {
 						Cancel
 					</button>
 					<button
-						onClick={onConfirm}
-						className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600"
+						onClick={() => {
+							setDelLoading(true);
+							onConfirm();
+						}}
+						className={`bg-red-600 text-white px-4 py-2 rounded-md ${delLoading ? "bg-red-400 cursor-not-allowed py-4" : "bg-red-600 hover:bg-red-700"
+							}`}
 					>
-						OK
+						{delLoading ? (
+							<div className="flex space-x-1">
+								<span className="dot bg-white"></span>
+								<span className="dot bg-white"></span>
+								<span className="dot bg-white"></span>
+							</div>
+						) : (
+							"Ok"
+						)}
 					</button>
 				</div>
 			</div>
