@@ -220,6 +220,12 @@ const GreetingDashboard = () => {
 						<ul className="py-1">
 							<li
 								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("none")}
+							>
+								All
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
 								onClick={() => setFilter("completed")}
 							>
 								Completed
@@ -244,9 +250,9 @@ const GreetingDashboard = () => {
 							</li>
 							<li
 								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("none")}
+								onClick={() => setFilter("pause")}
 							>
-								None
+								pause
 							</li>
 						</ul>
 					</div>
