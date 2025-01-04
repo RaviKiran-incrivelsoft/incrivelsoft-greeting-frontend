@@ -348,11 +348,11 @@ const GreetingDashboard = () => {
 
 									return (
 										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
-											<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>
-											<td className="py-4 px-6 text-center">{row[key].csvData.length}</td>
-											<td className="py-4 px-6 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
-											<td className="py-4 px-6 text-center">{row.schedule}</td>
-											<td className="py-4 px-6 text-center">
+											<td className="py-4 pl-4 text-center">{greetingTitle} Greetings</td>
+											<td className="py-4 text-center">{row[key].csvData.length}</td>
+											<td className="py-4 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
+											<td className="py-4 text-center">{row.schedule}</td>
+											<td className="py-4 text-center">
 												<button
 													onClick={() => setIsPopupOpen(true)}
 													className="text-blue-600"
@@ -361,7 +361,7 @@ const GreetingDashboard = () => {
 													<FaEye className="text-lg" />
 												</button>
 											</td>
-											<td className="py-4 px-6 text-center">
+											<td className="py-4 text-center">
 												{(row.schedule === "pause") && (
 													<button
 														className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
@@ -384,9 +384,10 @@ const GreetingDashboard = () => {
 											<td>
 												<div className="flex gap-4 justify-center items-center">
 													<button
-														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
-															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
+														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-300 border-gray-300 bg-gray-100 cursor-not-allowed" :
+															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent cursor-pointer"
 														}
+														disabled={row.schedule === "completed"}
 														title={row.schedule === "completed" ? "Edit (Disabled)" : "Edit"}
 													>
 														<FaEdit />
