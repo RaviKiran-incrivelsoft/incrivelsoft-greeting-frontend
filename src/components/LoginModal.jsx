@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -16,7 +16,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 		setIsPasswordVisible(!isPasswordVisible);
 	};
 	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
