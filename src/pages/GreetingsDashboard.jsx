@@ -207,7 +207,7 @@ const GreetingDashboard = () => {
 						<FaFilter className="mr-2" />
 						Filter
 					</button>
-					<div className="absolute right-0 mt-1 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
+					<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
 						<ul className="py-1">
 							<li
 								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
