@@ -155,7 +155,7 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 			console.log("Form submitted successfully:", response.data);
 
 			// sessionStorage.clear(); // Ensure this doesn't unintentionally clear unrelated data
-			// closeModal();
+			closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
 
