@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FaEye, FaRegEnvelope, FaEdit, FaTrashAlt, FaFilter } from 'react-icons/fa';
+import { FaEye, FaRegEnvelope, FaEdit, FaTrashAlt, FaFilter, FaCalendarAlt } from 'react-icons/fa';
 import TablePagination from '@mui/material/TablePagination';
 import Dropdown from '../components/Dropdown';
 import { useNavigate } from 'react-router-dom';
@@ -336,15 +336,15 @@ const GreetingDashboard = () => {
 												</button>
 											</td>
 											<td className="py-4 px-6 text-center">
-												{/* {(row.schedule === "completed") && (
-											<button
-												className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
-												title="Schedule Greeting"
-												onClick={() => handleSchedule(row)}
-											>
-												<FaCalendarAlt className="mr-2" /> Schedule
-											</button>
-										)} */}
+												{(row.schedule === "pause") && (
+													<button
+														className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+														title="Schedule Greeting"
+														onClick={() => handleSchedule(row)}
+													>
+														<FaCalendarAlt className="mr-2" /> Schedule
+													</button>
+												)}
 												{(row.schedule === "schedule_later" || row.schedule === "schedule_now") && (
 													<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
 												)}
@@ -355,20 +355,20 @@ const GreetingDashboard = () => {
 													<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Sent</span>
 												)}
 											</td>
-											<td className="py-4 px-6 text-center">
-												<>
+											<td>
+												<div className="flex gap-4 justify-center items-center">
 													<button
-														className={row.schedule === "completed" ? "flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
-															"flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
+														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
+															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
 														}
 														title={row.schedule === "completed" ? "Edit (Disabled)" : "Edit"}
 														disabled
 													>
-														<FaEdit className="mr-2" />
+														<FaEdit />
 													</button>
 													<button
-														className={row.schedule === "completed" ? "flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 bg-red-100 cursor-not-allowed" :
-															"flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
+														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 bg-red-100 cursor-not-allowed" :
+															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
 														}
 														title="Delete (Disabled)"
 														disabled
@@ -380,9 +380,9 @@ const GreetingDashboard = () => {
 															);
 														}}
 													>
-														<FaTrashAlt className="mr-2" />
+														<FaTrashAlt />
 													</button>
-												</>
+												</div>
 											</td>
 										</tr>
 									)
