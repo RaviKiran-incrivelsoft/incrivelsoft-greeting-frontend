@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { FaCalendarAlt, FaEye, FaRegEnvelope } from 'react-icons/fa';
+import { FaCalendarAlt, FaEye, FaRegEnvelope, FaEdit, FaTrashAlt, FaFilter } from 'react-icons/fa';
+import TablePagination from '@mui/material/TablePagination';
 import Dropdown from '../components/Dropdown';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import convertToUTC from "../utils/convertToUTC.js";
+import { deleteMarriageDetails, deleteTempleDetails, deleteFestivalDetails, deleteEventDetails, deleteBirthDatDetails } from "../utils/deleteMethods.js";
 
 const options = {
 	day: '2-digit',
@@ -25,13 +27,22 @@ const GreetingDashboard = () => {
 	const [selectedOption, setSelectedOption] = useState('');
 	const [scheduleTime, setScheduleTime] = useState('');
 	const [mediaOption, setMediaOption] = useState('');
+	const [currentPage, setCurrentPage] = useState(1);
+	const [limit, setLimit] = useState(10);
+	const [totalRows, setTotalRows] = useState(10);
+	const [filter, setFilter] = useState("none");
+
+	const token = localStorage.getItem("token");
 
 	const fetchGreetings = () => {
-		const token = localStorage.getItem("token");
 
-		axios.get(`${backendUrl}/schedule`, { headers: { Authorization: `Bearer ${token}` } })
+		console.log("schedule type: ", filter);
+		axios.get(`${backendUrl}/schedule?page=${currentPage}&limit=${limit}&status=${filter}`, {
+			 headers: { Authorization: `Bearer ${token}`,
+			  } })
 			.then(response => {
 				setGreetings(response.data.schedules);
+				setTotalRows(response.data.totalSchedules);
 			})
 			.catch(error => {
 				console.error('Error fetching greetings:', error);
@@ -43,7 +54,7 @@ const GreetingDashboard = () => {
 	}
 	useEffect(() => {
 		fetchGreetings();
-	}, []);
+	}, [currentPage, limit, filter]);
 
 	const handlePopupToggle = () => {
 		setPopupVisible(!popupVisible);
@@ -69,7 +80,6 @@ const GreetingDashboard = () => {
 
 	const handleScheduleSubmit = async () => {
 		try {
-			const token = localStorage.getItem("token");
 			const data = {
 				schedule: selectedOption,
 				mode: mediaOption,
@@ -112,23 +122,132 @@ const GreetingDashboard = () => {
 				theme: "colored"
 			})
 		}
-	};	
+	};
+
+	const deleteScheduleAndCampaign = async (scheduleId, templateId, type) => {
+		console.log("delete schedule details ..", scheduleId, templateId, type);
+		try {
+			const res = await axios.delete(
+				`${backendUrl}/schedule/${scheduleId}`,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+			if (res.status === 200) {
+				toast.success("Schedule and its template details are deleted.", {
+					position: 'top-center',
+					theme: "colored"
+				});
+				switch (type) {
+					case "temple":
+						deleteTempleDetails(templateId);
+						break;
+					case "birthday":
+						deleteBirthDatDetails(templateId);
+						break;
+					case 'event':
+						deleteEventDetails(templateId);
+						break;
+					case 'marriage':
+						deleteMarriageDetails(templateId);
+						break;
+					case 'festival':
+						deleteFestivalDetails(templateId);
+						break;
+					default:
+						console.log("Invalid type...");
+						toast.error(
+							"Failed to delete the Template details...",
+							{
+								"position": "top-center",
+								"theme": "colored"
+							}
+						);
+				}
+				fetchGreetings();
+			}
+
+			else {
+				throw new Error(res.data.error);
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error('Error while deletig', {
+				position: 'top-center',
+				theme: "colored"
+			});
+		}
+	}
+
+	const handleChangeRowsPerPage = (event) => {
+		setLimit(parseInt(event.target.value, 10));
+		setCurrentPage(1);
+	};
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen">
 			<div className="mb-8 text-center">
 				<h2 className="text-3xl font-semibold text-gray-800">Greeting Dashboard</h2>
 			</div>
-			<div className="mb-4 flex items-center gap-2">
-				<Dropdown fetchData={fetchGreetings} />
-				<button
-					onClick={() => navigate('/templates')}
-					className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
-				>
-					<FaRegEnvelope className='mr-2' />
-					Templates
-				</button>
+			<div className="mb-4 flex items-center justify-between">
+				<div className="flex items-center gap-2">
+					<Dropdown fetchData={fetchGreetings} />
+					<button
+						onClick={() => navigate('/templates')}
+						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+					>
+						<FaRegEnvelope className="mr-2" />
+						Templates
+					</button>
+				</div>
+				<div className="relative group ml-auto">
+					<button
+						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+					>
+						<FaFilter className="mr-2" />
+						Filter
+					</button>
+					<div className="absolute right-0 mt-1 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
+						<ul className="py-1">
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("completed")}
+							>
+								Completed
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("schedule_now")}
+							>
+								Schedule Now
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("schedule_later")}
+							>
+								Schedule Later
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("automate")}
+							>
+								Automate
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("none")}
+							>
+								None
+							</li>
+						</ul>
+					</div>
+				</div>
+
+
+
 			</div>
+
+
 			{isPopupOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 					<div className="bg-white p-4 rounded-lg shadow-lg">
@@ -152,6 +271,7 @@ const GreetingDashboard = () => {
 							<th className="py-4 px-6 text-center">Status</th>
 							<th className="py-4 px-6 text-center">Template</th>
 							<th className="py-4 px-6 text-center">Actions</th>
+							<th className="py-4 px-6 text-center">Edit/ Delete</th>
 						</tr>
 					</thead>
 					<tbody className="text-gray-700">
@@ -196,7 +316,7 @@ const GreetingDashboard = () => {
 										</button>
 									</td>
 									<td className="py-4 px-6 text-center">
-										{( row.schedule === "pause" )&& (
+										{(row.schedule === "completed") && (
 											<button
 												className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 												title="Schedule Greeting"
@@ -212,14 +332,51 @@ const GreetingDashboard = () => {
 											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Automate</span>
 										)}
 										{row.schedule === "completed" && (
-											<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Send</span>
+											<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Sent</span>
 										)}
+									</td>
+									<td className="py-4 px-6 text-center">
+										<>
+											<button
+												className={row.schedule === "completed" ? "flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
+													"flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
+												}
+												title={row.schedule === "completed" ? "Edit (Disabled)" : "Edit"}
+												disabled
+											>
+												<FaEdit className="mr-2" />
+											</button>
+											<button
+												className={row.schedule === "completed" ? "flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 bg-red-100 cursor-not-allowed" :
+													"flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
+												}
+												title="Delete (Disabled)"
+												disabled
+												onClick={() => {
+													deleteScheduleAndCampaign(
+														row._id,
+														row[greetingTitle.toLowerCase()]._id,
+														greetingTitle.toLowerCase()
+													);
+												}}
+											>
+												<FaTrashAlt className="mr-2" />
+											</button>
+										</>
 									</td>
 								</tr>
 							)
 						}))}
 					</tbody>
 				</table>
+				<TablePagination
+					component="div"
+					count={totalRows}             // Total items count
+					page={currentPage - 1}        // Convert to zero-based index
+					onPageChange={(event, newPage) => setCurrentPage(newPage + 1)}  // Correct page logic
+					rowsPerPage={limit}           // Rows per page
+					onRowsPerPageChange={handleChangeRowsPerPage}  // Handle rows per page change
+				/>
 				{popupVisible && (
 					<div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
 						<div className="bg-white p-8 rounded-lg shadow-xl w-96">
@@ -303,7 +460,7 @@ const GreetingDashboard = () => {
 					</div>
 				)}
 			</div>
-		</div>
+		</div >
 	);
 };
 

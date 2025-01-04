@@ -244,8 +244,8 @@ function EventComponent({ fetchGreetings, closeModal }) {
 								<option value="" disabled>
 									Select an option
 								</option>
-								<option value="single">Single User</option>
-								<option value="multiple">Multiple Users</option>
+								<option value="single">Single</option>
+								<option value="multiple">Multiple</option>
 							</select>
 						</div>
 					</div>
