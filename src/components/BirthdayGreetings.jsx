@@ -208,8 +208,8 @@ function BirthdayGreetings({ closeModal, fetchGreetings }) {
 								required
 							>
 								<option value="" disabled>Select an option</option>
-								<option value="single">Single User</option>
-								<option value="multiple">Multiple Users (CSV)</option>
+								<option value="single">Single</option>
+								<option value="multiple">Multiple (CSV)</option>
 							</select>
 						</div>
 						<div>

@@ -215,8 +215,8 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 								<option value="" disabled>
 									Select Recipient Type
 								</option>
-								<option value="single">Single User</option>
-								<option value="multiple">Multiple Users</option>
+								<option value="single">Single</option>
+								<option value="multiple">Multiple</option>
 							</select>
 						</div>
 					</div>
