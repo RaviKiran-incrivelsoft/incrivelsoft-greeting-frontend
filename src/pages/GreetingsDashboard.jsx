@@ -18,6 +18,13 @@ const options = {
 	hour12: true,
 };
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
+const globalPostImages = {
+	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
+	marriage: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140340_gozefj.png",
+	birthday: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140507_s1u7da.png",
+	event: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140427_kfzfam.png",
+	festival: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735657868/duyp9meidk3cji7zrqdm.png"
+};
 
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
@@ -25,6 +32,9 @@ const GreetingDashboard = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [schLoading, setSchLoading] = useState(false);
 	const [greetings, setGreetings] = useState([]);
+	const [posts, setPosts] = useState([]);
+	const [postDetailsAndTemplates, setPostDetailsAndTemplates] = useState([]);
+	const [templateImage, setTemplateImage] = useState('https://placehold.co/300X400/orange/white?text=Image+Failed\nto+Load');
 	const [scheduleId, setScheduleId] = useState(null);
 	const [popupVisible, setPopupVisible] = useState(false);
 	const [selectedOption, setSelectedOption] = useState('');
@@ -48,9 +58,27 @@ const GreetingDashboard = () => {
 
 	const token = localStorage.getItem("token");
 
+	const fetchPosts = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await axios.get(`${backendUrl}/post`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			setPosts(response.data.posts);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchPosts();
+	}, []);
+
 	const fetchGreetings = useCallback(() => {
 		setIsLoading(true);
-
 		axios
 			.get(`${backendUrl}/schedule?page=${currentPage}&limit=${limit}&status=${filter}`, {
 				headers: {
@@ -58,8 +86,37 @@ const GreetingDashboard = () => {
 				},
 			})
 			.then(response => {
+
+				const scheduleData = response.data.schedules;
+
 				setGreetings(response.data.schedules);
 				setTotalRows(response.data.totalSchedules);
+				const extractedData = [];
+				const scheduleTypes = ['occasion', 'marriage', 'birthday', 'event', 'festival'];
+
+				for (const scheduleItem of scheduleData) {
+					// Loop through each schedule type and check if the field exists in the current scheduleItem
+					for (const type of scheduleTypes) {
+						if (scheduleItem[type] && scheduleItem[type].postDetails) {
+							const postDetailsId = scheduleItem[type].postDetails;
+							const postDetail = posts.find(post => post._id === postDetailsId);
+							
+							// Determine the template URL: if isGlobal, use global image, otherwise use mediaURL from post
+							const templateUrl = postDetail?.isGlobal
+							? globalPostImages[type]  // Use global image if isGlobal is true
+							: postDetail?.mediaURL;          // Otherwise, use mediaURL from the post
+							
+							// Only add data if there's a valid template URL and postDetails
+							if (templateUrl && postDetail) {
+								extractedData.push({
+									schId: scheduleItem._id,
+									template: templateUrl,  // Use the corresponding template URL
+								});
+							}
+						}
+					}
+				}
+				setPostDetailsAndTemplates(extractedData);
 			})
 			.catch(error => {
 				console.error("Error fetching greetings:", error);
@@ -71,12 +128,16 @@ const GreetingDashboard = () => {
 			.finally(() => {
 				setIsLoading(false);
 			});
-	}, [currentPage, limit, filter, token]);
+	}, [currentPage, limit, filter, token, posts]);
 
 	useEffect(() => {
 		fetchGreetings();
 	}, [fetchGreetings]);
 
+	const handleTemplate = (id) => {
+		setIsPopupOpen(true);
+		setTemplateImage(postDetailsAndTemplates.find(item => item.schId === id)?.template || "https://placehold.co/300X400/orange/white?text=Image+Failed\nto+Load");
+	}
 	const handlePopupToggle = () => {
 		setPopupVisible(!popupVisible);
 		setSelectedOption('');
@@ -222,7 +283,7 @@ const GreetingDashboard = () => {
 				<div className="flex items-center gap-2">
 					<Dropdown fetchData={fetchGreetings} />
 					<button
-						onClick={() => navigate('/templates')}
+						onClick={() => navigate('/templates', { state: posts })}
 						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 					>
 						<FaRegEnvelope className="mr-2" />
@@ -283,7 +344,7 @@ const GreetingDashboard = () => {
 			{isPopupOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 					<div className="bg-white p-4 rounded-lg shadow-lg">
-						<img src="https://via.placeholder.com/300" alt="Template" className="w-64 h-64 object-cover" />
+						<img src={templateImage} alt="Template" className="w-64 h-auto object-cover" />
 						<button
 							onClick={() => setIsPopupOpen(false)}
 							className="mt-2 py-1 px-4 bg-red-500 text-white rounded-md"
@@ -354,7 +415,7 @@ const GreetingDashboard = () => {
 											<td className="py-4 text-center">{row.schedule}</td>
 											<td className="py-4 text-center">
 												<button
-													onClick={() => setIsPopupOpen(true)}
+													onClick={() => handleTemplate(row._id)}
 													className="text-blue-600"
 													title="View Template"
 												>
