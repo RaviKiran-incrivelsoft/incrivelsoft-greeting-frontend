@@ -90,8 +90,8 @@ const AddPost = () => {
 				}
 			);
 
-			console.log("Campaign created successfully:", response.data._id);
-			toast.success('Campaign created successfully', {
+			console.log("Template created successfully:", response.data._id);
+			toast.success('Template created successfully', {
 				position: 'top-center',
 				autoClose: 3000,
 				theme: "colored",
@@ -102,7 +102,7 @@ const AddPost = () => {
 				}
 			})
 		} catch (error) {
-			console.error("Error in submitting campaign:", error);
+			console.error("Error in Creating Template:", error);
 			toast.error('Failed to create campaign', {
 				position: 'top-center',
 				theme: "colored"
