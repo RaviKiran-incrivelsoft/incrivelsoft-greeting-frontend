@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import convertToUTC from "../utils/convertToUTC.js";
 import { deleteMarriageDetails, deleteTempleDetails, deleteFestivalDetails, deleteEventDetails, deleteBirthDatDetails } from "../utils/deleteMethods.js";
 import ConfirmationPopup from '../components/ConfirmationPopup.jsx';
+import { BsGraphUpArrow } from 'react-icons/bs';
 
 const options = {
 	day: '2-digit',
@@ -100,12 +101,12 @@ const GreetingDashboard = () => {
 						if (scheduleItem[type] && scheduleItem[type].postDetails) {
 							const postDetailsId = scheduleItem[type].postDetails;
 							const postDetail = posts.find(post => post._id === postDetailsId);
-							
+
 							// Determine the template URL: if isGlobal, use global image, otherwise use mediaURL from post
 							const templateUrl = postDetail?.isGlobal
-							? globalPostImages[type]  // Use global image if isGlobal is true
-							: postDetail?.mediaURL;          // Otherwise, use mediaURL from the post
-							
+								? globalPostImages[type]  // Use global image if isGlobal is true
+								: postDetail?.mediaURL;          // Otherwise, use mediaURL from the post
+
 							// Only add data if there's a valid template URL and postDetails
 							if (templateUrl && postDetail) {
 								extractedData.push({
@@ -290,52 +291,60 @@ const GreetingDashboard = () => {
 						Templates
 					</button>
 				</div>
-				<div className="relative group ml-auto">
+				<div className="flex gap-4">
 					<button
-						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+						className='flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+						onClick={() => navigate('/analytics')}
 					>
-						<FaFilter className="mr-2" />
-						Filter
+						<BsGraphUpArrow className="mr-2" /> Analytics
 					</button>
-					<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
-						<ul className="py-1">
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("none")}
-							>
-								All
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("completed")}
-							>
-								Completed
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("schedule_now")}
-							>
-								Schedule Now
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("schedule_later")}
-							>
-								Schedule Later
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("automate")}
-							>
-								Automate
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("pause")}
-							>
-								pause
-							</li>
-						</ul>
+					<div className="relative group ml-auto">
+						<button
+							className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+						>
+							<FaFilter className="mr-2" />
+							Filter
+						</button>
+						<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
+							<ul className="py-1">
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("none")}
+								>
+									All
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("completed")}
+								>
+									Completed
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("schedule_now")}
+								>
+									Schedule Now
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("schedule_later")}
+								>
+									Schedule Later
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("automate")}
+								>
+									Automate
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("pause")}
+								>
+									pause
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>

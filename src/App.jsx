@@ -16,6 +16,7 @@ import RegisterPopup from './components/RegisterPopup';
 import TemplateDashboard from './pages/TemplateDashboard';
 import GreetingDashboard from './pages/GreetingsDashboard';
 import ProtectedRoute from './ProtectedRoute';
+import DashboardAnalytics from './pages/DashboardAnalytics';
 
 function App() {
   const [activeModal, setActiveModal] = useState(null);
@@ -33,8 +34,9 @@ function App() {
         <Route element={<HomePage onRegisterClick={() => openModal('register')} />} path='/' />
         <Route element={<ServicePage />} path='/service' />
         <Route element={<ContactPage />} path='/contact' />
-        <Route element={<TemplateDashboard />} path='/templates' />
         <Route element={<ProtectedRoute element={<GreetingDashboard />} />} path='/greetings' />
+        <Route element={<ProtectedRoute element={<TemplateDashboard />} />} path='/templates' />
+        <Route element={<ProtectedRoute element={<DashboardAnalytics />} />} path='/analytics' />
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />
