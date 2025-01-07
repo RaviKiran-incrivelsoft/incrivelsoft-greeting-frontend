@@ -221,7 +221,7 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 						</div>
 					</div>
 
-					{/* {isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />} */}
+					{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 					{userType === "single" && (
 						<div className="grid grid-cols-3 gap-4 mt-4">
 							<div className="form-group">

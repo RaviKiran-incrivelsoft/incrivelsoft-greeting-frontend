@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { FaCalendarAlt, FaEye, FaRegEnvelope, FaEdit, FaTrashAlt, FaFilter } from 'react-icons/fa';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FaEye, FaRegEnvelope, FaEdit, FaTrashAlt, FaFilter, FaCalendarAlt } from 'react-icons/fa';
 import TablePagination from '@mui/material/TablePagination';
 import Dropdown from '../components/Dropdown';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [greetings, setGreetings] = useState([]);
 	const [scheduleId, setScheduleId] = useState(null);
 	const [popupVisible, setPopupVisible] = useState(false);
@@ -34,27 +35,35 @@ const GreetingDashboard = () => {
 
 	const token = localStorage.getItem("token");
 
-	const fetchGreetings = () => {
-
+	const fetchGreetings = useCallback(() => {
+		setIsLoading(true);
 		console.log("schedule type: ", filter);
-		axios.get(`${backendUrl}/schedule?page=${currentPage}&limit=${limit}&status=${filter}`, {
-			 headers: { Authorization: `Bearer ${token}`,
-			  } })
+
+		axios
+			.get(`${backendUrl}/schedule?page=${currentPage}&limit=${limit}&status=${filter}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
 			.then(response => {
 				setGreetings(response.data.schedules);
 				setTotalRows(response.data.totalSchedules);
 			})
 			.catch(error => {
-				console.error('Error fetching greetings:', error);
-				toast.error('Failed to fetch greetings', {
-					position: 'top-center',
-					theme: "colored"
-				})
+				console.error("Error fetching greetings:", error);
+				toast.error("Failed to fetch greetings", {
+					position: "top-center",
+					theme: "colored",
+				});
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
-	}
+	}, [currentPage, limit, filter, token]);
+
 	useEffect(() => {
 		fetchGreetings();
-	}, [currentPage, limit, filter]);
+	}, [fetchGreetings]);
 
 	const handlePopupToggle = () => {
 		setPopupVisible(!popupVisible);
@@ -207,8 +216,14 @@ const GreetingDashboard = () => {
 						<FaFilter className="mr-2" />
 						Filter
 					</button>
-					<div className="absolute right-0 mt-1 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
+					<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
 						<ul className="py-1">
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("none")}
+							>
+								All
+							</li>
 							<li
 								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
 								onClick={() => setFilter("completed")}
@@ -235,16 +250,13 @@ const GreetingDashboard = () => {
 							</li>
 							<li
 								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("none")}
+								onClick={() => setFilter("pause")}
 							>
-								None
+								pause
 							</li>
 						</ul>
 					</div>
 				</div>
-
-
-
 			</div>
 
 
@@ -275,98 +287,114 @@ const GreetingDashboard = () => {
 						</tr>
 					</thead>
 					<tbody className="text-gray-700">
-						{greetings.length === 0 ? (
+						{isLoading ? (
 							<tr>
-								<td colSpan="6" className="py-12 text-center text-sm text-gray-500">
-									<div className="flex flex-col items-center justify-center space-y-4">
-										<svg
-											className="w-12 h-12 text-gray-300"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-										>
-											<circle cx="12" cy="12" r="10"></circle>
-											<path d="M12 6v6l4 2"></path>
-										</svg>
-										<p className='font-semibold text-lg text-gray-400'>No Greetings available</p>
+								<td colSpan="7" className="relative py-24">
+									<div className="absolute inset-0 flex items-center justify-center">
+										<div className="rotating-circles">
+											<div></div>
+											<div></div>
+											<div></div>
+										</div>
 									</div>
 								</td>
 							</tr>
-						) : (greetings.map((row) => {
-							const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
-							const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
+						) : (
+							<>
+								{greetings.length === 0 ? (
+									<tr>
+										<td colSpan="7" className="py-12 text-center text-sm text-gray-500">
+											<div className="flex flex-col items-center justify-center space-y-4">
+												<svg
+													className="w-12 h-12 text-gray-300"
+													xmlns="http://www.w3.org/2000/svg"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+												>
+													<circle cx="12" cy="12" r="10"></circle>
+													<path d="M12 6v6l4 2"></path>
+												</svg>
+												<p className='font-semibold text-lg text-gray-400'>No Greetings available</p>
+											</div>
+										</td>
+									</tr>
+								) : (greetings.map((row) => {
+									const key = Object.keys(row).find((key) => ['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key));
+									const greetingTitle = key ? key.charAt(0).toUpperCase() + key.slice(1) : 'New Year';
 
-							return (
-								<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
-									<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>
-									<td className="py-4 px-6 text-center">{row[key].csvData.length}</td>
-									<td className="py-4 px-6 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
-									<td className="py-4 px-6 text-center">{row.schedule}</td>
-									<td className="py-4 px-6 text-center">
-										<button
-											onClick={() => setIsPopupOpen(true)}
-											className="text-blue-600"
-											title="View Template"
-										>
-											<FaEye className="text-lg" />
-										</button>
-									</td>
-									<td className="py-4 px-6 text-center">
-										{(row.schedule === "completed") && (
-											<button
-												className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
-												title="Schedule Greeting"
-												onClick={() => handleSchedule(row)}
-											>
-												<FaCalendarAlt className="mr-2" /> Schedule
-											</button>
-										)}
-										{(row.schedule === "schedule_later" || row.schedule === "schedule_now") && (
-											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
-										)}
-										{row.schedule === "automate" && (
-											<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Automate</span>
-										)}
-										{row.schedule === "completed" && (
-											<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Sent</span>
-										)}
-									</td>
-									<td className="py-4 px-6 text-center">
-										<>
-											<button
-												className={row.schedule === "completed" ? "flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
-													"flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
-												}
-												title={row.schedule === "completed" ? "Edit (Disabled)" : "Edit"}
-												disabled
-											>
-												<FaEdit className="mr-2" />
-											</button>
-											<button
-												className={row.schedule === "completed" ? "flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 bg-red-100 cursor-not-allowed" :
-													"flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
-												}
-												title="Delete (Disabled)"
-												disabled
-												onClick={() => {
-													deleteScheduleAndCampaign(
-														row._id,
-														row[greetingTitle.toLowerCase()]._id,
-														greetingTitle.toLowerCase()
-													);
-												}}
-											>
-												<FaTrashAlt className="mr-2" />
-											</button>
-										</>
-									</td>
-								</tr>
-							)
-						}))}
+									return (
+										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
+											<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>
+											<td className="py-4 px-6 text-center">{row[key].csvData.length}</td>
+											<td className="py-4 px-6 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
+											<td className="py-4 px-6 text-center">{row.schedule}</td>
+											<td className="py-4 px-6 text-center">
+												<button
+													onClick={() => setIsPopupOpen(true)}
+													className="text-blue-600"
+													title="View Template"
+												>
+													<FaEye className="text-lg" />
+												</button>
+											</td>
+											<td className="py-4 px-6 text-center">
+												{(row.schedule === "pause") && (
+													<button
+														className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+														title="Schedule Greeting"
+														onClick={() => handleSchedule(row)}
+													>
+														<FaCalendarAlt className="mr-2" /> Schedule
+													</button>
+												)}
+												{(row.schedule === "schedule_later" || row.schedule === "schedule_now") && (
+													<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Scheduled</span>
+												)}
+												{row.schedule === "automate" && (
+													<span className="inline-block bg-green-100 text-green-700 py-1 px-3 rounded-xl">Automate</span>
+												)}
+												{row.schedule === "completed" && (
+													<span className="inline-block bg-yellow-100 text-yellow-700 py-1 px-3 rounded-xl">Sent</span>
+												)}
+											</td>
+											<td>
+												<div className="flex gap-4 justify-center items-center">
+													<button
+														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
+															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
+														}
+														title={row.schedule === "completed" ? "Edit (Disabled)" : "Edit"}
+														disabled
+													>
+														<FaEdit />
+													</button>
+													<button
+														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 bg-red-100 cursor-not-allowed" :
+															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
+														}
+														title="Delete (Disabled)"
+														disabled
+														onClick={() => {
+															deleteScheduleAndCampaign(
+																row._id,
+																row[greetingTitle.toLowerCase()]._id,
+																greetingTitle.toLowerCase()
+															);
+														}}
+													>
+														<FaTrashAlt />
+													</button>
+												</div>
+											</td>
+										</tr>
+									)
+								}))}
+							</>
+						)}
 					</tbody>
 				</table>
 				<TablePagination

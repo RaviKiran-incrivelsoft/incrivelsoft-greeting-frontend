@@ -16,12 +16,13 @@ const TemplateDashboard = () => {
 	const navigate = useNavigate();
 	const [globalTemplates, setGlobalTemplates] = useState([]);
 	const [userPosts, setUserPosts] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Fetch posts and templates
 	const fetchPosts = async () => {
 		try {
 			const token = localStorage.getItem("token");
-
+			setIsLoading(true);
 			// Fetch global and user-created posts
 			const response = await axios.get(`${backendUrl}/post`, {
 				headers: {
@@ -41,6 +42,9 @@ const TemplateDashboard = () => {
 			setUserPosts(userCreatedPosts);
 		} catch (error) {
 			console.error(error);
+		}
+		finally{
+			setIsLoading(false);
 		}
 	};
 

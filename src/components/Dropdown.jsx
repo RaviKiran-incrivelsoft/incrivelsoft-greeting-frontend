@@ -50,7 +50,7 @@ const Dropdown = ({ fetchData }) => {
 			onMouseEnter={() => { setIsOpen(true); sessionStorage.setItem("greetingsPopup", true); }}
 		>
 			<button
-				onMouseLeave={() => { setIsOpen(false); sessionStorage.setItem("greetingsPopup", false); }}
+				onMouseLeave={() => { setIsOpen(false); sessionStorage.removeItem("greetingsPopup"); }}
 				type="button"
 				className="flex items-center mr-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
 				aria-haspopup="menu"
