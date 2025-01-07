@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { FaFilter } from "react-icons/fa";
 import { IoStar } from "react-icons/io5";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
@@ -11,13 +12,35 @@ const globalPostImages = {
 	event: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140427_kfzfam.png",
 };
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 const TemplateDashboard = () => {
 	const navigate = useNavigate();
-	const location = useLocation();
 	const [filter, setFilter] = useState("all");
+	const [templates, setTemplates] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	const fetchPosts = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await axios.get(`${backendUrl}/post`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			setIsLoading(false)
+			setTemplates(response.data.posts);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchPosts();
+	}, []);
 
 	const groupedData = {};
-	location?.state.forEach((item) => {
+	templates?.forEach((item) => {
 		const { type, postName, postDescription, isGlobal, mediaURL } = item;
 
 		if (!groupedData[type]) {
@@ -102,27 +125,41 @@ const TemplateDashboard = () => {
 			</div>
 
 			<div className="columns-3 gap-6">
-				{filteredData.map((item, index) => (
-					<div key={index} className="text-center mb-6">
-						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
-							<img
-								src={globalPostImages[item.type] || item.image}
-								alt={item.postName}
-								className="w-full h-full object-cover"
-							/>
-							<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-								<p className="text-white text-center px-4">{item.description}</p>
+				{isLoading ? (
+					<div className="relative py-24">
+						<div className="absolute inset-0 flex items-center justify-center">
+							<div className="rotating-circles">
+								<div></div>
+								<div></div>
+								<div></div>
 							</div>
-							{item.isGlobal && (
-								<IoStar
-									className="absolute top-4 right-4 bg-white rounded-lg p-1.5 text-yellow-400 text-3xl"
-									title="Preset Posts"
-								/>
-							)}
 						</div>
-						{/* <h3 className="text-lg font-semibold my-3">{item.postName}</h3> */}
 					</div>
-				))}
+				) : (
+					<>
+						{filteredData.map((item, index) => (
+							<div key={index} className="text-center mb-6">
+								<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
+									<img
+										src={globalPostImages[item.type] || item.image}
+										alt={item.postName}
+										className="w-full h-full object-cover"
+									/>
+									<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+										<p className="text-white text-center px-4">{item.description}</p>
+									</div>
+									{item.isGlobal && (
+										<IoStar
+											className="absolute top-4 right-4 bg-white rounded-lg p-1.5 text-yellow-400 text-3xl"
+											title="Preset Posts"
+										/>
+									)}
+								</div>
+								{/* <h3 className="text-lg font-semibold my-3">{item.postName}</h3> */}
+							</div>
+						))}
+					</>
+				)}
 			</div>
 		</div>
 	);
