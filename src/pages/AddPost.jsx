@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BsEnvelope } from "react-icons/bs";
 import { FaUpload, FaRedo } from "react-icons/fa";
 import { GiBigDiamondRing } from "react-icons/gi";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { MdOutlineEventNote, MdOutlineTempleHindu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -113,7 +114,7 @@ const AddPost = () => {
 	};
 
 	return (
-		<div className="mx-48 px-16 py-6 bg-[#f5f5f5]">
+		<div className="mx-48 px-16 py-6 bg-[#f5f5f5] relative">
 			{showPopup &&
 				<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
 					<div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
@@ -140,6 +141,12 @@ const AddPost = () => {
 				</div>
 			}
 			{/* Title Input */}
+			<button
+				onClick={() => navigate(-1)}
+				className=" absolute left-[-3rem] top-4 flex items-center p-1 text-xl border-2 rounded-full transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+			>
+				<IoMdArrowRoundBack />
+			</button>
 			<div className="mb-4">
 				<input
 					type="text"
