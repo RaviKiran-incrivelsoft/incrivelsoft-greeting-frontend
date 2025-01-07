@@ -1,9 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaTrashAlt } from "react-icons/fa";
 import { IoStar } from "react-icons/io5";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import ConfirmationPopup from "../components/ConfirmationPopup";
+import { toast } from "react-toastify";
 
 const globalPostImages = {
 	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
@@ -19,6 +21,8 @@ const TemplateDashboard = () => {
 	const [filter, setFilter] = useState("all");
 	const [templates, setTemplates] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [confirmPopup, setConfirmPopup] = useState(false);
+	const [tempToRemove, setTempToRemove] = useState(null);
 
 	const fetchPosts = async () => {
 		try {
@@ -43,13 +47,14 @@ const TemplateDashboard = () => {
 
 	const groupedData = {};
 	templates?.forEach((item) => {
-		const { type, postName, postDescription, isGlobal, mediaURL } = item;
+		const { _id, type, postName, postDescription, isGlobal, mediaURL } = item;
 
 		if (!groupedData[type]) {
 			groupedData[type] = [];
 		}
 
 		groupedData[type].push({
+			tempId: _id,
 			postName,
 			image: isGlobal ? globalPostImages[type] || mediaURL : mediaURL,
 			description: postDescription,
@@ -61,6 +66,35 @@ const TemplateDashboard = () => {
 		filter === "all"
 			? Object.values(groupedData).flat()
 			: groupedData[filter] || [];
+
+	const handleDeleteTemplate = (id) => {
+		setTempToRemove(id);
+		setConfirmPopup(true);
+	}
+
+	const removeTemplate = async () => {
+		try {
+			const response = await axios.delete(`${backendUrl}/post/${tempToRemove}`, {
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${localStorage.getItem("token")}`
+				}
+			});
+
+			if (response.status === 200) {
+				toast.success(response.data.message, {
+					position: "top-center",
+					theme: "colored",
+				});
+				setConfirmPopup(false);
+				fetchPosts();
+			}
+		} catch (error) {
+			console.error("Error deleting post:", error);
+			alert("Error deleting post. Please try again.");
+		}
+	};
+
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen flex flex-col items-center">
@@ -126,6 +160,12 @@ const TemplateDashboard = () => {
 				</div>
 			</div>
 
+			<ConfirmationPopup
+				isOpen={confirmPopup}
+				onClose={() => setConfirmPopup(false)}
+				onConfirm={removeTemplate}
+			/>
+
 			<div className="columns-3 gap-6">
 				{isLoading ? (
 					<div className="relative py-24">
@@ -147,8 +187,15 @@ const TemplateDashboard = () => {
 										alt={item.postName}
 										className="w-full h-full object-cover"
 									/>
-									<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+									<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex flex-col gap-4 items-center justify-center transition-opacity">
 										<p className="text-white text-center px-4">{item.description}</p>
+										{!item.isGlobal && (<button
+											className="flex items-center p-1.5 rounded-md transition-all duration-300 ease-in-out bg-red-600 text-white hover:bg-red-800"
+											title="Delete template"
+											onClick={() => handleDeleteTemplate(item.tempId)}
+										>
+											<FaTrashAlt className="mr-2" /> Delete
+										</button>)}
 									</div>
 									{item.isGlobal && (
 										<IoStar
