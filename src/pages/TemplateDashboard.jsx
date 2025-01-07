@@ -16,7 +16,6 @@ const TemplateDashboard = () => {
 	const location = useLocation();
 	const [filter, setFilter] = useState("all");
 
-
 	const groupedData = {};
 	location?.state.forEach((item) => {
 		const { type, postName, postDescription, isGlobal, mediaURL } = item;
@@ -37,14 +36,6 @@ const TemplateDashboard = () => {
 		filter === "all"
 			? Object.values(groupedData).flat()
 			: groupedData[filter] || [];
-
-	console.log(filteredData);
-
-
-	const globalPosts = location?.state.filter((post) => post.isGlobal);
-	const userCreatedPosts = location.state.filter(
-		(post) => !post.isGlobal
-	);
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen flex flex-col items-center">
