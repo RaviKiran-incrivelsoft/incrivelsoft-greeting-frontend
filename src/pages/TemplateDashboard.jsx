@@ -1,5 +1,7 @@
-import React from "react";
-import { FaPlus } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaFilter } from "react-icons/fa";
+import { IoStar } from "react-icons/io5";
+import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const globalPostImages = {
@@ -12,6 +14,32 @@ const globalPostImages = {
 const TemplateDashboard = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const [filter, setFilter] = useState("all");
+
+
+	const groupedData = {};
+	location?.state.forEach((item) => {
+		const { type, postName, postDescription, isGlobal, mediaURL } = item;
+
+		if (!groupedData[type]) {
+			groupedData[type] = [];
+		}
+
+		groupedData[type].push({
+			postName,
+			image: isGlobal ? globalPostImages[type] || mediaURL : mediaURL,
+			description: postDescription,
+			isGlobal,
+		});
+	});
+
+	const filteredData =
+		filter === "all"
+			? Object.values(groupedData).flat()
+			: groupedData[filter] || [];
+
+	console.log(filteredData);
+
 
 	const globalPosts = location?.state.filter((post) => post.isGlobal);
 	const userCreatedPosts = location.state.filter(
@@ -35,60 +63,75 @@ const TemplateDashboard = () => {
 					onClick={() => navigate('/addpost')}
 					className="flex items-center ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
 				>
-					<FaPlus className="mr-2" />
+					<MdOutlineDashboardCustomize className="mr-2" />
 					Create Template
 				</button>
-			</div>
-
-			{/* Global Templates */}
-			<h3 className="text-xl font-semibold mb-4">Preset Templates</h3>
-			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full mb-10">
-				{globalPosts.map((item, index) => (
-					<div key={index} className="text-center">
-						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
-							<img
-								src={
-									globalPostImages[item.type] || item.mediaURL
-								}
-								alt={item.postName}
-								className="w-full h-full object-cover"
-							/>
-							<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-								<p className="text-white text-center px-4">{item.postDescription}</p>
-							</div>
-						</div>
-						<h3 className="text-lg font-semibold my-3">{item.postName}</h3>
+				<div className="relative group ml-auto">
+					<button
+						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+					>
+						<FaFilter className="mr-2" />
+						Filter
+					</button>
+					<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
+						<ul className="py-1">
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("all")}
+							>
+								All
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("birthday")}
+							>
+								Birthday
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("anniversary")}
+							>
+								Anniversary
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("occasion")}
+							>
+								Occasion
+							</li>
+							<li
+								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+								onClick={() => setFilter("event")}
+							>
+								Event
+							</li>
+						</ul>
 					</div>
-				))}
-			</div>
-
-			{/* User-Created Templates */}
-			<h3 className="text-xl font-semibold mb-4">Your Custom Templates</h3>
-			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full">
-				{userCreatedPosts.map((item, index) => (
-					<div key={index} className="text-center">
-						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
-							<img
-								src={item.mediaURL}
-								alt={item.postName}
-								className="w-full h-full object-cover"
-							/>
-							<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-								<p className="text-white text-center px-4">{item.postDescription}</p>
-							</div>
-						</div>
-						<h3 className="text-lg font-semibold my-3">{item.postName}</h3>
-					</div>
-				))}
-				<div
-					onClick={() => navigate("/addpost")}
-					className="w-72 h-72 cursor-pointer bg-white shadow-md rounded-lg border-dashed border-2 border-blue-500 flex flex-col justify-center items-center relative"
-				>
-					<div className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full text-4xl pb-2 font-bold">
-						+
-					</div>
-					<p className="mt-4 text-blue-500 font-medium">Add Template</p>
 				</div>
+			</div>
+
+			<div className="columns-3 gap-6">
+				{filteredData.map((item, index) => (
+					<div key={index} className="text-center mb-6">
+						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
+							<img
+								src={globalPostImages[item.type] || item.image}
+								alt={item.postName}
+								className="w-full h-full object-cover"
+							/>
+							<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+								<p className="text-white text-center px-4">{item.description}</p>
+							</div>
+							{item.isGlobal && (
+								<IoStar
+									className="absolute top-4 right-4 bg-white rounded-lg p-1.5 text-yellow-400 text-3xl"
+									title="Global Post"
+								/>
+							)}
+						</div>
+						{/* <h3 className="text-lg font-semibold my-3">{item.postName}</h3> */}
+					</div>
+				))}
 			</div>
 		</div>
 	);

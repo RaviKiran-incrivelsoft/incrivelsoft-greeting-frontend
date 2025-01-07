@@ -284,6 +284,7 @@ const GreetingDashboard = () => {
 				<div className="flex items-center gap-2">
 					<Dropdown fetchData={fetchGreetings} />
 					<button
+						disabled={!posts.length}
 						onClick={() => navigate('/templates', { state: posts })}
 						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 					>
