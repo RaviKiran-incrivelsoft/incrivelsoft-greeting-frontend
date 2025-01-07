@@ -47,7 +47,7 @@ const TemplateDashboard = () => {
 
 	const groupedData = {};
 	templates?.forEach((item) => {
-		const { _id, type, postName, postDescription, isGlobal, mediaURL } = item;
+		const { _id, type, postName, postDescription, isGlobal, mediaURL, createdAt } = item;
 
 		if (!groupedData[type]) {
 			groupedData[type] = [];
@@ -59,13 +59,18 @@ const TemplateDashboard = () => {
 			image: isGlobal ? globalPostImages[type] || mediaURL : mediaURL,
 			description: postDescription,
 			isGlobal,
+			createdAt,
 		});
 	});
 
-	const filteredData =
-		filter === "all"
-			? Object.values(groupedData).flat()
-			: groupedData[filter] || [];
+	const filteredData = (filter === "all"
+		? Object.values(groupedData).flat()
+		: groupedData[filter] || []
+	).sort((a, b) => {
+		const dateComparison = new Date(b.createdAt) - new Date(a.createdAt);
+		if (dateComparison !== 0) return dateComparison;
+		return b.isGlobal - a.isGlobal;
+	});
 
 	const handleDeleteTemplate = (id) => {
 		setTempToRemove(id);
