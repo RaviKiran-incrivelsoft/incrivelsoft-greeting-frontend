@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaFilter } from "react-icons/fa";
 import { IoStar } from "react-icons/io5";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const globalPostImages = {
 	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
@@ -28,12 +28,14 @@ const TemplateDashboard = () => {
 					Authorization: `Bearer ${token}`,
 				},
 			});
-			setIsLoading(false)
 			setTemplates(response.data.posts);
 		} catch (error) {
 			console.error(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
+	console.log(templates);
 
 	useEffect(() => {
 		fetchPosts();
