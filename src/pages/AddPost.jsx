@@ -17,7 +17,7 @@ const AddPost = () => {
 	const [media, setMedia] = useState(null);
 	const [postDescription, setPostDescription] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [type, setType] = useState(sessionStorage.getItem("activeComponent"));
+	const [type, setType] = useState();
 	const [showPopup, setShowPopup] = useState(!type);
 
 	const postTypes = [
@@ -60,8 +60,8 @@ const AddPost = () => {
 	};
 
 	useEffect(() => {
-		setShowPopup(!type);
-	}, [type]);
+		setShowPopup(true);
+	}, []);
 
 	const handleMediaUpload = (file) => {
 		setMedia({ file, type: file.type.startsWith("video") ? "video" : "image" });
@@ -96,11 +96,7 @@ const AddPost = () => {
 				position: 'top-center',
 				autoClose: 3000,
 				theme: "colored",
-				onClose: () => {
-					sessionStorage.setItem('customPostId', response.data._id);
-					sessionStorage.removeItem('activeComponent')
-					navigate(-1);
-				}
+				onClose: navigate(-1)
 			})
 		} catch (error) {
 			console.error("Error in Creating Template:", error);

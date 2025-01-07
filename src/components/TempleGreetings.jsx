@@ -114,14 +114,9 @@ function TempleGreetings({ campaignId, closeModal }) {
 	);
 
 	useEffect(() => {
-		const id = sessionStorage.getItem('customPostId');
 		const storedData = sessionStorage.getItem('formData');
 		if (storedData) {
 			setFormData(JSON.parse(storedData));
-		}
-		if (id) {
-			handlePostSelect(id);
-			sessionStorage.removeItem('customPostId');
 		}
 	}, [handlePostSelect]);
 
