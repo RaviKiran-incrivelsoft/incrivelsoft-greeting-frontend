@@ -125,7 +125,7 @@ const TemplateDashboard = () => {
 							{item.isGlobal && (
 								<IoStar
 									className="absolute top-4 right-4 bg-white rounded-lg p-1.5 text-yellow-400 text-3xl"
-									title="Global Post"
+									title="Preset Posts"
 								/>
 							)}
 						</div>

@@ -96,7 +96,7 @@ const Template = ({ onSelect, closeModal }) => {
 								<h3 className="text-lg font-semibold my-3">{item.postName}</h3>
 							</div>
 						))}
-						<div
+						{/* <div
 							onClick={() => navigate('/addpost')}
 							className="w-72 h-72 cursor-pointer bg-white shadow-md rounded-lg border-dashed border-2 border-blue-500 flex flex-col justify-center items-center relative"
 						>
@@ -104,7 +104,7 @@ const Template = ({ onSelect, closeModal }) => {
 								+
 							</div>
 							<p className="mt-4 text-blue-500 font-medium">Add Post</p>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</div>
