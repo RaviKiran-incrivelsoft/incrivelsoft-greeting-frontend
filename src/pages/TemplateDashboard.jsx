@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaPlus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const backendUrl = process.env.REACT_APP_BACKEND_URL;
+import { useLocation, useNavigate } from "react-router-dom";
 
 const globalPostImages = {
 	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
@@ -14,43 +11,12 @@ const globalPostImages = {
 
 const TemplateDashboard = () => {
 	const navigate = useNavigate();
-	const [globalTemplates, setGlobalTemplates] = useState([]);
-	const [userPosts, setUserPosts] = useState([]);
-	const [isLoading, setIsLoading] = useState(false);
+	const location = useLocation();
 
-	// Fetch posts and templates
-	const fetchPosts = async () => {
-		try {
-			const token = localStorage.getItem("token");
-			setIsLoading(true);
-			// Fetch global and user-created posts
-			const response = await axios.get(`${backendUrl}/post`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			// Filter global posts based on type and isGlobal flag
-			const globalPosts = response.data.posts.filter((post) => post.isGlobal);
-
-			// Filter user-created posts for the active component
-			const userCreatedPosts = response.data.posts.filter(
-				(post) => !post.isGlobal
-			);
-
-			setGlobalTemplates(globalPosts);
-			setUserPosts(userCreatedPosts);
-		} catch (error) {
-			console.error(error);
-		}
-		finally{
-			setIsLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchPosts();
-	}, []);
+	const globalPosts = location?.state.filter((post) => post.isGlobal);
+	const userCreatedPosts = location.state.filter(
+		(post) => !post.isGlobal
+	);
 
 	return (
 		<div className="py-10 px-32 bg-gray-100 min-h-screen flex flex-col items-center">
@@ -77,7 +43,7 @@ const TemplateDashboard = () => {
 			{/* Global Templates */}
 			<h3 className="text-xl font-semibold mb-4">Preset Templates</h3>
 			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full mb-10">
-				{globalTemplates.map((item, index) => (
+				{globalPosts.map((item, index) => (
 					<div key={index} className="text-center">
 						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
 							<img
@@ -99,7 +65,7 @@ const TemplateDashboard = () => {
 			{/* User-Created Templates */}
 			<h3 className="text-xl font-semibold mb-4">Your Custom Templates</h3>
 			<div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full">
-				{userPosts.map((item, index) => (
+				{userCreatedPosts.map((item, index) => (
 					<div key={index} className="text-center">
 						<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
 							<img

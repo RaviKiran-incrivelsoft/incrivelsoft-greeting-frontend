@@ -38,7 +38,6 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
 				// Close modal
 				onClose();
-				window.location.reload();
 
 				toast.success('Login successful', {
 					position: 'top-center',
