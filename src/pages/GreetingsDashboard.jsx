@@ -7,6 +7,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import convertToUTC from "../utils/convertToUTC.js";
 import { deleteMarriageDetails, deleteTempleDetails, deleteFestivalDetails, deleteEventDetails, deleteBirthDatDetails } from "../utils/deleteMethods.js";
+import ConfirmationPopup from '../components/ConfirmationPopup.jsx';
+import { BsGraphUpArrow } from 'react-icons/bs';
 
 const options = {
 	day: '2-digit',
@@ -17,12 +19,23 @@ const options = {
 	hour12: true,
 };
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
+const globalPostImages = {
+	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
+	marriage: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140340_gozefj.png",
+	birthday: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140507_s1u7da.png",
+	event: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634497/Screenshot_2024-12-31_140427_kfzfam.png",
+	festival: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735657868/duyp9meidk3cji7zrqdm.png"
+};
 
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [schLoading, setSchLoading] = useState(false);
 	const [greetings, setGreetings] = useState([]);
+	const [posts, setPosts] = useState([]);
+	const [postDetailsAndTemplates, setPostDetailsAndTemplates] = useState([]);
+	const [templateImage, setTemplateImage] = useState('https://placehold.co/300X400/orange/white?text=Image+Failed\nto+Load');
 	const [scheduleId, setScheduleId] = useState(null);
 	const [popupVisible, setPopupVisible] = useState(false);
 	const [selectedOption, setSelectedOption] = useState('');
@@ -32,13 +45,41 @@ const GreetingDashboard = () => {
 	const [limit, setLimit] = useState(10);
 	const [totalRows, setTotalRows] = useState(10);
 	const [filter, setFilter] = useState("none");
+	const [confirmPopup, setConfirmPopup] = useState(false);
+	const [selectedRow, setSelectedRow] = useState(null);
+
+	const handleDeleteClick = (row, greetingTitle) => {
+		setSelectedRow({
+			greetingId: row._id,
+			campaignId: row[greetingTitle.toLowerCase()]._id,
+			type: greetingTitle.toLowerCase(),
+		});
+		setConfirmPopup(true);
+	};
 
 	const token = localStorage.getItem("token");
 
+	const fetchPosts = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await axios.get(`${backendUrl}/post`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			setPosts(response.data.posts);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchPosts();
+	}, []);
+
 	const fetchGreetings = useCallback(() => {
 		setIsLoading(true);
-		console.log("schedule type: ", filter);
-
 		axios
 			.get(`${backendUrl}/schedule?page=${currentPage}&limit=${limit}&status=${filter}`, {
 				headers: {
@@ -46,8 +87,37 @@ const GreetingDashboard = () => {
 				},
 			})
 			.then(response => {
+
+				const scheduleData = response.data.schedules;
+
 				setGreetings(response.data.schedules);
 				setTotalRows(response.data.totalSchedules);
+				const extractedData = [];
+				const scheduleTypes = ['occasion', 'marriage', 'birthday', 'event', 'festival'];
+
+				for (const scheduleItem of scheduleData) {
+					// Loop through each schedule type and check if the field exists in the current scheduleItem
+					for (const type of scheduleTypes) {
+						if (scheduleItem[type] && scheduleItem[type].postDetails) {
+							const postDetailsId = scheduleItem[type].postDetails;
+							const postDetail = posts.find(post => post._id === postDetailsId);
+
+							// Determine the template URL: if isGlobal, use global image, otherwise use mediaURL from post
+							const templateUrl = postDetail?.isGlobal
+								? globalPostImages[type]  // Use global image if isGlobal is true
+								: postDetail?.mediaURL;          // Otherwise, use mediaURL from the post
+
+							// Only add data if there's a valid template URL and postDetails
+							if (templateUrl && postDetail) {
+								extractedData.push({
+									schId: scheduleItem._id,
+									template: templateUrl,  // Use the corresponding template URL
+								});
+							}
+						}
+					}
+				}
+				setPostDetailsAndTemplates(extractedData);
 			})
 			.catch(error => {
 				console.error("Error fetching greetings:", error);
@@ -59,12 +129,16 @@ const GreetingDashboard = () => {
 			.finally(() => {
 				setIsLoading(false);
 			});
-	}, [currentPage, limit, filter, token]);
+	}, [currentPage, limit, filter, token, posts]);
 
 	useEffect(() => {
 		fetchGreetings();
 	}, [fetchGreetings]);
 
+	const handleTemplate = (id) => {
+		setIsPopupOpen(true);
+		setTemplateImage(postDetailsAndTemplates.find(item => item.schId === id)?.template || "https://placehold.co/300X400/orange/white?text=Image+Failed\nto+Load");
+	}
 	const handlePopupToggle = () => {
 		setPopupVisible(!popupVisible);
 		setSelectedOption('');
@@ -88,6 +162,7 @@ const GreetingDashboard = () => {
 	}
 
 	const handleScheduleSubmit = async () => {
+		setSchLoading(true)
 		try {
 			const data = {
 				schedule: selectedOption,
@@ -130,6 +205,8 @@ const GreetingDashboard = () => {
 				position: 'top-center',
 				theme: "colored"
 			})
+		} finally {
+			setSchLoading(false)
 		}
 	};
 
@@ -143,25 +220,30 @@ const GreetingDashboard = () => {
 				}
 			);
 			if (res.status === 200) {
-				toast.success("Schedule and its template details are deleted.", {
-					position: 'top-center',
-					theme: "colored"
-				});
+				// toast.success("Schedule and its template details are deleted.", {
+				// 	position: 'top-center',
+				// 	theme: "colored"
+				// });
 				switch (type) {
 					case "temple":
 						deleteTempleDetails(templateId);
+						setConfirmPopup(false);
 						break;
 					case "birthday":
 						deleteBirthDatDetails(templateId);
+						setConfirmPopup(false);
 						break;
 					case 'event':
 						deleteEventDetails(templateId);
+						setConfirmPopup(false);
 						break;
 					case 'marriage':
 						deleteMarriageDetails(templateId);
+						setConfirmPopup(false);
 						break;
 					case 'festival':
 						deleteFestivalDetails(templateId);
+						setConfirmPopup(false);
 						break;
 					default:
 						console.log("Invalid type...");
@@ -202,59 +284,67 @@ const GreetingDashboard = () => {
 				<div className="flex items-center gap-2">
 					<Dropdown fetchData={fetchGreetings} />
 					<button
-						onClick={() => navigate('/templates')}
+						onClick={() => navigate('/templates', { state: posts })}
 						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 					>
 						<FaRegEnvelope className="mr-2" />
 						Templates
 					</button>
 				</div>
-				<div className="relative group ml-auto">
+				<div className="flex gap-4">
 					<button
-						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+						className='flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+						onClick={() => navigate('/analytics')}
 					>
-						<FaFilter className="mr-2" />
-						Filter
+						<BsGraphUpArrow className="mr-2" /> Analytics
 					</button>
-					<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
-						<ul className="py-1">
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("none")}
-							>
-								All
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("completed")}
-							>
-								Completed
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("schedule_now")}
-							>
-								Schedule Now
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("schedule_later")}
-							>
-								Schedule Later
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("automate")}
-							>
-								Automate
-							</li>
-							<li
-								className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-								onClick={() => setFilter("pause")}
-							>
-								pause
-							</li>
-						</ul>
+					<div className="relative group ml-auto">
+						<button
+							className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+						>
+							<FaFilter className="mr-2" />
+							Filter
+						</button>
+						<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
+							<ul className="py-1">
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("none")}
+								>
+									All
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("completed")}
+								>
+									Completed
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("schedule_now")}
+								>
+									Schedule Now
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("schedule_later")}
+								>
+									Schedule Later
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("automate")}
+								>
+									Automate
+								</li>
+								<li
+									className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+									onClick={() => setFilter("pause")}
+								>
+									pause
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -263,7 +353,7 @@ const GreetingDashboard = () => {
 			{isPopupOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 					<div className="bg-white p-4 rounded-lg shadow-lg">
-						<img src="https://via.placeholder.com/300" alt="Template" className="w-64 h-64 object-cover" />
+						<img src={templateImage} alt="Template" className="w-64 h-auto object-cover" />
 						<button
 							onClick={() => setIsPopupOpen(false)}
 							className="mt-2 py-1 px-4 bg-red-500 text-white rounded-md"
@@ -328,21 +418,21 @@ const GreetingDashboard = () => {
 
 									return (
 										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
-											<td className="py-4 px-6 text-center">{greetingTitle} Greetings</td>
-											<td className="py-4 px-6 text-center">{row[key].csvData.length}</td>
-											<td className="py-4 px-6 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
-											<td className="py-4 px-6 text-center">{row.schedule}</td>
-											<td className="py-4 px-6 text-center">
+											<td className="py-4 pl-4 text-center">{greetingTitle} Greetings</td>
+											<td className="py-4 text-center">{row[key].csvData.length}</td>
+											<td className="py-4 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
+											<td className="py-4 text-center">{row.schedule}</td>
+											<td className="py-4 text-center">
 												<button
-													onClick={() => setIsPopupOpen(true)}
+													onClick={() => handleTemplate(row._id)}
 													className="text-blue-600"
 													title="View Template"
 												>
 													<FaEye className="text-lg" />
 												</button>
 											</td>
-											<td className="py-4 px-6 text-center">
-												{(row.schedule === "pause") && (
+											<td className="py-4 text-center">
+												{(row.schedule === "automate") && (
 													<button
 														className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 														title="Schedule Greeting"
@@ -364,27 +454,18 @@ const GreetingDashboard = () => {
 											<td>
 												<div className="flex gap-4 justify-center items-center">
 													<button
-														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 bg-yellow-100 cursor-not-allowed" :
-															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent"
+														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-300 border-gray-300 bg-gray-100 cursor-not-allowed" :
+															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent cursor-pointer"
 														}
+														disabled={row.schedule === "completed"}
 														title={row.schedule === "completed" ? "Edit (Disabled)" : "Edit"}
-														disabled
 													>
 														<FaEdit />
 													</button>
 													<button
-														className={row.schedule === "completed" ? "flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 bg-red-100 cursor-not-allowed" :
-															"flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
-														}
+														className="flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
 														title="Delete (Disabled)"
-														disabled
-														onClick={() => {
-															deleteScheduleAndCampaign(
-																row._id,
-																row[greetingTitle.toLowerCase()]._id,
-																greetingTitle.toLowerCase()
-															);
-														}}
+														onClick={() => handleDeleteClick(row, greetingTitle)}
 													>
 														<FaTrashAlt />
 													</button>
@@ -397,6 +478,16 @@ const GreetingDashboard = () => {
 						)}
 					</tbody>
 				</table>
+				<ConfirmationPopup
+					isOpen={confirmPopup}
+					onClose={() => setConfirmPopup(false)}
+					onConfirm={() =>
+						deleteScheduleAndCampaign(
+							selectedRow.greetingId,
+							selectedRow.campaignId,
+							selectedRow.type
+						)}
+				/>
 				<TablePagination
 					component="div"
 					count={totalRows}             // Total items count
@@ -458,31 +549,22 @@ const GreetingDashboard = () => {
 								>
 									Close
 								</button>
-
-								{selectedOption === 'schedule_now' && (
-									<button
-										onClick={handleScheduleSubmit}
-										className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
-									>
-										Schedule
-									</button>
-								)}
-								{selectedOption === 'schedule_later' && (
-									<button
-										onClick={handleScheduleSubmit}
-										className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
-									>
-										Schedule
-									</button>
-								)}
-								{selectedOption === 'pause' && (
-									<button
-										onClick={handleScheduleSubmit}
-										className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
-									>
-										Submit
-									</button>
-								)}
+								<button
+									onClick={handleScheduleSubmit}
+									disabled={schLoading}
+									className={`bg-blue-600 text-white px-6 py-2 rounded-md ${schLoading ? "bg-blue-400 cursor-not-allowed py-4" : "bg-blue-600 hover:bg-blue-700"
+										}`}
+								>
+									{schLoading ? (
+										<div className="flex space-x-1">
+											<span className="dot bg-white"></span>
+											<span className="dot bg-white"></span>
+											<span className="dot bg-white"></span>
+										</div>
+									) : (
+										"Submit"
+									)}
+								</button>
 							</div>
 						</div>
 					</div>

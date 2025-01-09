@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = ({ onLoginClick }) => {
 	const navigate = useNavigate();
+	const location = useLocation();
+
+	const isActive = (path) => location.pathname === path;
 	const [profileImage, setProfileImage] = useState('/avatars/cat.png');
 
 	const images = [
@@ -37,26 +40,31 @@ const Navbar = ({ onLoginClick }) => {
 					<div className="flex space-x-6">
 						<Link
 							to="/"
-							className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
+							className={`${isActive("/") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
+								} hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4`}
 						>
 							Home
 						</Link>
-						{token &&
+						{token && (
 							<Link
 								to="/greetings"
-								className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
+								className={`${isActive("/greetings") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
+									} hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4`}
 							>
 								Dashboard
-							</Link>}
+							</Link>
+						)}
 						<Link
 							to="/service"
-							className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4"
+							className={`${isActive("/service") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
+								} hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4`}
 						>
 							Services
 						</Link>
 						<Link
 							to="/contact"
-							className="text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-8"
+							className={`${isActive("/contact") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
+								} hover:text-gray-800 hover:underline hover:underline-offset-8`}
 						>
 							Contact
 						</Link>
