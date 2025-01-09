@@ -91,6 +91,7 @@ const GreetingDashboard = () => {
 				const scheduleData = response.data.schedules;
 
 				setGreetings(response.data.schedules);
+				console.log(response.data.schedules)
 				setTotalRows(response.data.totalSchedules);
 				const extractedData = [];
 				const scheduleTypes = ['occasion', 'marriage', 'birthday', 'event', 'festival'];
@@ -220,10 +221,10 @@ const GreetingDashboard = () => {
 				}
 			);
 			if (res.status === 200) {
-				// toast.success("Schedule and its template details are deleted.", {
-				// 	position: 'top-center',
-				// 	theme: "colored"
-				// });
+				toast.success("Schedule and its template details are deleted.", {
+					position: 'top-center',
+					theme: "colored"
+				});
 				switch (type) {
 					case "temple":
 						deleteTempleDetails(templateId);
@@ -254,6 +255,7 @@ const GreetingDashboard = () => {
 								"theme": "colored"
 							}
 						);
+						setConfirmPopup(false);
 				}
 				fetchGreetings();
 			}
@@ -284,7 +286,8 @@ const GreetingDashboard = () => {
 				<div className="flex items-center gap-2">
 					<Dropdown fetchData={fetchGreetings} />
 					<button
-						onClick={() => navigate('/templates', { state: posts })}
+						disabled={!posts.length}
+						onClick={() => navigate('/templates')}
 						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 					>
 						<FaRegEnvelope className="mr-2" />
@@ -481,12 +484,15 @@ const GreetingDashboard = () => {
 				<ConfirmationPopup
 					isOpen={confirmPopup}
 					onClose={() => setConfirmPopup(false)}
-					onConfirm={() =>
+					onConfirm={() =>{
 						deleteScheduleAndCampaign(
 							selectedRow.greetingId,
 							selectedRow.campaignId,
 							selectedRow.type
-						)}
+						)
+						return false;
+					}}
+					
 				/>
 				<TablePagination
 					component="div"

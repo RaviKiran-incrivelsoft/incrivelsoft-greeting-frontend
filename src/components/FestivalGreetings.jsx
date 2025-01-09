@@ -116,16 +116,11 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 	);
 
 	useEffect(() => {
-		const id = sessionStorage.getItem('customPostId');
 		const storedData = sessionStorage.getItem('formData');
 		const recipientType = sessionStorage.getItem('userType');
 		if (storedData) {
 			setFormData(JSON.parse(storedData));
 			setUserDetails(JSON.parse(storedData).csvData)
-		}
-		if (id) {
-			handlePostSelect(id);
-			sessionStorage.removeItem('customPostId');
 		}
 		if (recipientType) {
 			setUserType(recipientType);

@@ -6,7 +6,7 @@ const Navbar = ({ onLoginClick }) => {
 	const location = useLocation();
 
 	const isActive = (path) => location.pathname === path;
-	const [profileImage, setProfileImage] = useState('/avatars/cat.png');
+	const [profileImage, setProfileImage] = useState('/avatars/deer.png');
 
 	const images = [
 		"bear", "cat", "chicken", "deer", "dog",
@@ -24,8 +24,7 @@ const Navbar = ({ onLoginClick }) => {
 
 
 	const handleLogout = () => {
-		localStorage.removeItem('token');
-		localStorage.removeItem('userName');
+		localStorage.clear();
 		navigate('/');
 	};
 
@@ -48,7 +47,7 @@ const Navbar = ({ onLoginClick }) => {
 						{token && (
 							<Link
 								to="/greetings"
-								className={`${isActive("/greetings") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
+								className={`${isActive("/greetings") || isActive("/templates") || isActive("/addpost") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
 									} hover:text-gray-800 hover:underline hover:underline-offset-8 mr-4`}
 							>
 								Dashboard
