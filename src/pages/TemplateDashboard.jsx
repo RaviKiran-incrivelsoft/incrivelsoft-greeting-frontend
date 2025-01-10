@@ -39,7 +39,6 @@ const TemplateDashboard = () => {
 			setIsLoading(false);
 		}
 	};
-	console.log(templates);
 
 	useEffect(() => {
 		fetchPosts();
