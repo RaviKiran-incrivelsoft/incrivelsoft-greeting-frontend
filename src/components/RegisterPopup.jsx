@@ -86,7 +86,7 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 										onClick={() => setIsEmailSignup(true)}
 										className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
 									>
-										Sign up with email
+										Sign up with email or Phone
 									</button>
 									<p className="text-center text-sm text-gray-500">
 										By continuing, you agree to our <span className="text-blue-600 hover:cursor-pointer">Terms of Service</span> and <span href="#" className="text-blue-600 hover:cursor-pointer">Privacy Policy</span>.
@@ -124,12 +124,12 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 										<input
 											id="email-address"
 											name="email"
-											type="email"
+											type="text"
 											required
 											value={formData.email}
 											onChange={handleChange}
 											className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
-											placeholder="Email address"
+											placeholder="Email address Or Phone number"
 										/>
 										<div className="relative">
 											<input

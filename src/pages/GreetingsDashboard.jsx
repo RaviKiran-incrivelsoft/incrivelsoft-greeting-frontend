@@ -435,7 +435,7 @@ const GreetingDashboard = () => {
 												</button>
 											</td>
 											<td className="py-4 text-center">
-												{(row.schedule === "automate") && (
+												{(row.schedule === "pause") && (
 													<button
 														className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 														title="Schedule Greeting"

@@ -104,17 +104,17 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 								<div className="rounded-md shadow-sm space-y-4">
 									<div>
 										<label htmlFor="email-address" className="sr-only">
-											Email address
+											Email address Or Phone number
 										</label>
 										<input
 											id="email-address"
 											name="email"
-											type="email"
+											type="text"
 											required
 											value={email}
 											onChange={(e) => setEmail(e.target.value)}
 											className="relative block w-full px-3 py-2 border border-gray-400 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-											placeholder="Email address"
+											placeholder="Email address Or Phone number"
 										/>
 									</div>
 									<div>
