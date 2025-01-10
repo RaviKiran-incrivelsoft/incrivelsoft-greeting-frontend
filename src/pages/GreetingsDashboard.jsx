@@ -10,7 +10,7 @@ import { deleteMarriageDetails, deleteTempleDetails, deleteFestivalDetails, dele
 import ConfirmationPopup from '../components/ConfirmationPopup.jsx';
 import { BsGraphUpArrow } from 'react-icons/bs';
 
-const options = {
+const options = {	
 	day: '2-digit',
 	month: '2-digit',
 	year: 'numeric',
