@@ -14,7 +14,7 @@ import EventModal from '../components/EditModals/EventModal.jsx';
 import BirthdayModal from '../components/EditModals/BirthdayModal.jsx';
 import MarriageModal from '../components/EditModals/MarriageModal.jsx';
 
-const options = {
+const options = {	
 	day: '2-digit',
 	month: '2-digit',
 	year: 'numeric',
@@ -107,6 +107,7 @@ const GreetingDashboard = () => {
 				const scheduleData = response.data.schedules;
 
 				setGreetings(response.data.schedules);
+				console.log(response.data.schedules)
 				setTotalRows(response.data.totalSchedules);
 				const extractedData = [];
 				const scheduleTypes = ['occasion', 'marriage', 'birthday', 'event', 'festival'];
@@ -257,17 +258,13 @@ const GreetingDashboard = () => {
 					theme: "colored"
 				})
 			} else {
-				console.error("Error updating schedule:", response.data);
-				toast.error('Failed to schedule', {
-					position: 'top-center',
-					theme: "colored"
-				})
+				throw new Error(response.data.error);
 			}
 
 			handlePopupToggle();
 		} catch (error) {
 			console.error("Error in handleScheduleSubmit:", error);
-			toast.error('Error while scheduling', {
+			toast.error(error.response.data.error || 'Error while scheduling', {
 				position: 'top-center',
 				theme: "colored"
 			})
@@ -286,10 +283,10 @@ const GreetingDashboard = () => {
 				}
 			);
 			if (res.status === 200) {
-				// toast.success("Schedule and its template details are deleted.", {
-				// 	position: 'top-center',
-				// 	theme: "colored"
-				// });
+				toast.success("Schedule and its template details are deleted.", {
+					position: 'top-center',
+					theme: "colored"
+				});
 				switch (type) {
 					case "temple":
 						deleteTempleDetails(templateId);
@@ -320,6 +317,7 @@ const GreetingDashboard = () => {
 								"theme": "colored"
 							}
 						);
+						setConfirmPopup(false);
 				}
 				fetchGreetings();
 			}
@@ -485,7 +483,7 @@ const GreetingDashboard = () => {
 
 									return (
 										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
-											<td className="py-4 pl-4 text-center">{greetingTitle} Greetings</td>
+											<td className="py-4 pl-4 text-center">{greetingTitle === "Festival"? "Occasion": greetingTitle} Greetings</td>
 											<td className="py-4 text-center">{row[key].csvData.length}</td>
 											<td className="py-4 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
 											<td className="py-4 text-center">{row.schedule}</td>
@@ -550,12 +548,15 @@ const GreetingDashboard = () => {
 				<ConfirmationPopup
 					isOpen={confirmPopup}
 					onClose={() => setConfirmPopup(false)}
-					onConfirm={() =>
+					onConfirm={() =>{
 						deleteScheduleAndCampaign(
 							selectedRow.greetingId,
 							selectedRow.campaignId,
 							selectedRow.type
-						)}
+						)
+						return false;
+					}}
+					
 				/>
 				<TablePagination
 					component="div"

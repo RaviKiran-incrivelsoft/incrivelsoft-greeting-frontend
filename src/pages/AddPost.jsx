@@ -100,7 +100,7 @@ const AddPost = () => {
 			})
 		} catch (error) {
 			console.error("Error in Creating Template:", error);
-			toast.error('Failed to create campaign', {
+			toast.error(error.response.data.error, {
 				position: 'top-center',
 				theme: "colored"
 			})
@@ -191,7 +191,7 @@ const AddPost = () => {
 			{/* Paragraph Input */}
 			<div className="mb-4">
 				<textarea
-					placeholder="Enter paragraph"
+					placeholder="Enter your text"
 					value={postDescription}
 					onChange={(e) => setPostDescription(e.target.value)}
 					className="w-full px-3 py-2 text-gray-700 outline-none placeholder-gray-400 bg-[#f5f5f5] resize-none"

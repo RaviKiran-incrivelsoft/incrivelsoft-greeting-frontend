@@ -62,7 +62,19 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 				const values = row.split(",");
 				const obj = {};
 				headers.forEach((header, index) => {
-					obj[header.trim()] = values[index]?.trim();
+					let value = values[index]?.trim();
+
+					// Clean up extra quotes from the field
+					if (value.startsWith('"') && value.endsWith('"')) {
+						value = value.slice(1, -1); // Remove wrapping quotes
+					}
+
+					// Handle the contact field specifically
+					if (header.trim().toLowerCase() === "contact") {
+						value = value.replace(/"/g, ""); // Remove extra embedded quotes
+					}
+
+					obj[header.trim()] = value;
 				});
 				return obj;
 			});
@@ -90,7 +102,8 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 	};
 
 	const downloadSampleCSV = () => {
-		const sampleCSV = `husband_name,wife_name,email,contact,marriagedate\nMohan,Rashmika,mohan@example.com,1234567890,dd-mm-yyyy`;
+		const sampleCSV = `"husband_name","wife_name","email","contact","marriagedate"\n` +
+						  `"mufasa","babu","mahesh@example.com","=""+911234567890""","dd-mm-yyyy"`;
 		const blob = new Blob([sampleCSV], { type: "text/csv" });
 		const link = document.createElement("a");
 		link.href = URL.createObjectURL(blob);

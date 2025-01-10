@@ -167,7 +167,10 @@ const TemplateDashboard = () => {
 			<ConfirmationPopup
 				isOpen={confirmPopup}
 				onClose={() => setConfirmPopup(false)}
-				onConfirm={removeTemplate}
+				onConfirm={() => {
+					removeTemplate();
+					return false
+				}}
 			/>
 
 			<div className="columns-3 gap-6">
