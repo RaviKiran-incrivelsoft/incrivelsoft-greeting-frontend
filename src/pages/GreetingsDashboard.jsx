@@ -192,17 +192,13 @@ const GreetingDashboard = () => {
 					theme: "colored"
 				})
 			} else {
-				console.error("Error updating schedule:", response.data);
-				toast.error('Failed to schedule', {
-					position: 'top-center',
-					theme: "colored"
-				})
+				throw new Error(response.data.error);
 			}
 
 			handlePopupToggle();
 		} catch (error) {
 			console.error("Error in handleScheduleSubmit:", error);
-			toast.error('Error while scheduling', {
+			toast.error(error.response.data.error || 'Error while scheduling', {
 				position: 'top-center',
 				theme: "colored"
 			})
@@ -421,7 +417,7 @@ const GreetingDashboard = () => {
 
 									return (
 										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
-											<td className="py-4 pl-4 text-center">{greetingTitle} Greetings</td>
+											<td className="py-4 pl-4 text-center">{greetingTitle === "Festival"? "Occasion": greetingTitle} Greetings</td>
 											<td className="py-4 text-center">{row[key].csvData.length}</td>
 											<td className="py-4 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
 											<td className="py-4 text-center">{row.schedule}</td>
