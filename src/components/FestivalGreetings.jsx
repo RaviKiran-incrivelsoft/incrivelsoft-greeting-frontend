@@ -108,13 +108,17 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 	};
 
 	const downloadSampleCSV = () => {
-		const sampleCSV = `first_name,last_name,email,contact,birthdate\nmufasa,babu,mahesh@example.com,"1234567890",dd-mm-yyyy`;
-		const blob = new Blob([sampleCSV], { type: "text/csv" });
+		const sampleCSV = `"first_name","last_name","email","contact","birthdate"\n` +
+						  `"mufasa","babu","mahesh@example.com","=""+911234567890""","dd-mm-yyyy"`;
+	
+		const blob = new Blob([sampleCSV], { type: "text/csv;charset=utf-8;" });
 		const link = document.createElement("a");
 		link.href = URL.createObjectURL(blob);
 		link.download = "sample.csv";
 		link.click();
 	};
+	
+	
 
 	const handlePostSelect = useCallback(
 		(id) => {
