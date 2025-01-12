@@ -31,18 +31,18 @@ const ContactPage = () => {
 
 	return (
 		<section
-			className="py-16 px-32 bg-cover bg-center h-[145vh]"
+			className="py-16 lg:px-32 px-10 bg-cover bg-center lg:h-[145vh]"
 			style={{ backgroundImage: "url('/images/contactbg.avif')" }}
 		>
 			<div className="max-w-7xl mx-auto">
 				<div className="text-center mb-12">
-					<h2 className="text-5xl font-bold">Contact Us</h2>
-					<p className="text-lg text-white mt-4 px-48">
+					<h2 className="lg:text-5xl text-3xl font-bold">Contact Us</h2>
+					<p className="lg:text-lg text-gray-700 mt-4 lg:px-48">
 						We'd love to hear from you! Whether you have a question about services, donations, or anything else, our team is ready to answer all your queries.
 					</p>
 				</div>
 
-				<div className="flex flex-row justify-between gap-10">
+				<div className="flex lg:flex-row flex-col justify-between gap-10">
 					<div className="flex flex-col space-y-6 text-white md:w-1/2">
 						<div className="flex items-start space-x-4">
 							<FaMapMarkerAlt className="text-2xl" />
@@ -71,9 +71,9 @@ const ContactPage = () => {
 					</div>
 
 					<div className="bg-white p-8 shadow-lg rounded-lg md:w-1/2">
-						<h2 className="text-3xl font-semibold text-gray-800 mb-6">Know us more</h2>
-						<div className="mb-6 flex items-end gap-4">
-							<label className="block text-gray-700 font-medium mb-2">Preferred Contact Method:</label>
+						<h2 className="lg:text-3xl text-2xl font-semibold text-gray-800 mb-6">Know us more</h2>
+						<div className="mb-6 flex lg:flex-row flex-col lg:items-end gap-4">
+							<label className="block text-gray-700 font-medium lg:mb-2">Preferred Contact Method:</label>
 							<div className="flex gap-4">
 								<button
 									className={`py-1 px-3 rounded-md border transition-all duration-300 ${contactMethod === "email"
