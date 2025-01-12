@@ -2,9 +2,8 @@ import React from 'react'
 
 const Services = () => {
 	return (
-		<div className="mx-20 py-20 flex-1 flex flex-row items-end justify-start gap-[52px] max-w-full z-[2] text-left text-13xl text-black font-yeseva-one mq1225:flex-wrap" >
-			<div className="flex-[0.7685] rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid  border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border flex flex-col items-start justify-start pt-11 px-[49px] pb-[70px] gap-[34px] min-w-[324px] max-w-full mq450:flex-1">
-				<div className="w-[432px] h-[338px] relative rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border hidden max-w-full" />
+		<div className="lg:mx-20 mx-10 py-20 flex-1 flex lg:flex-row flex-col items-end justify-start gap-[52px] max-w-full z-[2] text-left text-13xl text-black font-yeseva-one mq1225:flex-wrap" >
+			<div className="flex-1 rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid  border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border flex flex-col items-start justify-start pt-11 lg:px-10 px-6 pb-[70px] gap-[34px] max-w-full mq450:flex-1">
 				<img
 					className="w-[50px] h-[50px] relative overflow-hidden shrink-0 z-[1]"
 					loading="lazy"
@@ -20,9 +19,8 @@ const Services = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flex-1 flex flex-col items-start justify-start pt-0 px-0 pb-[50px] box-border min-w-[324px] min-h-[388px] max-w-full">
-				<div className="self-stretch rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid  border-r-[1px]  border-b-[3px]  border-l-[1px] box-border flex flex-col items-start justify-start pt-11 px-[49px] pb-[70px] gap-[34px] max-w-full">
-					<div className="w-[432px] h-[338px] relative rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid  border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border hidden max-w-full" />
+			<div className="flex-1 flex flex-col items-start justify-start pt-0 px-0 lg:pb-[50px] box-border lg:min-h-[388px] max-w-full">
+				<div className="self-stretch rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid  border-r-[1px]  border-b-[3px]  border-l-[1px] box-border flex flex-col items-start justify-start pt-11 lg:px-10 px-6 pb-[70px] gap-[34px] max-w-full">
 					<img
 						className="w-[50px] h-[50px] relative overflow-hidden shrink-0 z-[1]"
 						loading="lazy"
@@ -40,8 +38,7 @@ const Services = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flex-[0.7685] rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border flex flex-col items-start justify-start pt-11 px-[49px] pb-[70px] gap-[34px] min-w-[324px] max-w-full mq450:flex-1">
-				<div className="w-[432px] h-[338px] relative rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid  border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border hidden max-w-full" />
+			<div className="flex-1 rounded-tl-3xl rounded-tr-none rounded-br-3xl rounded-bl-none bg-white border-black border-t-[1px] border-solid border-r-[1px]  border-b-[3px]  border-l-[1px]  box-border flex flex-col items-start justify-start pt-11 lg:px-10 px-6 pb-[70px] gap-[34px] max-w-full mq450:flex-1">
 				<img
 					className="w-[50px] h-[50px] relative overflow-hidden shrink-0 z-[1]"
 					loading="lazy"

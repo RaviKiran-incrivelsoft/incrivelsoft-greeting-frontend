@@ -5,7 +5,7 @@ const Footer = () => {
 	const navigate = useNavigate();
 
 	return (
-		<footer className="w-full bg-black py-10 px-20">
+		<footer className="w-full bg-black py-10 lg:px-20 px-10">
 			<div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
 				{/* Left Section */}
 				<div className="flex flex-col">

@@ -13,14 +13,15 @@ const Join = ({ onRegisterClick }) => {
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		autoplay: true,
-		autoplaySpeed: 4000,
+		pauseOnHover: false,
+		autoplaySpeed: 3000,
 	};
 
 	return (
-		<section className="bg-black text-white px-32 py-14 flex items-center justify-between">
+		<section className="bg-black text-white lg:px-32 px-10 py-14 flex lg:flex-row flex-col items-center justify-between">
 			{/* Left content */}
-			<div className="w-1/2">
-				<h2 className="text-4xl font-bold mb-4">Join Us</h2>
+			<div className="lg:w-1/2">
+				<h2 className="lg:text-4xl text-2xl font-bold mb-4">Join Us</h2>
 				<p className="text-lg mb-6">
 					Be a part of our spiritual family and let us celebrate your special moments together. Sign up today!
 				</p>
@@ -36,7 +37,7 @@ const Join = ({ onRegisterClick }) => {
 			</div>
 
 			{/* Right carousel */}
-			<div className="w-1/3 ml-10">
+			<div className="lg:w-1/3 w-3/4 lg:ml-10 lg:mt-0 mt-10">
 				<Slider {...settings}>
 					<div>
 						<img src="/images/join.png" alt="Image1" className="w-[300px] h-[300px] object-cover" />

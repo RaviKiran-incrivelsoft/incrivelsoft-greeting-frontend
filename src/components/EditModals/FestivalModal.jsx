@@ -71,7 +71,7 @@ const FestivalModal = ({ data, onClose }) => {
 			const backendUrl = process.env.REACT_APP_BACKEND_URL;
 			const token = localStorage.getItem("token");
 
-			const response = await axios.put(
+			await axios.put(
 				`${backendUrl}/festivals/${data._id}`,
 				changedData,
 				{
