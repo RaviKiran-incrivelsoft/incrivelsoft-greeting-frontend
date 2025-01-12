@@ -52,13 +52,13 @@ const Dropdown = ({ fetchData }) => {
 			<button
 				onMouseLeave={() => { setIsOpen(false); sessionStorage.removeItem("greetingsPopup"); }}
 				type="button"
-				className="flex items-center mr-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
+				className="flex items-center mr-2 bg-blue-600 text-white lg:px-4 p-2 rounded-lg shadow-md hover:bg-blue-700"
 				aria-haspopup="menu"
 				aria-expanded={isOpen ? "true" : "false"}
 				aria-label="Dropdown"
 			>
 				<FaPlus className="mr-2" />
-				Add Greetings
+				Add<span className='lg:block hidden ml-1'>Greetings</span>				
 				<svg
 					className={`ml-2 transform transition-transform duration-500 ${isOpen ? "rotate-180" : ""}`}
 					xmlns="http://www.w3.org/2000/svg"

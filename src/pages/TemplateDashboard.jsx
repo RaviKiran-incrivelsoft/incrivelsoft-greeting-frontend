@@ -6,6 +6,7 @@ import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ConfirmationPopup from "../components/ConfirmationPopup";
 import { toast } from "react-toastify";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const globalPostImages = {
 	occasion: "https://res.cloudinary.com/dnl1wajhw/image/upload/v1735634498/Screenshot_2024-12-31_140252_yo7icy.png",
@@ -101,24 +102,24 @@ const TemplateDashboard = () => {
 
 
 	return (
-		<div className="py-10 px-32 bg-gray-100 min-h-screen flex flex-col items-center">
+		<div className="py-10 lg:px-32 px-10 bg-gray-100 min-h-screen flex flex-col items-center">
 			<h2 className="text-2xl font-semibold mb-4 text-center">Our Templates</h2>
-			<p className="text-gray-600 mb-10 w-2/3 text-center">
+			<p className="text-gray-600 mb-10 lg:w-2/3 lg:text-base text-sm text-center">
 				Browse through a selection of beautifully designed greeting templates, or create your own to send personalized messages for every occasion.
 			</p>
 			<div className="flex items-center mb-6 w-full">
 				<button
 					onClick={() => navigate(-1)}
-					className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+					className="flex items-center p-1 text-xl border-2 rounded-full transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
 				>
-					Back
+					<IoMdArrowRoundBack />
 				</button>
 				<button
 					onClick={() => navigate('/addpost')}
 					className="flex items-center ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
 				>
-					<MdOutlineDashboardCustomize className="mr-2" />
-					Create Template
+					<MdOutlineDashboardCustomize className="mr-2 text-lg" />
+					Create <span className="lg:block hidden">Template</span>
 				</button>
 				<div className="relative group ml-auto">
 					<button
@@ -173,7 +174,7 @@ const TemplateDashboard = () => {
 				}}
 			/>
 
-			<div className="columns-3 gap-6">
+			<div className="lg:columns-3 columns-1 gap-6">
 				{isLoading ? (
 					<div className="relative py-24">
 						<div className="absolute inset-0 flex items-center justify-center">

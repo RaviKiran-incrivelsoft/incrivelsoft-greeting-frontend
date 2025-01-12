@@ -132,11 +132,11 @@ const TempleModal = ({ data, onClose }) => {
 
 	return (
 		<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-			<div className="bg-white rounded-lg w-2/3 p-6">
+			<div className="bg-white rounded-lg lg:w-2/3 w-5/6 p-6">
 				<h2 className="text-2xl font-bold mb-4">Edit Temple Data</h2>
 				<div className="space-y-6">
 					{/* Editable fields */}
-					<div className="grid grid-cols-3 gap-4">
+					<div className="grid lg:grid-cols-3 grid-cols-2 gap-4">
 						{Object.keys(formData)
 							.filter(
 								(key) =>
@@ -160,13 +160,13 @@ const TempleModal = ({ data, onClose }) => {
 							))}
 					</div>
 					{/* QR Code Images */}
-					<div className="grid grid-cols-3 gap-6">
+					<div className="grid lg:grid-cols-3 grid-cols-2 gap-6">
 						{["paypalQrCodeURL", "zelleQrCodeURL"].map((field) => (
 							<div key={field}>
 								<label className="block font-medium capitalize">
 									{field === "paypalQrCodeURL" ? "PayPal QR Code" : "Zelle QR Code"}
 								</label>
-								<div className="relative w-40 h-32">
+								<div className="relative w-30 h-auto">
 									<img
 										src={imagePreview[field] || changedData[field]}
 										alt={field}
@@ -209,7 +209,7 @@ const TempleModal = ({ data, onClose }) => {
 				</div>
 				{isModalOpen && (
 					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-						<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
+						<div className="bg-white rounded-lg lg:w-2/5 w-4/5 lg:text-base text-sm p-6 shadow-lg">
 							<h2 className="text-lg font-semibold mb-4">CSV File Requirements</h2>
 							<p className="mb-6">
 								Please make sure the CSV file contains the following fields: <br />
@@ -221,20 +221,20 @@ const TempleModal = ({ data, onClose }) => {
 								<button
 									type="button"
 									onClick={downloadSampleCSV}
-									className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+									className="lg:px-4 p-2 bg-green-600 text-white rounded hover:bg-green-700"
 								>
 									Sample CSV
 								</button>
 								<button
 									type="button"
-									className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+									className="lg:px-4 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
 									onClick={() => document.getElementById('csv-upload').click()}
 								>
 									Upload
 								</button>
 								<button
 									onClick={toggleModal}
-									className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+									className="lg:px-4 p-2 bg-gray-300 text-black rounded hover:bg-gray-400"
 								>
 									Close
 								</button>
@@ -263,7 +263,7 @@ const TempleModal = ({ data, onClose }) => {
 								<span className="dot bg-white"></span>
 							</div>
 						) : (
-							"Create"
+							"Update"
 						)}
 					</button>
 				</div>

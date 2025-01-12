@@ -122,7 +122,7 @@ const DashboardAnalytics = () => {
 	};
 
 	return (
-		<div className="py-6 px-32 bg-gray-50 min-h-screen">
+		<div className="py-6 lg:px-32 px-10 bg-gray-50 min-h-screen">
 			<h1 className="text-3xl text-center font-bold text-gray-800 mb-6">Dashboard Analytics</h1>
 <div className="flex items-center mb-6 w-full">
 				<button
@@ -172,11 +172,11 @@ const DashboardAnalytics = () => {
 			{/* Greetings Analysis with Pie Charts */}
 			<div className="mb-8">
 				<h2 className="text-2xl font-semibold text-gray-700 mb-4">Greetings Analysis</h2>
-				<div className="grid grid-cols-2 gap-6">
+				<div className="grid lg:grid-cols-2 gap-6">
 					{Object.entries(analytics.greetings).map(([category, data]) => (
 						<div
 							key={category}
-							className="p-8 bg-white rounded-lg shadow-md flex items-center gap-4"
+							className="p-8 bg-white rounded-lg shadow-md flex lg:flex-row flex-col items-center gap-4"
 						>
 							{/* Left side: Custom Labels */}
 							<div className="flex flex-col justify-between w-1/2">

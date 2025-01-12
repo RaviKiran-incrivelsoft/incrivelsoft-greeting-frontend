@@ -13,8 +13,9 @@ import TempleModal from '../components/EditModals/TempleModal.jsx';
 import EventModal from '../components/EditModals/EventModal.jsx';
 import BirthdayModal from '../components/EditModals/BirthdayModal.jsx';
 import MarriageModal from '../components/EditModals/MarriageModal.jsx';
+import FestivalModal from '../components/EditModals/FestivalModal.jsx';
 
-const options = {	
+const options = {
 	day: '2-digit',
 	month: '2-digit',
 	year: 'numeric',
@@ -107,7 +108,6 @@ const GreetingDashboard = () => {
 				const scheduleData = response.data.schedules;
 
 				setGreetings(response.data.schedules);
-				console.log(response.data.schedules)
 				setTotalRows(response.data.totalSchedules);
 				const extractedData = [];
 				const scheduleTypes = ['occasion', 'marriage', 'birthday', 'event', 'festival'];
@@ -154,47 +154,41 @@ const GreetingDashboard = () => {
 
 	const renderModal = () => {
 		if (!isModalOpen || !selectedRow || !selectedCategory) return null;
-		console.log(selectedRow);
 
 		switch (selectedCategory) {
 			case 'temple':
 				return (
 					<TempleModal
 						data={selectedRow.temple}
-						onClose={() => {setIsModalOpen(false);fetchGreetings()}}
+						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
 					/>
 				);
 			case 'event':
 				return (
 					<EventModal
 						data={selectedRow.event}
-						onClose={() => {setIsModalOpen(false);fetchGreetings()}}
+						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
 					/>
 				);
 			case 'marriage':
 				return (
 					<MarriageModal
 						data={selectedRow.marriage}
-						onClose={() => {setIsModalOpen(false);fetchGreetings()}}
+						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
 					/>
 				);
-			// case 'festival':
-			// 	return (
-			// 		<FestivalModal
-			// 			data={selectedRow}
-			// 			onClose={() => setIsModalOpen(false)}
-			// 			onSave={(updatedRow) => {
-			// 				setGreetings((prev) =>
-			// 					prev.map((row) => (row._id === updatedRow._id ? updatedRow : row))
-			// 				);
-			// 			}}
-			// 		/>
-			// 	);
+			case 'festival':
+				return (
+					<FestivalModal
+						data={selectedRow.festival}
+						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
+					/>
+				);
 			case 'birthday':
 				return (
 					<BirthdayModal
 						data={selectedRow.birthday}
-						onClose={() => {setIsModalOpen(false);fetchGreetings()}}
+						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
 					/>
 				);
 			default:
@@ -283,10 +277,6 @@ const GreetingDashboard = () => {
 				}
 			);
 			if (res.status === 200) {
-				toast.success("Schedule and its template details are deleted.", {
-					position: 'top-center',
-					theme: "colored"
-				});
 				switch (type) {
 					case "temple":
 						deleteTempleDetails(templateId);
@@ -340,7 +330,7 @@ const GreetingDashboard = () => {
 	};
 
 	return (
-		<div className="py-10 px-32 bg-gray-100 min-h-screen">
+		<div className="py-10 lg:px-32 px-10 bg-gray-100 min-h-screen">
 			<div className="mb-8 text-center">
 				<h2 className="text-3xl font-semibold text-gray-800">Greeting Dashboard</h2>
 			</div>
@@ -350,25 +340,26 @@ const GreetingDashboard = () => {
 					<button
 						disabled={!posts.length}
 						onClick={() => navigate('/templates')}
-						className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+						className="flex items-center gap-1 py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 					>
-						<FaRegEnvelope className="mr-2" />
-						Templates
+						<FaRegEnvelope className="lg:mr-2" />
+						<span className='lg:block hidden'>Templates</span>
 					</button>
 				</div>
 				<div className="flex gap-4">
 					<button
-						className='flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
 						onClick={() => navigate('/analytics')}
 					>
-						<BsGraphUpArrow className="mr-2" /> Analytics
+						<BsGraphUpArrow className="lg:mr-2" />
+						<span className='lg:block hidden'>Analytics</span>
 					</button>
 					<div className="relative group ml-auto">
 						<button
-							className="flex items-center gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+							className="flex items-center gap-1 py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 						>
-							<FaFilter className="mr-2" />
-							Filter
+							<FaFilter className="lg:mr-2" />
+							<span className='lg:block hidden'>Filter</span>
 						</button>
 						<div className="absolute right-0 hidden group-hover:flex bg-white border border-gray-200 rounded-md shadow-lg z-10 flex-col">
 							<ul className="py-1">
@@ -429,14 +420,14 @@ const GreetingDashboard = () => {
 				</div>
 			)}
 			<div className="overflow-x-auto shadow-md rounded-lg">
-				<table className="w-full bg-white">
+				<table className="w-full bg-white lg:text-base text-sm">
 					<thead>
 						<tr className="border-b bg-gray-200 text-gray-600 uppercase text-sm">
 							<th className="py-4 px-6 text-center">Greeting</th>
-							<th className="py-4 px-6 text-center">Recipient Count</th>
+							<th className="py-4 px-6 lg:table-cell hidden text-center">Recipient Count</th>
 							<th className="py-4 px-6 text-center">Created At</th>
-							<th className="py-4 px-6 text-center">Status</th>
-							<th className="py-4 px-6 text-center">Template</th>
+							<th className="py-4 px-6 lg:table-cell hidden text-center">Status</th>
+							<th className="py-4 px-6 lg:table-cell hidden text-center">Template</th>
 							<th className="py-4 px-6 text-center">Actions</th>
 							<th className="py-4 px-6 text-center">Edit/ Delete</th>
 						</tr>
@@ -444,7 +435,7 @@ const GreetingDashboard = () => {
 					<tbody className="text-gray-700">
 						{isLoading ? (
 							<tr>
-								<td colSpan="7" className="relative py-24">
+								<td colSpan={window.innerWidth >= 1024 ? 7 : 4} className="relative py-24">
 									<div className="absolute inset-0 flex items-center justify-center">
 										<div className="rotating-circles">
 											<div></div>
@@ -483,11 +474,11 @@ const GreetingDashboard = () => {
 
 									return (
 										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
-											<td className="py-4 pl-4 text-center">{greetingTitle === "Festival"? "Occasion": greetingTitle} Greetings</td>
-											<td className="py-4 text-center">{row[key].csvData.length}</td>
+											<td className="py-4 pl-4 text-center">{greetingTitle === "Festival" ? "Occasion" : greetingTitle} Greetings</td>
+											<td className="py-4 lg:table-cell hidden text-center">{row[key].csvData.length}</td>
 											<td className="py-4 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
-											<td className="py-4 text-center">{row.schedule}</td>
-											<td className="py-4 text-center">
+											<td className="py-4 lg:table-cell hidden text-center">{row.schedule}</td>
+											<td className="py-4 lg:table-cell hidden text-center">
 												<button
 													onClick={() => handleTemplate(row._id)}
 													className="text-blue-600"
@@ -548,7 +539,7 @@ const GreetingDashboard = () => {
 				<ConfirmationPopup
 					isOpen={confirmPopup}
 					onClose={() => setConfirmPopup(false)}
-					onConfirm={() =>{
+					onConfirm={() => {
 						deleteScheduleAndCampaign(
 							selectedRow.greetingId,
 							selectedRow.campaignId,
@@ -556,7 +547,7 @@ const GreetingDashboard = () => {
 						)
 						return false;
 					}}
-					
+
 				/>
 				<TablePagination
 					component="div"
@@ -568,7 +559,7 @@ const GreetingDashboard = () => {
 				/>
 				{popupVisible && (
 					<div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-						<div className="bg-white p-8 rounded-lg shadow-xl w-96">
+						<div className="bg-white p-8 rounded-lg shadow-xl lg:w-96 w-4/5">
 							<h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Schedule Action</h2>
 
 							<div className="mb-4">

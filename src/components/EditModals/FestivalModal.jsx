@@ -2,27 +2,20 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const BirthdayModal = ({ data, onClose }) => {
+const FestivalModal = ({ data, onClose }) => {
 	const [loading, setLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState({
-		title: data.title,
+		festivalName: data.festivalName,
+		festivalDate: data.festivalDate,
 		from: data.from,
+		address: data.address,
 		csvData: data.csvData,
 	});
 	const [changedData, setChangedData] = useState({});
 
 	const toggleModal = () => {
 		setIsModalOpen(!isModalOpen);
-	};
-
-	const downloadSampleCSV = () => {
-		const sampleCSV = `first_name,last_name,email,contact,birthdate\nmufasa,babu,mahesh@example.com,1234567890,dd-mm-yyy`;
-		const blob = new Blob([sampleCSV], { type: 'text/csv' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = 'sample.csv';
-		link.click();
 	};
 
 	const handleFileChange = (e) => {
@@ -34,10 +27,10 @@ const BirthdayModal = ({ data, onClose }) => {
 		reader.onload = () => {
 			const text = reader.result;
 			const rows = text.trim().split("\n");
-			const headers = rows[0].split(",");
+			const headers = rows[0].replace(/"/g, "").split(",");
 
 			const data = rows.slice(1).map((row) => {
-				const values = row.split(",");
+				const values = row.replace(/"/g, "").split(",");
 				const obj = {};
 				headers.forEach((header, index) => {
 					obj[header.trim()] = values[index]?.trim();
@@ -78,25 +71,24 @@ const BirthdayModal = ({ data, onClose }) => {
 			const backendUrl = process.env.REACT_APP_BACKEND_URL;
 			const token = localStorage.getItem("token");
 
-			await axios.put(
-				`${backendUrl}/birthdays/${data._id}`,
+			const response = await axios.put(
+				`${backendUrl}/festivals/${data._id}`,
 				changedData,
 				{
 					headers: {
-						'Content-Type': 'multipart/form-data',
+						'Content-Type': 'application/json',
 						Authorization: `Bearer ${token}`,
 					},
 				}
 			);
-
 			onClose();
-			toast.success("Birthday Data Updated..!", {
+			toast.success("Festival Data Updated..!", {
 				position: "top-center",
 				theme: "colored",
 			});
 		} catch (error) {
-			console.error("Error updating birthday data:", error);
-			const errorMessage = error.response?.data?.error || "Failed to Update birthday data";
+			console.error("Error updating festival data:", error);
+			const errorMessage = error.response?.data?.error || "Failed to Update festival data";
 			toast.error(errorMessage, {
 				position: "top-center",
 				theme: "colored",
@@ -106,20 +98,30 @@ const BirthdayModal = ({ data, onClose }) => {
 		}
 	};
 
+	const downloadSampleCSV = () => {
+		const sampleCSV = `"first_name","last_name","email","contact","birthdate"\n` +
+			`"mufasa","babu","mahesh@example.com","=""+911234567890""","dd-mm-yyyy"`;
+		const blob = new Blob([sampleCSV], { type: "text/csv;charset=utf-8;" });
+		const link = document.createElement("a");
+		link.href = URL.createObjectURL(blob);
+		link.download = "sample.csv";
+		link.click();
+	};
+
 	return (
 		<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-			<div className="bg-white rounded-lg lg:w-1/2 w-4/5 p-6">
-				<h2 className="text-2xl font-bold mb-4">Edit Birthday Data</h2>
+			<div className="bg-white rounded-lg lg:w-1/2 w-5/6 p-6 overflow-y-auto max-h-[90vh]">
+				<h2 className="text-2xl font-bold mb-4">Edit Occation Data</h2>
 				<div className="space-y-6">
 					{/* Editable fields */}
 					<div className="grid grid-cols-2 gap-4">
 						{Object.keys(formData)
-							.filter((key) => key !== "csvData")
+							.filter((key) => !["csvData"].includes(key))
 							.map((key) => (
 								<div key={key}>
 									<label className="block font-medium capitalize">{key}</label>
 									<input
-										type="text"
+										type={key === "festivalDate" ? "date" : "text"}
 										name={key}
 										value={formData[key]}
 										onChange={handleInputChange}
@@ -218,4 +220,4 @@ const BirthdayModal = ({ data, onClose }) => {
 	);
 };
 
-export default BirthdayModal;
+export default FestivalModal;

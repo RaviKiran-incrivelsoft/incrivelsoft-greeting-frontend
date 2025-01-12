@@ -109,7 +109,7 @@ const EventModal = ({ data, onClose }) => {
 
 	return (
 		<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-			<div className="bg-white rounded-lg w-1/2 p-6 overflow-y-auto max-h-[90vh]">
+			<div className="bg-white rounded-lg lg:w-1/2 w-4/5 p-6 overflow-y-auto max-h-[90vh]">
 				<h2 className="text-2xl font-bold mb-4">Edit Event Data</h2>
 				<div className="space-y-6">
 					{/* Editable fields */}
@@ -122,7 +122,7 @@ const EventModal = ({ data, onClose }) => {
 								<div key={key}>
 									<label className="block font-medium capitalize">{key}</label>
 									<input
-										type="text"
+										type={key === "eventDate" ? "date" : "text"}
 										name={key}
 										value={formData[key]}
 										onChange={handleInputChange}
@@ -153,7 +153,7 @@ const EventModal = ({ data, onClose }) => {
 				{/* CSV Modal */}
 				{isModalOpen && (
 					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-						<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
+						<div className="bg-white lg:text-base text-sm rounded-lg lg:w-2/5 w-4/5 p-6 shadow-lg">
 							<h2 className="text-lg font-semibold mb-4">CSV File Requirements</h2>
 							<p className="mb-6">
 								Please make sure the CSV file contains the following fields: <br />
@@ -165,20 +165,20 @@ const EventModal = ({ data, onClose }) => {
 								<button
 									type="button"
 									onClick={downloadSampleCSV}
-									className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+									className="lg:px-4 p-2 bg-green-600 text-white rounded hover:bg-green-700"
 								>
 									Sample CSV
 								</button>
 								<button
 									type="button"
-									className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+									className="lg:px-4 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
 									onClick={() => document.getElementById('csv-upload').click()}
 								>
 									Upload
 								</button>
 								<button
 									onClick={toggleModal}
-									className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+									className="lg:px-4 p-2 bg-gray-300 text-black rounded hover:bg-gray-400"
 								>
 									Close
 								</button>

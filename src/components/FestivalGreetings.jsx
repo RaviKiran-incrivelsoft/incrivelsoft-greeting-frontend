@@ -196,12 +196,12 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 			onClick={closeModal}
 		>
 			<div
-				className="bg-white p-6 rounded-lg w-1/2"
+				className="bg-white p-6 rounded-lg lg:w-1/2 w-4/5"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<h2 className="text-xl font-bold text-center mb-5">Occasion Greetings</h2>
 				<form onSubmit={handleSubmit}>
-					<div className="grid grid-cols-3 items-start justify-center gap-4">
+					<div className="grid lg:grid-cols-3 grid-cols-2 items-start justify-center gap-4 lg:text-base text-sm">
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Occasion Name</label>
 							<input
@@ -225,7 +225,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 							/>
 						</div>
 						<div className="form-group">
-							<label className="block text-sm font-semibold mb-2">Occasion Description</label>
+							<label className="block text-sm font-semibold mb-2">Description</label>
 							<input
 								type="text"
 								value={formData.festivalDescription}
@@ -257,16 +257,6 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								required
 							/>
 						</div>
-						<div>
-							<button
-								className="flex w-full mt-5 items-center text-center justify-around py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
-								type="button"
-								onClick={() => setIsTemplateSelected(true)}
-							>
-								<FaRegEnvelope /> Select Template
-							</button>
-							{/* {formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>} */}
-						</div>
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Recipient Type</label>
 							<select
@@ -276,7 +266,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 								required
 							>
 								<option value="" disabled>
-									Select Recipient Type
+									Select Type
 								</option>
 								<option value="single">Single</option>
 								<option value="multiple">Multiple</option>
@@ -284,9 +274,19 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 						</div>
 					</div>
 
+					<div>
+							<button
+								className="flex w-fit mt-5 items-center text-center justify-around py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
+								type="button"
+								onClick={() => setIsTemplateSelected(true)}
+							>
+								<FaRegEnvelope className="mr-2"/> Select Template
+							</button>
+							{/* {formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>} */}
+						</div>
 					{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 					{userType === "single" && (
-						<div className="grid grid-cols-3 gap-4 mt-4">
+						<div className="grid lg:grid-cols-3 grid-cols-2 gap-4 mt-4">
 							<div className="form-group">
 								<label className="block text-sm font-semibold mb-2">First Name</label>
 								<input
@@ -355,7 +355,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 
 					{isModalOpen && (
 						<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-							<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
+							<div className="bg-white rounded-lg lg:w-2/5 w-4/5 p-6 shadow-lg lg:text-base text-sm">
 								<h2 className="text-lg font-semibold mb-4">CSV File Requirements</h2>
 								<p className="mb-6">
 									Please ensure the CSV file contains the following fields: <br />
@@ -367,13 +367,13 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 									<button
 										type="button"
 										onClick={downloadSampleCSV}
-										className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+										className="lg:px-4 p-2 bg-green-600 text-white rounded hover:bg-green-700"
 									>
 										Sample CSV
 									</button>
 									<button
 										type="button"
-										className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+										className="lg:px-4 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
 										onClick={() => document.getElementById("csvFileInput").click()}
 									>
 										Upload
@@ -387,7 +387,7 @@ function FestivalGreetings({ fetchGreetings, closeModal }) {
 									/>
 									<button
 										onClick={() => setIsModalOpen(false)}
-										className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+										className="lg:px-4 p-2 bg-gray-300 text-black rounded hover:bg-gray-400"
 									>
 										Close
 									</button>

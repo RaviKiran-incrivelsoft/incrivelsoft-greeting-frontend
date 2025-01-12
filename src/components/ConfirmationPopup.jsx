@@ -6,7 +6,7 @@ const ConfirmationPopup = ({ isOpen, onClose, onConfirm }) => {
 
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-			<div className="bg-white rounded-lg shadow-lg p-6 w-96">
+			<div className="bg-white rounded-lg shadow-lg p-6 lg:w-96 w-4/5">
 				<h2 className="text-xl font-semibold text-gray-800 mb-4">Confirm Deletion</h2>
 				<p className="text-gray-600 mb-6">Are you sure you want to delete this greeting? This action cannot be undone.</p>
 				<div className="flex justify-end space-x-4">
