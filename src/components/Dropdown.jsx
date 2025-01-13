@@ -5,13 +5,12 @@ import { GiBigDiamondRing } from "react-icons/gi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { MdOutlineEventNote, MdOutlineTempleHindu } from "react-icons/md";
 // import { PiBuildingOffice } from "react-icons/pi";
+// import CompanyDetails from "./CompanyPopup";
 import BirthdayGreetings from "./BirthdayGreetings";
 import FestivalGreetings from "./FestivalGreetings";
-// import MarriageDetails from "./MarriageDetails";
 import EventComponent from "./EventComponent";
 import TempleGreetings from "./TempleGreetings";
 import AnniversaryGreetings from "./AnniversaryGreetings";
-// import CompanyDetails from "./CompanyPopup";
 
 const Dropdown = ({ fetchData }) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +36,6 @@ const Dropdown = ({ fetchData }) => {
 	const componentMap = {
 		birthday: <BirthdayGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		occasion: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		// anniversary: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		anniversary: <AnniversaryGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		event: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,

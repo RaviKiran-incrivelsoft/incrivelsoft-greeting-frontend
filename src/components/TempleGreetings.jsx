@@ -189,11 +189,9 @@ function TempleGreetings({ campaignId, closeModal }) {
 	return (
 		<div
 			className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
-			onClick={closeModal}
 		>
 			<div
 				className="bg-white p-6 rounded-lg lg:w-3/5 w-4/5"
-				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-xl font-bold text-center mb-5">Temple Information</div>
 				<div className="container mx-auto px-4">

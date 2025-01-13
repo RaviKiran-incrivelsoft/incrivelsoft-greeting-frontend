@@ -182,11 +182,9 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 	return (
 		<div
 			className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
-			onClick={closeModal}
 		>
 			<div
 				className="bg-white p-6 rounded-lg lg:w-1/2 w-4/5"
-				onClick={(e) => e.stopPropagation()}
 			>
 				<h2 className="text-xl font-bold text-center mb-5">Anniversary Greetings</h2>
 				<form onSubmit={handleSubmit}>
