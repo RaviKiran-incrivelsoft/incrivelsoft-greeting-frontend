@@ -18,7 +18,7 @@ const AddPost = () => {
 	const [postDescription, setPostDescription] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [type, setType] = useState();
-	const [showPopup, setShowPopup] = useState(!type);
+	const [showPopup, setShowPopup] = useState(false);
 
 	const postTypes = [
 		{
@@ -110,14 +110,14 @@ const AddPost = () => {
 	};
 
 	return (
-		<div className="mx-48 px-16 py-6 bg-[#f5f5f5] relative">
+		<div className="lg:mx-48 lg:px-16 px-10 py-10 bg-[#f5f5f5] relative">
 			{showPopup &&
 				<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
-						<h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+					<div className="bg-white p-8 rounded-lg shadow-lg lg:w-1/2 w-4/5">
+						<h2 className="lg:text-2xl text-lg font-bold text-center mb-6 text-gray-800">
 							Select Post Type
 						</h2>
-						<div className="grid grid-cols-3 gap-4">
+						<div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
 							{postTypes.map((post) => (
 								<button
 									key={post.id}
@@ -129,7 +129,7 @@ const AddPost = () => {
 									>
 										{post.icon}
 									</div>
-									<span className="font-semibold">{post.name}</span>
+									<span className="lg:font-semibold">{post.name}</span>
 								</button>
 							))}
 						</div>
@@ -139,7 +139,7 @@ const AddPost = () => {
 			{/* Title Input */}
 			<button
 				onClick={() => navigate(-1)}
-				className=" absolute left-[-3rem] top-4 flex items-center p-1 text-xl border-2 rounded-full transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+				className=" absolute lg:left-[-3rem] left-[1rem] top-4 flex items-center p-1 text-xl border-2 rounded-full transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
 			>
 				<IoMdArrowRoundBack />
 			</button>
@@ -158,7 +158,7 @@ const AddPost = () => {
 				{media ? (
 					<div className="relative">
 						{media.type === "image" ? (
-							<img src={URL.createObjectURL(media.file)} alt="Uploaded" className="w-auto h-72 rounded shadow" />
+							<img src={URL.createObjectURL(media.file)} alt="Uploaded" className="w-64 lg:w-auto h-auto lg:h-80 rounded shadow" />
 						) : (
 							<video controls src={URL.createObjectURL(media.file)} className="w-auto h-72 rounded shadow"></video>
 						)}
