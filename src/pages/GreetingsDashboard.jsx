@@ -160,35 +160,40 @@ const GreetingDashboard = () => {
 				return (
 					<TempleModal
 						data={selectedRow.temple}
-						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
+						onClose={() => { setIsModalOpen(false) }}
+						onFetch={fetchGreetings}
 					/>
 				);
 			case 'event':
 				return (
 					<EventModal
 						data={selectedRow.event}
-						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
+						onClose={() => { setIsModalOpen(false) }}
+						onFetch={fetchGreetings}
 					/>
 				);
 			case 'marriage':
 				return (
 					<MarriageModal
 						data={selectedRow.marriage}
-						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
+						onClose={() => { setIsModalOpen(false) }}
+						onFetch={fetchGreetings}
 					/>
 				);
 			case 'festival':
 				return (
 					<FestivalModal
 						data={selectedRow.festival}
-						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
+						onClose={() => { setIsModalOpen(false) }}
+						onFetch={fetchGreetings}
 					/>
 				);
 			case 'birthday':
 				return (
 					<BirthdayModal
 						data={selectedRow.birthday}
-						onClose={() => { setIsModalOpen(false); fetchGreetings() }}
+						onClose={() => { setIsModalOpen(false) }}
+						onFetch={fetchGreetings}
 					/>
 				);
 			default:

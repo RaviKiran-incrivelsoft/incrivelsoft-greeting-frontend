@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 
-const TempleModal = ({ data, onClose }) => {
+const TempleModal = ({ data, onClose, onFetch }) => {
 	const [loading, setLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState({
@@ -114,6 +114,7 @@ const TempleModal = ({ data, onClose }) => {
 			);
 
 			onClose();
+			onFetch();
 			toast.success("Temple Data Updated..!", {
 				position: "top-center",
 				theme: "colored",

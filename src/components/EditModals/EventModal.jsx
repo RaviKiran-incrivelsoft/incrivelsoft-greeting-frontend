@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const EventModal = ({ data, onClose }) => {
+const EventModal = ({ data, onClose, onFetch }) => {
 	const [loading, setLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState({
@@ -91,6 +91,7 @@ const EventModal = ({ data, onClose }) => {
 			);
 
 			onClose();
+			onFetch();
 			toast.success("Event Updated Successfully!", {
 				position: "top-center",
 				theme: "colored",

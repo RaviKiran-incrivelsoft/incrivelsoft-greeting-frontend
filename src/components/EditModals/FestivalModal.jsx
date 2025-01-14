@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const FestivalModal = ({ data, onClose }) => {
+const FestivalModal = ({ data, onClose, onFetch }) => {
 	const [loading, setLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState({
@@ -82,6 +82,7 @@ const FestivalModal = ({ data, onClose }) => {
 				}
 			);
 			onClose();
+			onFetch();
 			toast.success("Festival Data Updated..!", {
 				position: "top-center",
 				theme: "colored",

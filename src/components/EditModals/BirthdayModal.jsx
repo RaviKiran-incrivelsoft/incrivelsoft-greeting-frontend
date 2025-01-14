@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const BirthdayModal = ({ data, onClose }) => {
+const BirthdayModal = ({ data, onClose, onFetch }) => {
 	const [loading, setLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState({
@@ -90,6 +90,7 @@ const BirthdayModal = ({ data, onClose }) => {
 			);
 
 			onClose();
+			onFetch();
 			toast.success("Birthday Data Updated..!", {
 				position: "top-center",
 				theme: "colored",
