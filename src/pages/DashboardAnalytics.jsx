@@ -77,7 +77,6 @@ const DashboardAnalytics = () => {
 		labels: Object.keys(analytics.templatesCreated),
 		datasets: [
 			{
-				label: "Templates Created",
 				data: Object.values(analytics.templatesCreated),
 				backgroundColor: ["#FF573388", "#FFC30088", "#DAF7A688", "#C7003988", "#900C3F88", "#1F618D88"],
 				borderColor: ["#FF5733", "#FFC300", "#DAF7A6", "#C70039", "#900C3F", "#1F618D"],
@@ -85,7 +84,7 @@ const DashboardAnalytics = () => {
 			},
 		],
 	};
-	
+
 
 	return (
 		<div className="py-6 lg:px-32 px-10 bg-gray-50 min-h-screen">
@@ -102,7 +101,14 @@ const DashboardAnalytics = () => {
 			<div className="mb-8">
 				<h2 className="text-2xl font-semibold text-gray-700 mb-4">Greetings Created</h2>
 				<div className="bg-white p-4 rounded-lg shadow-md">
-					<Bar data={barChartData} options={{ responsive: true, maintainAspectRatio: false }} height={300} />
+					<Bar data={barChartData} options={{
+						responsive: true, maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								display: false, // Disable the legend if you don't want a dataset title
+							},
+						},
+					}} height={300} />
 				</div>
 			</div>
 
@@ -159,7 +165,7 @@ const DashboardAnalytics = () => {
 										<p className="text-lg font-medium text-gray-700 capitalize">{category}</p>
 									</div>
 									<p className="text-xl font-bold text-blue-500">{totalCount} Greetings</p>
-									<p className="text-sm text-gray-600">Success Rate: {totalCount > 0 ? ((successful / totalCount) * 100).toFixed(2) : 0 }%</p>
+									<p className="text-sm text-gray-600">Success Rate: {totalCount > 0 ? ((successful / totalCount) * 100).toFixed(2) : 0}%</p>
 
 									{/* Custom Success/Failed Labels */}
 									<div className="mt-4">
@@ -208,6 +214,11 @@ const DashboardAnalytics = () => {
 						options={{
 							responsive: true,
 							maintainAspectRatio: false,
+							plugins: {
+								legend: {
+									display: false, // Disable the legend if you don't want a dataset title
+								},
+							},
 							scales: {
 								x: {
 									title: {
