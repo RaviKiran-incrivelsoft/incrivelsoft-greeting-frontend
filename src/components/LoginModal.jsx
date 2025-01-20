@@ -53,46 +53,66 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
     }
   };
 
+  // Handle Google Login
   const handleGoogleLogin = () => {
-    const popup = window.open(
-      `${backendUrl}/users/google`,
-      "GoogleLogin",
-      "width=600,height=600"
-    );
-    const timer = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(timer);
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
-        const userName = params.get("userName");
-
-        if (token && userName) {
-          localStorage.setItem("token", token);
-          localStorage.setItem("userName", userName);
-          onClose();
-          toast.success("Google login successful!", {
-            position: "top-center",
-            theme: "colored",
-          });
-        } else {
-          toast.error("Google login failed. Please try again.", {
-            position: "top-center",
-            theme: "colored",
-          });
-        }
-      }
-    }, 500);
+    // Redirect the user to the backend OAuth URL
+    window.location.href = `${backendUrl}/users/google`;
   };
+  
 
+  // Handle Facebook Login Placeholder
   const handleFacebookLogin = () => {
-    console.log("Facebook login");
+    toast.info("Facebook login is not implemented yet", {
+      position: "top-center",
+      theme: "colored",
+    });
   };
 
+  // Handle outside click to close modal
   const handleOutsideClick = (e) => {
     if (e.target.id === "modal-container") {
       onClose();
     }
   };
+
+  useEffect(() => {
+    const extractDetails = () => {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+      const userName = params.get("userName");
+  
+      if (token && userName) {
+        console.log("OAuth response received:", { token, userName });
+  
+        try {
+          // Store token and username in localStorage
+          localStorage.setItem("token", token);
+          localStorage.setItem("userName", userName);
+  
+          onClose(); // Close modal
+          toast.success("Google login successful!", {
+            position: "top-center",
+            theme: "colored",
+          });
+  
+          // Clear the query parameters from the URL
+          const newUrl = window.location.origin + window.location.pathname;
+          window.history.replaceState({}, document.title, newUrl);
+        } catch (error) {
+          console.error("Failed to save login data to localStorage:", error);
+          toast.error("An error occurred while logging in.", {
+            position: "top-center",
+            theme: "colored",
+          });
+        }
+      }
+    };
+  
+    // Delay execution to ensure query parameters are available
+    setTimeout(extractDetails, 100);
+  }, [onClose]);
+  
+  
 
   return (
     <div
@@ -101,7 +121,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
       onClick={handleOutsideClick}
     >
       <div
-        className="bg-white p-[0.5rem] rounded-lg"
+        className="bg-white p-6 rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-center min-h-[36vh] bg-gray-100">
@@ -125,12 +145,12 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                     <input
                       id="email-address"
                       name="email"
-                      type="text"
+                      type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="relative block w-full px-3 py-2 border border-gray-400 rounded-md placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                      placeholder="Email address or phone number"
+                      placeholder="Email address"
                     />
                   </div>
                   <div>
@@ -148,9 +168,9 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
-                        className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-blue-600 dark:text-neutral-600 dark:focus:text-blue-500"
+                        className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400"
                       >
-                        {/* Eye Icon */}
+                        {isPasswordVisible ? "🙈" : "👁️"}
                       </button>
                     </div>
                   </div>
@@ -160,8 +180,11 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                      }`}
+                    className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                      loading
+                        ? "bg-blue-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                   >
                     {loading ? "Loading..." : "Sign in"}
                   </button>
