@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 const Process = () => {
 	const navigate = useNavigate();
 	return (
-		<section className="px-32 py-20 bg-gray-100 flex justify-between items-center">
+		<section className="lg:px-32 px-10 py-20 bg-gray-100 flex justify-between items-center">
 			{/* Left side image */}
-			<div className="flex-1">
+			<div className="lg:flex flex-1 hidden">
 				<img
 					src="/images/process.png"
 					alt="How it works"
@@ -15,9 +15,9 @@ const Process = () => {
 			</div>
 
 			{/* Right side content */}
-			<div className="flex-1 pl-10">
-				<h2 className="text-4xl font-semibold mb-4">How it Works</h2>
-				<p className="text-lg text-gray-700 mb-6">
+			<div className="flex-1 lg:pl-10">
+				<h2 className="lg:text-4xl text-3xl font-semibold mb-4">How it Works</h2>
+				<p className="lg:text-lg text-gray-700 mb-6">
 					Sign Up With Us, And On Your Birthday, You'll Receive A Personalized Message Filled With
 					Blessings From The Temple.
 				</p>

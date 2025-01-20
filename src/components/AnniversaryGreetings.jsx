@@ -62,7 +62,19 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 				const values = row.split(",");
 				const obj = {};
 				headers.forEach((header, index) => {
-					obj[header.trim()] = values[index]?.trim();
+					let value = values[index]?.trim();
+
+					// Clean up extra quotes from the field
+					if (value.startsWith('"') && value.endsWith('"')) {
+						value = value.slice(1, -1); // Remove wrapping quotes
+					}
+
+					// Handle the contact field specifically
+					if (header.trim().toLowerCase() === "contact") {
+						value = value.replace(/"/g, ""); // Remove extra embedded quotes
+					}
+
+					obj[header.trim()] = value;
 				});
 				return obj;
 			});
@@ -90,7 +102,8 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 	};
 
 	const downloadSampleCSV = () => {
-		const sampleCSV = `husband_name,wife_name,email,contact,marriagedate\nMohan,Rashmika,mohan@example.com,1234567890,dd-mm-yyyy`;
+		const sampleCSV = `"husband_name","wife_name","email","contact","marriagedate"\n` +
+						  `"mufasa","babu","mahesh@example.com","=""+911234567890""","dd-mm-yyyy"`;
 		const blob = new Blob([sampleCSV], { type: "text/csv" });
 		const link = document.createElement("a");
 		link.href = URL.createObjectURL(blob);
@@ -113,16 +126,11 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 	);
 
 	useEffect(() => {
-		const id = sessionStorage.getItem('customPostId');
 		const storedData = sessionStorage.getItem('formData');
 		const recipientType = sessionStorage.getItem('userType');
 		if (storedData) {
 			setFormData(JSON.parse(storedData));
 			setUserDetails(JSON.parse(storedData).csvData)
-		}
-		if (id) {
-			handlePostSelect(id);
-			sessionStorage.removeItem('customPostId');
 		}
 		if (recipientType) {
 			setUserType(recipientType);
@@ -155,7 +163,7 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 			console.log("Form submitted successfully:", response.data);
 
 			// sessionStorage.clear(); // Ensure this doesn't unintentionally clear unrelated data
-			// closeModal();
+			closeModal();
 		} catch (error) {
 			console.error("Error submitting form:", error);
 
@@ -174,15 +182,13 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 	return (
 		<div
 			className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
-			onClick={closeModal}
 		>
 			<div
-				className="bg-white p-6 rounded-lg w-1/2"
-				onClick={(e) => e.stopPropagation()}
+				className="bg-white p-6 rounded-lg lg:w-1/2 w-4/5"
 			>
 				<h2 className="text-xl font-bold text-center mb-5">Anniversary Greetings</h2>
 				<form onSubmit={handleSubmit}>
-					<div className="grid grid-cols-3 items-start justify-center gap-4">
+					<div className="grid lg:grid-cols-3 items-start justify-center gap-4">
 						<div className="form-group">
 							<label className="block text-sm font-semibold mb-2">Title</label>
 							<input
@@ -221,9 +227,9 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 						</div>
 					</div>
 
-					{/* {isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />} */}
+					{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 					{userType === "single" && (
-						<div className="grid grid-cols-3 gap-4 mt-4">
+						<div className="grid lg:grid-cols-3 grid-cols-2 gap-4 mt-4">
 							<div className="form-group">
 								<label className="block text-sm font-semibold mb-2">Husband Name</label>
 								<input
@@ -292,7 +298,7 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 
 					{isModalOpen && (
 						<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-							<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
+							<div className="bg-white rounded-lg  lg:w-2/5 w-4/5 p-6 shadow-lg lg:text-base text-sm">
 								<h2 className="text-lg font-semibold mb-4">CSV File Requirements</h2>
 								<p className="mb-6">
 									Please ensure the CSV file contains the following fields: <br />
@@ -304,13 +310,13 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 									<button
 										type="button"
 										onClick={downloadSampleCSV}
-										className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+										className="lg:px-4 p-2 bg-green-600 text-white rounded hover:bg-green-700"
 									>
 										Sample CSV
 									</button>
 									<button
 										type="button"
-										className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+										className="lg:px-4 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
 										onClick={() => document.getElementById("csvFileInput").click()}
 									>
 										Upload
@@ -324,7 +330,7 @@ function AnniversaryGreetings({ fetchGreetings, closeModal }) {
 									/>
 									<button
 										onClick={() => setIsModalOpen(false)}
-										className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+										className="lg:px-4 p-2 bg-gray-300 text-black rounded hover:bg-gray-400"
 									>
 										Close
 									</button>

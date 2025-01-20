@@ -35,17 +35,17 @@ const Business = () => {
 			<div className="my-16 mx-auto w-1/2 border-t-2 border-gray-400"></div>
 
 			{/* Title */}
-			<h2 className="text-4xl mb-6">
+			<h2 className="lg:text-4xl text-xl lg:mb-16 mb-10">
 				OVER 1K+ BUSINESSES GROWING WITH Market
 			</h2>
 
 			{/* Images */}
-			<div className="flex justify-center gap-16">
-				<img src="/images/spotify.svg" alt="Business 1" className="w-[150px] h-[150px] object-contain" />
-				<img src="/images/dropbox.svg" alt="Business 2" className="w-[150px] h-[150px] object-contain" />
-				<img src="/images/google.svg" alt="Business 3" className="w-[150px] h-[150px] object-contain" />
-				<img src="/images/airbnb.svg" alt="Business 4" className="w-[150px] h-[150px] object-contain" />
-				<img src="/images/envato.svg" alt="Business 5" className="w-[150px] h-[150px] object-contain" />
+			<div className="flex lg:flex-row flex-wrap justify-center lg:gap-16 gap-10">
+				<img src="/images/spotify.svg" alt="Business 1" className="lg:w-[150px] w-[100px] h-auto object-contain" />
+				<img src="/images/dropbox.svg" alt="Business 2" className="lg:w-[150px] w-[100px] h-auto object-contain" />
+				<img src="/images/google.svg" alt="Business 3" className="lg:w-[150px] w-[100px] h-auto object-contain" />
+				<img src="/images/airbnb.svg" alt="Business 4" className="lg:w-[150px] w-[100px] h-auto object-contain" />
+				<img src="/images/envato.svg" alt="Business 5" className="lg:w-[150px] w-[100px] h-auto object-contain" />
 			</div>
 		</section>
 	);

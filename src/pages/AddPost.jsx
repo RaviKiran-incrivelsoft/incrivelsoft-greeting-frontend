@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BsEnvelope } from "react-icons/bs";
 import { FaUpload, FaRedo } from "react-icons/fa";
 import { GiBigDiamondRing } from "react-icons/gi";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { MdOutlineEventNote, MdOutlineTempleHindu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -16,8 +17,8 @@ const AddPost = () => {
 	const [media, setMedia] = useState(null);
 	const [postDescription, setPostDescription] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [type, setType] = useState(sessionStorage.getItem("activeComponent"));
-	const [showPopup, setShowPopup] = useState(!type);
+	const [type, setType] = useState();
+	const [showPopup, setShowPopup] = useState(false);
 
 	const postTypes = [
 		{
@@ -59,8 +60,8 @@ const AddPost = () => {
 	};
 
 	useEffect(() => {
-		setShowPopup(!type);
-	}, [type]);
+		setShowPopup(true);
+	}, []);
 
 	const handleMediaUpload = (file) => {
 		setMedia({ file, type: file.type.startsWith("video") ? "video" : "image" });
@@ -90,20 +91,16 @@ const AddPost = () => {
 				}
 			);
 
-			console.log("Campaign created successfully:", response.data._id);
-			toast.success('Campaign created successfully', {
+			console.log("Template created successfully:", response.data._id);
+			toast.success('Template created successfully', {
 				position: 'top-center',
 				autoClose: 3000,
 				theme: "colored",
-				onClose: () => {
-					sessionStorage.setItem('customPostId', response.data._id);
-					sessionStorage.removeItem('activeComponent')
-					navigate(-1);
-				}
+				onClose: navigate(-1)
 			})
 		} catch (error) {
-			console.error("Error in submitting campaign:", error);
-			toast.error('Failed to create campaign', {
+			console.error("Error in Creating Template:", error);
+			toast.error(error.response.data.error, {
 				position: 'top-center',
 				theme: "colored"
 			})
@@ -113,14 +110,14 @@ const AddPost = () => {
 	};
 
 	return (
-		<div className="mx-48 px-16 py-6 bg-[#f5f5f5]">
+		<div className="lg:mx-48 lg:px-16 px-10 py-10 bg-[#f5f5f5] relative">
 			{showPopup &&
 				<div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
-						<h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+					<div className="bg-white p-8 rounded-lg shadow-lg lg:w-1/2 w-4/5">
+						<h2 className="lg:text-2xl text-lg font-bold text-center mb-6 text-gray-800">
 							Select Post Type
 						</h2>
-						<div className="grid grid-cols-3 gap-4">
+						<div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
 							{postTypes.map((post) => (
 								<button
 									key={post.id}
@@ -132,7 +129,7 @@ const AddPost = () => {
 									>
 										{post.icon}
 									</div>
-									<span className="font-semibold">{post.name}</span>
+									<span className="lg:font-semibold">{post.name}</span>
 								</button>
 							))}
 						</div>
@@ -140,6 +137,12 @@ const AddPost = () => {
 				</div>
 			}
 			{/* Title Input */}
+			<button
+				onClick={() => navigate(-1)}
+				className=" absolute lg:left-[-3rem] left-[1rem] top-4 flex items-center p-1 text-xl border-2 rounded-full transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+			>
+				<IoMdArrowRoundBack />
+			</button>
 			<div className="mb-4">
 				<input
 					type="text"
@@ -155,7 +158,7 @@ const AddPost = () => {
 				{media ? (
 					<div className="relative">
 						{media.type === "image" ? (
-							<img src={URL.createObjectURL(media.file)} alt="Uploaded" className="w-auto h-72 rounded shadow" />
+							<img src={URL.createObjectURL(media.file)} alt="Uploaded" className="w-64 lg:w-auto h-auto lg:h-80 rounded shadow" />
 						) : (
 							<video controls src={URL.createObjectURL(media.file)} className="w-auto h-72 rounded shadow"></video>
 						)}
@@ -188,7 +191,7 @@ const AddPost = () => {
 			{/* Paragraph Input */}
 			<div className="mb-4">
 				<textarea
-					placeholder="Enter paragraph"
+					placeholder="Enter your text"
 					value={postDescription}
 					onChange={(e) => setPostDescription(e.target.value)}
 					className="w-full px-3 py-2 text-gray-700 outline-none placeholder-gray-400 bg-[#f5f5f5] resize-none"

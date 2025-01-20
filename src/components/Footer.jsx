@@ -4,15 +4,8 @@ import { useNavigate } from 'react-router-dom';
 const Footer = () => {
 	const navigate = useNavigate();
 
-	const handleHomeClick = () => {
-		navigate('/home');
-	};
-	const handleMainClick = () => {
-		navigate('/login');
-	};
-
 	return (
-		<footer className="w-full bg-black py-10 px-20">
+		<footer className="w-full bg-black py-10 lg:px-20 px-10">
 			<div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
 				{/* Left Section */}
 				<div className="flex flex-col">
@@ -36,8 +29,9 @@ const Footer = () => {
 				{/* Quick Links */}
 				<div className="flex flex-col">
 					<h2 className="text-white text-2xl font-bold mb-4">Quick link</h2>
-					<p className="text-[#bbbbbb] cursor-pointer" onClick={handleHomeClick}>Home</p>
-					<p className="text-[#bbbbbb] cursor-pointer" onClick={handleMainClick}>Main Services</p>
+					<p className="text-[#999] cursor-pointer hover:text-white" onClick={()=>navigate('/')}>Home</p>
+					<p className="text-[#999] cursor-pointer hover:text-white" onClick={()=>navigate('/greetings')}>Greetings</p>
+					<p className="text-[#999] cursor-pointer hover:text-white" onClick={()=>navigate('/templates')}>Templates</p>
 				</div>
 
 				{/* Right Section */}
@@ -53,7 +47,7 @@ const Footer = () => {
 					</div>
 					<div className="flex items-center gap-3">
 						<img className="w-[2rem] h-[2rem]" src="/images/phone.jpg" alt="Phone" />
-						<a href="tel:+91123456789" className="text-white">+91 123456789</a>
+						<a href="tel:+91123456789" className="text-white">+91 7032880286</a>
 					</div>
 				</div>
 			</div>
@@ -61,7 +55,7 @@ const Footer = () => {
 			{/* Footer Bottom */}
 			<div className="mt-10 border-t border-gray-500 pt-5 text-center">
 				<p className="text-[#bbbbbb]">
-					Copyright © 2024 <span className="text-white">incrivelsoft</span>
+					Copyright © {new Date().getFullYear()} <span className="text-white">incrivelsoft</span>
 				</p>
 			</div>
 		</footer>

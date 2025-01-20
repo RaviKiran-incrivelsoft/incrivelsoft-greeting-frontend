@@ -5,13 +5,12 @@ import { GiBigDiamondRing } from "react-icons/gi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { MdOutlineEventNote, MdOutlineTempleHindu } from "react-icons/md";
 // import { PiBuildingOffice } from "react-icons/pi";
+// import CompanyDetails from "./CompanyPopup";
 import BirthdayGreetings from "./BirthdayGreetings";
 import FestivalGreetings from "./FestivalGreetings";
-// import MarriageDetails from "./MarriageDetails";
 import EventComponent from "./EventComponent";
 import TempleGreetings from "./TempleGreetings";
 import AnniversaryGreetings from "./AnniversaryGreetings";
-// import CompanyDetails from "./CompanyPopup";
 
 const Dropdown = ({ fetchData }) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +36,6 @@ const Dropdown = ({ fetchData }) => {
 	const componentMap = {
 		birthday: <BirthdayGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		occasion: <FestivalGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
-		// anniversary: <MarriageDetails fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		anniversary: <AnniversaryGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		event: <EventComponent fetchGreetings={fetchData} closeModal={toggleGreeting} />,
 		temple: <TempleGreetings fetchGreetings={fetchData} closeModal={toggleGreeting} />,
@@ -50,15 +48,15 @@ const Dropdown = ({ fetchData }) => {
 			onMouseEnter={() => { setIsOpen(true); sessionStorage.setItem("greetingsPopup", true); }}
 		>
 			<button
-				onMouseLeave={() => { setIsOpen(false); sessionStorage.setItem("greetingsPopup", false); }}
+				onMouseLeave={() => { setIsOpen(false); sessionStorage.removeItem("greetingsPopup"); }}
 				type="button"
-				className="flex items-center mr-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
+				className="flex items-center mr-2 bg-blue-600 text-white lg:px-4 p-2 rounded-lg shadow-md hover:bg-blue-700"
 				aria-haspopup="menu"
 				aria-expanded={isOpen ? "true" : "false"}
 				aria-label="Dropdown"
 			>
 				<FaPlus className="mr-2" />
-				Add Greetings
+				Add<span className='lg:block hidden ml-1'>Greetings</span>				
 				<svg
 					className={`ml-2 transform transition-transform duration-500 ${isOpen ? "rotate-180" : ""}`}
 					xmlns="http://www.w3.org/2000/svg"

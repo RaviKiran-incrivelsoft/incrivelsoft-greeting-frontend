@@ -10,8 +10,8 @@ const Testimonial = () => {
 
 			{/* Title and Description */}
 			<div className="relative z-10 max-w-4xl mx-auto text-white">
-				<h2 className="text-4xl font-semibold mb-4">What people say</h2>
-				<p className="text-lg mb-12">
+				<h2 className="lg:text-4xl text-3xl font-semibold mb-4">What people say</h2>
+				<p className="lg:text-lg mb-12">
 					Make your birthdays even more special by sending personalized blessings directly from the temple.
 					Join our Greetings Portal and feel the love and blessings of our spiritual family.
 				</p>

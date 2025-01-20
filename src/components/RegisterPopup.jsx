@@ -58,11 +58,11 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 
 	return (
 		<div id="modal-container" onClick={handleOutsideClick} className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
-			<div onClick={(e) => e.stopPropagation()} className="flex items-center justify-center w-full max-w-xl overflow-hidden bg-white rounded-lg shadow-lg">
-				<div className="flex w-1/2">
+			<div onClick={(e) => e.stopPropagation()} className="flex items-center justify-center lg:w-full w-4/5 max-w-xl overflow-hidden bg-white rounded-lg shadow-lg">
+				<div className="lg:flex hidden w-1/2">
 					<img src="/images/loginbg.png" alt="Promotion" className="w-full object-cover" />
 				</div>
-				<div className="w-1/2 p-6">
+				<div className="lg:w-1/2 p-6">
 					<div className="space-y-8 text-black">
 						{!isEmailSignup ? (
 							<>
@@ -73,20 +73,20 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									<li>Loved by 20+ million users</li>
 								</ul>
 								<div className="space-y-4">
+									<button
+										onClick={() => setIsEmailSignup(true)}
+										className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+									>
+										Sign up with email or Phone
+									</button>
+									<div className="relative flex justify-center">
+										<span className="text-sm text-gray-500">or</span>
+									</div>
 									<button className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
 										Continue with Google
 									</button>
 									<button className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
 										Continue with Facebook
-									</button>
-									<div className="relative flex justify-center">
-										<span className="text-sm text-gray-500">or</span>
-									</div>
-									<button
-										onClick={() => setIsEmailSignup(true)}
-										className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-									>
-										Sign up with email
 									</button>
 									<p className="text-center text-sm text-gray-500">
 										By continuing, you agree to our <span className="text-blue-600 hover:cursor-pointer">Terms of Service</span> and <span href="#" className="text-blue-600 hover:cursor-pointer">Privacy Policy</span>.
@@ -124,12 +124,12 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 										<input
 											id="email-address"
 											name="email"
-											type="email"
+											type="text"
 											required
 											value={formData.email}
 											onChange={handleChange}
 											className="py-2 ps-4 pe-10 block w-full border border-gray-400 rounded-md text-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
-											placeholder="Email address"
+											placeholder="Email address Or Phone number"
 										/>
 										<div className="relative">
 											<input

@@ -30,7 +30,8 @@ function TempleGreetings({ campaignId, closeModal }) {
 	};
 
 	const downloadSampleCSV = () => {
-		const sampleCSV = `first_name,last_name,email,contact,birthdate\nmufasa,babu,mahesh@example.com,1234567890,dd-mm-yyy`;
+		const sampleCSV = `"first_name","last_name","email","contact","birthdate"\n` +
+						  `"mufasa","babu","mahesh@example.com","=""+911234567890""","dd-mm-yyyy"`;
 		const blob = new Blob([sampleCSV], { type: 'text/csv' });
 		const link = document.createElement('a');
 		link.href = URL.createObjectURL(blob);
@@ -64,7 +65,19 @@ function TempleGreetings({ campaignId, closeModal }) {
 				const values = row.split(",");
 				const obj = {};
 				headers.forEach((header, index) => {
-					obj[header.trim()] = values[index]?.trim();
+					let value = values[index]?.trim();
+
+					// Clean up extra quotes from the field
+					if (value.startsWith('"') && value.endsWith('"')) {
+						value = value.slice(1, -1); // Remove wrapping quotes
+					}
+
+					// Handle the contact field specifically
+					if (header.trim().toLowerCase() === "contact") {
+						value = value.replace(/"/g, ""); // Remove extra embedded quotes
+					}
+
+					obj[header.trim()] = value;
 				});
 				return obj;
 			});
@@ -114,14 +127,9 @@ function TempleGreetings({ campaignId, closeModal }) {
 	);
 
 	useEffect(() => {
-		const id = sessionStorage.getItem('customPostId');
 		const storedData = sessionStorage.getItem('formData');
 		if (storedData) {
 			setFormData(JSON.parse(storedData));
-		}
-		if (id) {
-			handlePostSelect(id);
-			sessionStorage.removeItem('customPostId');
 		}
 	}, [handlePostSelect]);
 
@@ -181,16 +189,14 @@ function TempleGreetings({ campaignId, closeModal }) {
 	return (
 		<div
 			className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
-			onClick={closeModal}
 		>
 			<div
-				className="bg-white p-6 rounded-lg w-3/5"
-				onClick={(e) => e.stopPropagation()}
+				className="bg-white p-6 rounded-lg lg:w-3/5 w-4/5"
 			>
 				<div className="text-xl font-bold text-center mb-5">Temple Information</div>
 				<div className="container mx-auto px-4">
 					<form onSubmit={handleSubmit}>
-						<div className="grid items-end grid-cols-3 gap-3">
+						<div className="grid items-end lg:grid-cols-3 grid-cols-2 gap-3">
 							<div className="form-group">
 								<label className="block text-sm text-gray-700 font-semibold mb-2">Temple Name</label>
 								<input
@@ -236,7 +242,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 								/>
 							</div>
 							<div className="form-group">
-								<label className="block text-sm text-gray-700 font-semibold mb-2">Temple Website URL</label>
+								<label className="block text-sm text-gray-700 font-semibold mb-2">Website URL</label>
 								<input
 									type="text"
 									value={formData.websiteUrl}
@@ -279,7 +285,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 									required
 								/>
 							</div>
-							<div>
+							<div className="lg:col-span-1 col-span-2">
 								<button
 									className="flex items-center mt-5 w-4/5 text-center justify-around py-1.5 px-4 rounded-md transition-all duration-300 ease-in-out text-white bg-blue-600 hover:bg-blue-700"
 									type="button"
@@ -290,9 +296,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 								</button>
 								{/* {formData.postDetails ? <span className="block text-sm text-green-600">Template Selected</span> : <span className="block text-sm text-red-600">Please Select Template</span>} */}
 							</div>
-						</div>
-						<div className="flex gap-6 my-4 mb-6">
-							<div>
+							<div className="lg:col-span-1 col-span-2">
 								<button
 									type="button"
 									className="py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
@@ -310,7 +314,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 								/>
 								{isFileUploaded('paypalQrCode') && <span className="block text-green-600">File uploaded</span>}
 							</div>
-							<div>
+							<div className="lg:col-span-1 col-span-2">
 								<button
 									type="button"
 									className="py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
@@ -328,7 +332,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 								/>
 								{isFileUploaded('zelleQrCode') && <span className="block text-green-600">File uploaded</span>}
 							</div>
-							<div>
+							<div className="lg:col-span-1 col-span-2">
 								<input
 									id="csvFileInput"
 									type="file"
@@ -351,7 +355,7 @@ function TempleGreetings({ campaignId, closeModal }) {
 						{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 						{isModalOpen && (
 							<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-								<div className="bg-white rounded-lg w-2/5 p-6 shadow-lg">
+								<div className="bg-white rounded-lg lg:w-2/5 w-4/5 p-6 shadow-lg lg:text-base text-sm">
 									<h2 className="text-lg font-semibold mb-4">CSV File Requirements</h2>
 									<p className="mb-6">
 										Please make sure the CSV file contains the following fields: <br />
@@ -363,20 +367,20 @@ function TempleGreetings({ campaignId, closeModal }) {
 										<button
 											type="button"
 											onClick={downloadSampleCSV}
-											className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+											className="lg:px-4 p-2 bg-green-600 text-white rounded hover:bg-green-700"
 										>
 											Sample CSV
 										</button>
 										<button
 											type="button"
-											className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+											className="lg:px-4 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
 											onClick={() => document.getElementById('csvFileInput').click()}
 										>
 											Upload
 										</button>
 										<button
 											onClick={toggleModal}
-											className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+											className="lg:px-4 p-2 bg-gray-300 text-black rounded hover:bg-gray-400"
 										>
 											Close
 										</button>
