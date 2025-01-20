@@ -1,10 +1,18 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 	const [loading, setLoading] = useState(false);
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+	const location = useLocation();
+
+	const stableOnClose = useCallback(onClose, []); // Memoize onClose
+
 
 	const togglePasswordVisibility = () => {
 		setIsPasswordVisible(!isPasswordVisible);
@@ -56,6 +64,37 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 		}
 	};
 
+	const handleGoogleLogin = () => {
+		window.location.href = `${backendUrl}/users/google`;
+	  };
+	
+	  // Extract token and userName from URL query parameters
+	  useEffect(() => {
+		const params = new URLSearchParams(location.search);
+		const token = params.get("token");
+		const userName = params.get("userName");
+	
+		if (token && userName) {
+		  console.log("OAuth response received:", { token, userName });
+	
+		  // Save token and userName to localStorage
+		  localStorage.setItem("token", token);
+		  localStorage.setItem("userName", userName);
+	
+		  toast.success("Google login successful!", {
+			position: "top-center",
+			theme: "colored",
+		  });
+	
+		  // Clear the query parameters from the URL
+		  const newUrl = window.location.origin + window.location.pathname;
+		  window.history.replaceState({}, document.title, newUrl);
+	
+		  // Close modal only after successful login
+		  stableOnClose();
+		}
+	  }, [location.search, stableOnClose]);
+
 	return (
 		<div id="modal-container" onClick={handleOutsideClick} className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
 			<div onClick={(e) => e.stopPropagation()} className="flex items-center justify-center lg:w-full w-4/5 max-w-xl overflow-hidden bg-white rounded-lg shadow-lg">
@@ -82,12 +121,14 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									<div className="relative flex justify-center">
 										<span className="text-sm text-gray-500">or</span>
 									</div>
-									<button className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+									<button 
+									className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+									onClick={handleGoogleLogin}>
 										Continue with Google
 									</button>
-									<button className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+									{/* <button className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
 										Continue with Facebook
-									</button>
+									</button> */}
 									<p className="text-center text-sm text-gray-500">
 										By continuing, you agree to our <span className="text-blue-600 hover:cursor-pointer">Terms of Service</span> and <span href="#" className="text-blue-600 hover:cursor-pointer">Privacy Policy</span>.
 									</p>
