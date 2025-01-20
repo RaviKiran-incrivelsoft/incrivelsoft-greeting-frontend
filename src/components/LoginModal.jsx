@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -10,6 +11,10 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const location = useLocation();
+
+  const stableOnClose = useCallback(onClose, []); // Memoize onClose
 
   // Toggle password visibility
   const togglePasswordVisibility = () => {
@@ -28,11 +33,9 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
       });
 
       if (response.data.token) {
-        // Save token and userName to localStorage
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userName", response.data.userName);
-
-        onClose(); // Close modal
+        stableOnClose(); // Close modal
         toast.success("Login successful", {
           position: "top-center",
           theme: "colored",
@@ -55,70 +58,41 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
 
   // Handle Google Login
   const handleGoogleLogin = () => {
-    // Redirect the user to the backend OAuth URL
     window.location.href = `${backendUrl}/users/google`;
   };
-  
 
-  // Handle Facebook Login Placeholder
-  const handleFacebookLogin = () => {
-    toast.info("Facebook login is not implemented yet", {
-      position: "top-center",
-      theme: "colored",
-    });
-  };
-
-  // Handle outside click to close modal
-  const handleOutsideClick = (e) => {
-    if (e.target.id === "modal-container") {
-      onClose();
-    }
-  };
-
+  // Extract token and userName from URL query parameters
   useEffect(() => {
-    const extractDetails = () => {
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get("token");
-      const userName = params.get("userName");
-  
-      if (token && userName) {
-        console.log("OAuth response received:", { token, userName });
-  
-        try {
-          // Store token and username in localStorage
-          localStorage.setItem("token", token);
-          localStorage.setItem("userName", userName);
-  
-          onClose(); // Close modal
-          toast.success("Google login successful!", {
-            position: "top-center",
-            theme: "colored",
-          });
-  
-          // Clear the query parameters from the URL
-          const newUrl = window.location.origin + window.location.pathname;
-          window.history.replaceState({}, document.title, newUrl);
-        } catch (error) {
-          console.error("Failed to save login data to localStorage:", error);
-          toast.error("An error occurred while logging in.", {
-            position: "top-center",
-            theme: "colored",
-          });
-        }
-      }
-    };
-  
-    // Delay execution to ensure query parameters are available
-    setTimeout(extractDetails, 100);
-  }, [onClose]);
-  
-  
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+    const userName = params.get("userName");
+
+    if (token && userName) {
+      console.log("OAuth response received:", { token, userName });
+
+      // Save token and userName to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userName", userName);
+
+      toast.success("Google login successful!", {
+        position: "top-center",
+        theme: "colored",
+      });
+
+      // Clear the query parameters from the URL
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+
+      // Close modal only after successful login
+      stableOnClose();
+    }
+  }, [location.search, stableOnClose]);
 
   return (
     <div
       id="modal-container"
       className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
-      onClick={handleOutsideClick}
+      onClick={(e) => e.target.id === "modal-container" && stableOnClose()}
     >
       <div
         className="bg-white p-6 rounded-lg"
@@ -202,12 +176,12 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                 >
                   <FaGoogle className="text-xl text-gray-700" />
                 </button>
-                <button
+                {/* <button
                   onClick={handleFacebookLogin}
                   className="bg-gray-200 p-2 rounded-full hover:bg-gray-300"
                 >
                   <FaFacebook className="text-xl text-blue-600" />
-                </button>
+                </button> */}
               </div>
 
               <p className="text-center text-sm text-gray-500">
