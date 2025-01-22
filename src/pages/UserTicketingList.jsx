@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FaClock, FaCheckCircle, FaExclamationCircle, FaInbox } from "react-icons/fa";
+import { FaClock, FaCheckCircle, FaExclamationCircle, FaInbox, FaTrash } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-const UserTicketingCard = ({ ticket }) => {
+const UserTicketingCard = ({ ticket, onDelete }) => {
 	// Determine the status color and icon
 	const getStatusDetails = (status) => {
 		switch (status) {
@@ -22,10 +23,18 @@ const UserTicketingCard = ({ ticket }) => {
 	const { color, icon } = getStatusDetails(ticket.status);
 
 	return (
-		<div className="bg-white shadow-md rounded-lg p-6 border border-gray-300">
+		<div className="bg-white shadow-md rounded-lg p-6 border border-gray-300 relative group">
+			<div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+				<button
+					onClick={() => onDelete(ticket._id)}
+					className="text-red-500 hover:text-red-700"
+				>
+					<FaTrash className="text-xl" />
+				</button>
+			</div>
 			<div className="flex items-center justify-between mb-4">
-				<h2 className="text-xl font-semibold text-gray-800">{ticket.sub}</h2>
-				<div className={`flex items-center ${color}`}>
+				<h2 className="text-2xl font-semibold text-gray-800">{ticket.sub}</h2>
+				<div className={`flex items-center ${color} text-xl`}>
 					{icon}
 					<span className="ml-2 capitalize font-medium">{ticket.status}</span>
 				</div>
@@ -50,6 +59,7 @@ const UserTicketingList = () => {
 	const [tickets, setTickets] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchTickets = async () => {
@@ -72,18 +82,43 @@ const UserTicketingList = () => {
 		fetchTickets();
 	}, []);
 
-	if (loading) return <p>Loading tickets...</p>;
-	if (error) return <p className="text-red-500">{error}</p>;
+	const handleDelete = async (id) => {
+		try {
+			const token = localStorage.getItem("token");
+			await axios.delete(`${backendUrl}/user-ticketing/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			setTickets((prev) => prev.filter((ticket) => ticket._id !== id));
+		} catch (err) {
+			console.error("Error deleting ticket:", err);
+			alert("Failed to delete ticket.");
+		}
+	};
 
 	return (
-		<div className="py-6 lg:px-32 px-10 space-y-6">
+		<div className="py-10 lg:px-32 px-10 space-y-6">
 			<div className="flex flex-col items-center justify-center text-center">
 				<h1 className="text-4xl font-semibold text-gray-800 mb-4">Track your Feedbacks</h1>
 				<p className="text-lg text-gray-600 max-w-2xl">
-				Manage and Monitor your feedback. Stay informed about the progress of your feedbacks and ensure every detail is accounted for.
+					Manage and Monitor your feedback. Stay informed about the progress of your feedbacks and ensure every detail is accounted for.
 				</p>
 			</div>
-			{tickets.length === 0 ? (
+			
+			<div className="flex items-center mb-6 w-full">
+				<button
+					onClick={() => navigate(-1)}
+					className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+				>
+					Back
+				</button>
+			</div>
+			{loading ? (
+				<p>Loading tickets...</p>
+			) : error ? (
+				<p className="text-red-500">{error}</p>
+			) : tickets.length === 0 ? (
 				<div className="flex flex-col items-center justify-center h-64 text-gray-500">
 					<FaInbox className="text-6xl mb-4" />
 					<p className="text-xl">No Feedbacks Available</p>
@@ -91,7 +126,7 @@ const UserTicketingList = () => {
 			) : (
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 					{tickets.map((ticket) => (
-						<UserTicketingCard key={ticket._id} ticket={ticket} />
+						<UserTicketingCard key={ticket._id} ticket={ticket} onDelete={handleDelete} />
 					))}
 				</div>
 			)}
