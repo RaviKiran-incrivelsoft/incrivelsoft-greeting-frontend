@@ -14,6 +14,7 @@ import EventModal from '../components/EditModals/EventModal.jsx';
 import BirthdayModal from '../components/EditModals/BirthdayModal.jsx';
 import MarriageModal from '../components/EditModals/MarriageModal.jsx';
 import FestivalModal from '../components/EditModals/FestivalModal.jsx';
+import { MdOutlineFeedback } from 'react-icons/md';
 
 const options = {
 	day: '2-digit',
@@ -351,6 +352,13 @@ const GreetingDashboard = () => {
 					</button>
 				</div>
 				<div className="flex gap-4">
+					<button
+						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+						onClick={() => navigate('/tickets')}
+					>
+						<MdOutlineFeedback className="lg:mr-2" />
+						<span className='lg:block hidden'>FeedBacks</span>
+					</button>
 					<button
 						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
 						onClick={() => navigate('/analytics')}

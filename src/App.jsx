@@ -17,6 +17,7 @@ import TemplateDashboard from './pages/TemplateDashboard';
 import GreetingDashboard from './pages/GreetingsDashboard';
 import ProtectedRoute from './ProtectedRoute';
 import DashboardAnalytics from './pages/DashboardAnalytics';
+import UserTicketingList from './pages/UserTicketingList';
 
 function App() {
   const [activeModal, setActiveModal] = useState(null);
@@ -39,6 +40,7 @@ function App() {
         <Route element={<ProtectedRoute element={<DashboardAnalytics />} />} path='/analytics' />
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
+        <Route element={<ProtectedRoute element={<UserTicketingList />} />} path='/tickets' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />
         <Route element={<NotFoundPage />} path="*" />
       </Routes>
