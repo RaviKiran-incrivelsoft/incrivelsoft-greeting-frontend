@@ -74,7 +74,7 @@ const Navbar = ({ onLoginClick }) => {
 					{token && (
 						<Link
 							to="/greetings"
-							className={`${isActive("/greetings") || isActive("/templates") || isActive("/addpost")
+							className={`${isActive("/greetings") || isActive("/templates") || isActive("/addpost") || isActive("/analytics")
 								? "text-gray-800 underline underline-offset-8"
 								: "text-gray-600"
 								} hover:text-gray-800`}
@@ -96,6 +96,17 @@ const Navbar = ({ onLoginClick }) => {
 					>
 						Contact
 					</Link>
+					{token && (
+						<Link
+							to="/support"
+							className={`${isActive("/support")
+								? "text-gray-800 underline underline-offset-8"
+								: "text-gray-600"
+								} hover:text-gray-800`}
+						>
+							Support
+						</Link>
+					)}
 				</div>
 
 				{/* Profile Section */}
@@ -146,7 +157,7 @@ const Navbar = ({ onLoginClick }) => {
 					{token && (
 						<Link
 							to="/greetings"
-							className={`${isActive("/greetings") || isActive("/templates") || isActive("/addpost")
+							className={`${isActive("/greetings") || isActive("/templates") || isActive("/analytics") || isActive("/addpost")
 								? "text-gray-800 underline underline-offset-8"
 								: "text-gray-600"
 								} hover:text-gray-800 block`}
@@ -171,6 +182,16 @@ const Navbar = ({ onLoginClick }) => {
 					>
 						Contact
 					</Link>
+					{token && (
+						<Link
+							to="/support"
+							className={`${isActive("/support") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
+								} hover:text-gray-800 block`}
+							onClick={() => setIsMenuOpen(false)}
+						>
+							Support
+						</Link>
+					)}
 					{token ? (
 						<button
 							onClick={() => {

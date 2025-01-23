@@ -1,15 +1,15 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const ContactPage = () => {
-	// const [contactMethod, setContactMethod] = useState("email");
-	const [loading, setLoading] = useState(false);
+	const [contactMethod, setContactMethod] = useState("email");
 	const [formData, setFormData] = useState({
-		sub: "",
-		phoneNumber: "",
-		complement: "",
+		fullName: "",
+		email: "",
+		message: "",
+		number: "",
+		whatsappNumber: "",
 	});
 
 	const handleInputChange = (e) => {
@@ -20,47 +20,13 @@ const ContactPage = () => {
 		});
 	};
 
-	const handleSubmit = async (e) => {
-		console.log(formData);
-
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		const token = localStorage.getItem("token");
-
-		if (!token) {
-			toast.warning("Please log in to submit the form.", {
-				position: "top-center",
-				theme: "colored",
-			});
-			return;
-		}
-		setLoading(true)
-		try {
-			const response = await axios.post(
-				`${process.env.REACT_APP_BACKEND_URL}/user-ticketing`,
-				formData,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
-			console.log(response.data);
-
-			toast.success("Feedback submitted successfully!", {
-				position: "top-center",
-				theme: "colored",
-			});
-
-			setFormData({ sub: "", phoneNumber: "", complement: "" });
-		} catch (error) {
-			console.error("Error submitting feedback:", error);
-			toast.error("Failed to submit feedback. Please try again.", {
-				position: "top-center",
-				theme: "colored",
-			});
-		} finally {
-			setLoading(false);
-		}
+		toast.success('Message Sent Successfully', {
+			position: 'top-center',
+			theme: "colored"
+		})
+		console.log("Message Sent:");
 	};
 
 	return (
@@ -106,13 +72,13 @@ const ContactPage = () => {
 
 					<div className="bg-white p-8 shadow-lg rounded-lg md:w-1/2">
 						<h2 className="lg:text-3xl text-2xl font-semibold text-gray-800 mb-6">Know us more</h2>
-						{/* <div className="mb-6 flex lg:flex-row flex-col lg:items-end gap-4">
+						<div className="mb-6 flex lg:flex-row flex-col lg:items-end gap-4">
 							<label className="block text-gray-700 font-medium lg:mb-2">Preferred Contact Method:</label>
 							<div className="flex gap-4">
 								<button
 									className={`py-1 px-3 rounded-md border transition-all duration-300 ${contactMethod === "email"
-										? "bg-blue-600 text-white border-blue-600"
-										: "bg-white text-blue-600 border-blue-600"
+											? "bg-blue-600 text-white border-blue-600"
+											: "bg-white text-blue-600 border-blue-600"
 										}`}
 									onClick={() => setContactMethod("email")}
 								>
@@ -120,18 +86,18 @@ const ContactPage = () => {
 								</button>
 								<button
 									className={`py-1 px-3 rounded-md border transition-all duration-300 ${contactMethod === "phone"
-										? "bg-blue-600 text-white border-blue-600"
-										: "bg-white text-blue-600 border-blue-600"
+											? "bg-blue-600 text-white border-blue-600"
+											: "bg-white text-blue-600 border-blue-600"
 										}`}
 									onClick={() => setContactMethod("phone")}
 								>
 									Phone
 								</button>
 							</div>
-						</div> */}
+						</div>
 
 						<form onSubmit={handleSubmit}>
-							{/* {contactMethod === "email" ? (
+							{contactMethod === "email" ? (
 								<>
 									<div className="mb-4">
 										<label htmlFor="fullName" className="block text-gray-700 font-medium mb-2">
@@ -190,7 +156,7 @@ const ContactPage = () => {
 											value={formData.number}
 											onChange={handleInputChange}
 											className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-										/>
+											/>
 									</div>
 
 									<div className="mb-4">
@@ -208,72 +174,13 @@ const ContactPage = () => {
 										/>
 									</div>
 								</>
-							)} */}
-							<div className="mb-4">
-								<label htmlFor="sub" className="block text-gray-700 font-medium mb-2">
-									Subject *
-								</label>
-								<input
-									type="text"
-									id="sub"
-									name="sub"
-									value={formData.sub}
-									onChange={handleInputChange}
-									className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-									required
-								/>
-							</div>
+							)}
 
-							<div className="mb-4">
-								<label
-									htmlFor="phoneNumber"
-									className="block text-gray-700 font-medium mb-2"
-								>
-									Phone Number *
-								</label>
-								<input
-									type="tel"
-									id="phoneNumber"
-									name="phoneNumber"
-									value={formData.phoneNumber}
-									onChange={handleInputChange}
-									className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-									required
-								/>
-							</div>
-
-							<div className="mb-4">
-								<label
-									htmlFor="complement"
-									className="block text-gray-700 font-medium mb-2"
-								>
-									Complement *
-								</label>
-								<textarea
-									id="complement"
-									name="complement"
-									value={formData.complement}
-									onChange={handleInputChange}
-									className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-									rows="4"
-									required
-								></textarea>
-							</div>
 							<button
 								type="submit"
-								disabled={loading}
-								className={`bg-blue-600 text-white px-6 py-2 rounded-md ${loading ? "bg-blue-400 cursor-not-allowed py-4" : "bg-blue-600 hover:bg-blue-700"
-									}`}
+								className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-all"
 							>
-								{loading ? (
-									<div className="flex space-x-1">
-										<span className="dot bg-white"></span>
-										<span className="dot bg-white"></span>
-										<span className="dot bg-white"></span>
-									</div>
-								) : (
-									"Submit"
-								)}
+								Submit
 							</button>
 						</form>
 					</div>

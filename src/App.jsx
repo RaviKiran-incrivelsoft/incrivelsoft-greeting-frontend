@@ -18,6 +18,7 @@ import GreetingDashboard from './pages/GreetingsDashboard';
 import ProtectedRoute from './ProtectedRoute';
 import DashboardAnalytics from './pages/DashboardAnalytics';
 import UserTicketingList from './pages/UserTicketingList';
+import SupportForm from './components/SupportForm';
 
 function App() {
   const [activeModal, setActiveModal] = useState(null);
@@ -35,12 +36,13 @@ function App() {
         <Route element={<HomePage onRegisterClick={() => openModal('register')} />} path='/' />
         <Route element={<ServicePage />} path='/service' />
         <Route element={<ContactPage />} path='/contact' />
+        <Route element={<SupportForm />} path='/form' />
         <Route element={<ProtectedRoute element={<GreetingDashboard />} />} path='/greetings' />
         <Route element={<ProtectedRoute element={<TemplateDashboard />} />} path='/templates' />
         <Route element={<ProtectedRoute element={<DashboardAnalytics />} />} path='/analytics' />
         <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
-        <Route element={<ProtectedRoute element={<UserTicketingList />} />} path='/tickets' />
+        <Route element={<ProtectedRoute element={<UserTicketingList />} />} path='/support' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />
         <Route element={<NotFoundPage />} path="*" />
       </Routes>

@@ -102,9 +102,9 @@ const TemplateDashboard = () => {
 
 
 	return (
-		<div className="py-10 lg:px-32 px-10 bg-gray-100 min-h-screen flex flex-col items-center">
+		<div className="py-10 lg:px-32 px-10 bg-gray-100 min-h-screen">
 			<h2 className="text-2xl font-semibold mb-4 text-center">Our Templates</h2>
-			<p className="text-gray-600 mb-10 lg:w-2/3 lg:text-base text-sm text-center">
+			<p className="text-gray-600 mb-10 lg:w-2/3 lg:text-base text-sm mx-auto text-center">
 				Browse through a selection of beautifully designed greeting templates, or create your own to send personalized messages for every occasion.
 			</p>
 			<div className="flex items-center mb-6 w-full">
@@ -164,7 +164,6 @@ const TemplateDashboard = () => {
 					</div>
 				</div>
 			</div>
-
 			<ConfirmationPopup
 				isOpen={confirmPopup}
 				onClose={() => setConfirmPopup(false)}
@@ -172,52 +171,50 @@ const TemplateDashboard = () => {
 					removeTemplate();
 					return false
 				}}
+				content={"Are you sure you want to delete this Template? This action cannot be undone."}
 			/>
 
-			<div className="lg:columns-3 columns-1 gap-6">
-				{isLoading ? (
-					<div className="relative py-24">
-						<div className="absolute inset-0 flex items-center justify-center">
-							<div className="rotating-circles">
-								<div></div>
-								<div></div>
-								<div></div>
-							</div>
+			{isLoading ?
+				<div className="relative py-24">
+					<div className="absolute inset-0 flex items-center justify-center">
+						<div className="rotating-circles">
+							<div></div>
+							<div></div>
+							<div></div>
 						</div>
 					</div>
-				) : (
-					<>
-						{filteredData.map((item, index) => (
-							<div key={index} className="text-center mb-6">
-								<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
-									<img
-										src={globalPostImages[item.type] || item.image}
-										alt={item.postName}
-										className="w-full h-full object-cover"
-									/>
-									<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex flex-col gap-4 items-center justify-center transition-opacity">
-										<p className="text-white text-center px-4">{item.description}</p>
-										{!item.isGlobal && (<button
-											className="flex items-center p-1.5 rounded-md transition-all duration-300 ease-in-out bg-red-600 text-white hover:bg-red-800"
-											title="Delete template"
-											onClick={() => handleDeleteTemplate(item.tempId)}
-										>
-											<FaTrashAlt className="mr-2" /> Delete
-										</button>)}
-									</div>
-									{item.isGlobal && (
-										<IoStar
-											className="absolute top-4 right-4 bg-white rounded-lg p-1.5 text-yellow-400 text-3xl"
-											title="Preset Posts"
-										/>
-									)}
+				</div> :
+				<div className="lg:columns-3 columns-1 gap-6">
+					{filteredData.map((item, index) => (
+						<div key={index} className="text-center mb-6">
+							<div className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
+								<img
+									src={globalPostImages[item.type] || item.image}
+									alt={item.postName}
+									className="w-full h-full object-cover"
+								/>
+								<div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex flex-col gap-4 items-center justify-center transition-opacity">
+									<p className="text-white text-center px-4">{item.description}</p>
+									{!item.isGlobal && (<button
+										className="flex items-center p-1.5 rounded-md transition-all duration-300 ease-in-out bg-red-600 text-white hover:bg-red-800"
+										title="Delete template"
+										onClick={() => handleDeleteTemplate(item.tempId)}
+									>
+										<FaTrashAlt className="mr-2" /> Delete
+									</button>)}
 								</div>
-								{/* <h3 className="text-lg font-semibold my-3">{item.postName}</h3> */}
+								{item.isGlobal && (
+									<IoStar
+										className="absolute top-4 right-4 bg-white rounded-lg p-1.5 text-yellow-400 text-3xl"
+										title="Preset Posts"
+									/>
+								)}
 							</div>
-						))}
-					</>
-				)}
-			</div>
+							{/* <h3 className="text-lg font-semibold my-3">{item.postName}</h3> */}
+						</div>
+					))}
+				</div>
+			}
 		</div>
 	);
 };

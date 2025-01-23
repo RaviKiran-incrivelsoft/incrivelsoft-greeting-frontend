@@ -1,64 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { FaClock, FaCheckCircle, FaExclamationCircle, FaInbox, FaTrash } from "react-icons/fa";
+import { FaClock, FaCheckCircle, FaExclamationCircle, FaInbox, FaEdit, FaTrashAlt } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { MdOutlineReportProblem } from "react-icons/md";
+import SupportForm from "../components/SupportForm";
+import ConfirmationPopup from '../components/ConfirmationPopup.jsx';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
-const UserTicketingCard = ({ ticket, onDelete }) => {
-	// Determine the status color and icon
-	const getStatusDetails = (status) => {
-		switch (status) {
-			case "pending":
-				return { color: "text-yellow-500", icon: <FaClock /> };
-			case "reviewed":
-				return { color: "text-blue-500", icon: <FaExclamationCircle /> };
-			case "completed":
-				return { color: "text-green-500", icon: <FaCheckCircle /> };
-			default:
-				return { color: "text-gray-500", icon: <FaClock /> };
-		}
-	};
-
-	const { color, icon } = getStatusDetails(ticket.status);
-
-	return (
-		<div className="bg-white shadow-md rounded-lg p-6 border border-gray-300 relative group">
-			<div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-				<button
-					onClick={() => onDelete(ticket._id)}
-					className="text-red-500 hover:text-red-700"
-				>
-					<FaTrash className="text-xl" />
-				</button>
-			</div>
-			<div className="flex items-center justify-between mb-4">
-				<h2 className="text-2xl font-semibold text-gray-800">{ticket.sub}</h2>
-				<div className={`flex items-center ${color} text-xl`}>
-					{icon}
-					<span className="ml-2 capitalize font-medium">{ticket.status}</span>
-				</div>
-			</div>
-			<div className="space-y-2">
-				<p className="text-gray-700">
-					<span className="font-semibold">Phone Number:</span> {ticket.phoneNumber}
-				</p>
-				<p className="text-gray-700">
-					<span className="font-semibold">Complement:</span> {ticket.complement}
-				</p>
-				<p className="text-gray-500 text-sm">
-					<span className="font-semibold">Created At:</span> {new Date(ticket.createdAt).toLocaleDateString()} {" "}
-					{new Date(ticket.createdAt).toLocaleTimeString()}
-				</p>
-			</div>
-		</div>
-	);
-};
 
 const UserTicketingList = () => {
 	const [tickets, setTickets] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const [selectedTicket, setSelectedTicket] = useState(true);
+	const [confirmPopup, setConfirmPopup] = useState(false);
+	const [supportVisible, setSupportVisible] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -73,24 +28,24 @@ const UserTicketingList = () => {
 				setTickets(response.data.data);
 			} catch (err) {
 				console.error("Error fetching tickets:", err);
-				setError("Failed to load tickets.");
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchTickets();
-	}, []);
+	}, [supportVisible]);
 
-	const handleDelete = async (id) => {
+	const handleDelete = async () => {
 		try {
 			const token = localStorage.getItem("token");
-			await axios.delete(`${backendUrl}/user-ticketing/${id}`, {
+			await axios.delete(`${backendUrl}/user-ticketing/${selectedTicket}`, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
 			});
-			setTickets((prev) => prev.filter((ticket) => ticket._id !== id));
+			setConfirmPopup(false)
+			setTickets((prev) => prev.filter((ticket) => ticket._id !== selectedTicket));
 		} catch (err) {
 			console.error("Error deleting ticket:", err);
 			alert("Failed to delete ticket.");
@@ -98,36 +53,127 @@ const UserTicketingList = () => {
 	};
 
 	return (
-		<div className="py-10 lg:px-32 px-10 space-y-6">
+		<div className="py-10 lg:px-32 px-10">
+			<SupportForm isOpen={supportVisible} onClose={() => setSupportVisible(false)} />
+			<ConfirmationPopup
+				isOpen={confirmPopup}
+				onClose={() => setConfirmPopup(false)}
+				onConfirm={() => {
+					handleDelete()
+					return false;
+				}}
+				content={"Are you sure you want to remove this Issue? This action cannot be undone."}
+			/>
 			<div className="flex flex-col items-center justify-center text-center">
-				<h1 className="text-4xl font-semibold text-gray-800 mb-4">Track your Feedbacks</h1>
-				<p className="text-lg text-gray-600 max-w-2xl">
-					Manage and Monitor your feedback. Stay informed about the progress of your feedbacks and ensure every detail is accounted for.
+				<h1 className="lg:text-4xl text-2xl font-semibold text-gray-800 mb-4">Track your Issues</h1>
+				<p className="lg:text-lg text-sm text-gray-600 max-w-2xl">
+					Manage and Monitor your Issues. Stay informed about the progress of your Issuess and ensure every detail is accounted for.
 				</p>
 			</div>
-			
-			<div className="flex items-center mb-6 w-full">
+
+			<div className="flex items-center gap-4 my-6 w-full text-sm">
 				<button
 					onClick={() => navigate(-1)}
 					className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
 				>
 					Back
 				</button>
+				<button
+					className='flex items-center bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700'
+					onClick={() => setSupportVisible(true)}
+				>
+					<MdOutlineReportProblem className="mr-2" />
+					<span>Rise Issue</span>
+				</button>
 			</div>
 			{loading ? (
-				<p>Loading tickets...</p>
-			) : error ? (
-				<p className="text-red-500">{error}</p>
+				<div className="relative py-24">
+					<div className="absolute inset-0 flex items-center justify-center">
+						<div className="rotating-circles">
+							<div></div>
+							<div></div>
+							<div></div>
+						</div>
+					</div>
+				</div>
 			) : tickets.length === 0 ? (
 				<div className="flex flex-col items-center justify-center h-64 text-gray-500">
 					<FaInbox className="text-6xl mb-4" />
-					<p className="text-xl">No Feedbacks Available</p>
+					<p className="text-xl">No Issues Available</p>
 				</div>
 			) : (
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-					{tickets.map((ticket) => (
-						<UserTicketingCard key={ticket._id} ticket={ticket} onDelete={handleDelete} />
-					))}
+				<div className="overflow-x-auto shadow-md rounded-lg">
+					<table className="w-full bg-white lg:text-base text-sm">
+						<thead>
+							<tr className="border-b bg-gray-200 text-gray-600 uppercase lg:text-sm text-xs">
+								<th className="py-4 px-6 text-center">Subject</th>
+								<th className="py-4 px-6 lg:table-cell hidden text-center">Phone Number</th>
+								<th className="py-4 px-6 lg:table-cell hidden text-center">Complement</th>
+								<th className="py-4 px-6 text-center">Created At</th>
+								<th className="py-4 px-6 text-center">Status</th>
+								<th className="py-4 px-6 text-center">Actions</th>
+							</tr>
+						</thead>
+						<tbody className="text-gray-700">
+							{tickets.map((ticket) => {
+								const getStatusDetails = (status) => {
+									switch (status) {
+										case "pending":
+											return { color: "text-yellow-500", icon: <FaClock /> };
+										case "reviewed":
+											return { color: "text-blue-500", icon: <FaExclamationCircle /> };
+										case "completed":
+											return { color: "text-green-500", icon: <FaCheckCircle /> };
+										default:
+											return { color: "text-gray-500", icon: <FaClock /> };
+									}
+								};
+
+								const { color, icon } = getStatusDetails(ticket.status);
+								const truncateText = (text, wordLimit) => {
+									const words = text.split(" ");
+									return words.length > wordLimit
+										? words.slice(0, wordLimit).join(" ") + "..."
+										: text;
+								};
+
+								return (
+									<tr key={ticket._id} className="border-b hover:bg-gray-100">
+										<td className="py-4 px-6 text-center">{ticket.sub}</td>
+										<td className="py-4 px-6 text-center lg:table-cell hidden">{ticket.phoneNumber}</td>
+										<td className="py-4 px-6 text-center lg:table-cell hidden">{truncateText(ticket.complement, 4)}</td>
+										<td className="py-4 px-6 text-center">
+											{new Date(ticket.createdAt).toLocaleDateString()} {" "}
+											{new Date(ticket.createdAt).toLocaleTimeString()}
+										</td>
+										<td className={`py-4 text-center ${color}`}>
+											<div className="flex justify-center items-center gap-2">
+												{icon}
+												<span className="capitalize font-medium">{ticket.status}</span>
+											</div>
+										</td>
+										<td className="py-4 px-6 text-center">
+											<div className="flex gap-4 justify-center items-center">
+												<button
+													className="flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-transparent cursor-pointer"
+													title="Edit"
+												>
+													<FaEdit />
+												</button>
+												<button
+													className="flex items-center p-1.5 border-2 rounded-md transition-all duration-300 ease-in-out text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-transparent"
+													title="Delete"
+													onClick={() => { setConfirmPopup(true); setSelectedTicket(ticket._id) }}
+												>
+													<FaTrashAlt />
+												</button>
+											</div>
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
 				</div>
 			)}
 		</div>
