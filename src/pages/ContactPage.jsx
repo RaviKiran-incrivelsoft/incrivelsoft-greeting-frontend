@@ -1,14 +1,18 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 const ContactPage = () => {
+	const [loading, setLoading] = useState(false);
 	const [contactMethod, setContactMethod] = useState("email");
 	const [formData, setFormData] = useState({
 		fullName: "",
 		email: "",
 		message: "",
-		number: "",
+		phoneNumber: "",
 		whatsappNumber: "",
 	});
 
@@ -20,13 +24,49 @@ const ContactPage = () => {
 		});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		toast.success('Message Sent Successfully', {
-			position: 'top-center',
-			theme: "colored"
-		})
-		console.log("Message Sent:");
+		setLoading(true)
+		try {
+			const dataToSubmit =
+				contactMethod === "email"
+					? {
+						fullName: formData.fullName,
+						email: formData.email,
+						message: formData.message,
+					}
+					: {
+						phoneNumber: formData.phoneNumber,
+						whatsappNumber: formData.whatsappNumber,
+					};
+
+			const response = await axios.post(`${backendUrl}/contact`, dataToSubmit);
+
+			toast.success("Details Sent Successfully!", {
+				position: "top-center",
+				theme: "colored",
+			});
+
+			// Reset form
+			setFormData({
+				fullName: "",
+				email: "",
+				message: "",
+				phoneNumber: "",
+				whatsappNumber: "",
+			});
+			console.log("Response:", response.data);
+		} catch (error) {
+			const errorMessage =
+				error.response?.data?.error || "Failed to send the Details.";
+			toast.error(errorMessage, {
+				position: "top-center",
+				theme: "colored",
+			});
+			console.error("Error:", errorMessage);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -77,8 +117,8 @@ const ContactPage = () => {
 							<div className="flex gap-4">
 								<button
 									className={`py-1 px-3 rounded-md border transition-all duration-300 ${contactMethod === "email"
-											? "bg-blue-600 text-white border-blue-600"
-											: "bg-white text-blue-600 border-blue-600"
+										? "bg-blue-600 text-white border-blue-600"
+										: "bg-white text-blue-600 border-blue-600"
 										}`}
 									onClick={() => setContactMethod("email")}
 								>
@@ -86,8 +126,8 @@ const ContactPage = () => {
 								</button>
 								<button
 									className={`py-1 px-3 rounded-md border transition-all duration-300 ${contactMethod === "phone"
-											? "bg-blue-600 text-white border-blue-600"
-											: "bg-white text-blue-600 border-blue-600"
+										? "bg-blue-600 text-white border-blue-600"
+										: "bg-white text-blue-600 border-blue-600"
 										}`}
 									onClick={() => setContactMethod("phone")}
 								>
@@ -146,17 +186,17 @@ const ContactPage = () => {
 							) : (
 								<>
 									<div className="mb-4">
-										<label htmlFor="number" className="block text-gray-700 font-medium mb-2">
+										<label htmlFor="phoneNumber" className="block text-gray-700 font-medium mb-2">
 											Phone Number
 										</label>
 										<input
 											type="tel"
-											id="number"
-											name="number"
-											value={formData.number}
+											id="phoneNumber"
+											name="phoneNumber"
+											value={formData.phoneNumber}
 											onChange={handleInputChange}
 											className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-											/>
+										/>
 									</div>
 
 									<div className="mb-4">
@@ -178,9 +218,19 @@ const ContactPage = () => {
 
 							<button
 								type="submit"
-								className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-all"
+								disabled={loading}
+								className={`w-full flex justify-center text-white px-6 py-2 rounded-md ${loading ? "bg-blue-400 cursor-not-allowed py-4" : "bg-blue-600 hover:bg-blue-700"
+									}`}
 							>
-								Submit
+								{loading ? (
+									<div className="flex space-x-1">
+										<span className="dot bg-white"></span>
+										<span className="dot bg-white"></span>
+										<span className="dot bg-white"></span>
+									</div>
+								) : (
+									"Submit"
+								)}
 							</button>
 						</form>
 					</div>
