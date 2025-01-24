@@ -55,7 +55,7 @@ const SupportForm = ({ isOpen, onClose }) => {
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 			<div className="bg-white p-8 shadow-lg rounded-lg lg:w-1/3">
-				<h2 className="lg:text-3xl text-2xl text-center font-semibold text-gray-800 mb-6">Rise a Ticket</h2>
+				<h2 className="lg:text-3xl text-2xl text-center font-semibold text-gray-800 mb-6">Raise a Ticket</h2>
 				<form onSubmit={handleSubmit}>
 					<div className="mb-4">
 						<label htmlFor="sub" className="block text-gray-700 font-medium mb-2">

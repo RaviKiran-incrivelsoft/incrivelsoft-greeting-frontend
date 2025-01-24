@@ -83,7 +83,7 @@ const UserTicketingList = () => {
 					onClick={() => setSupportVisible(true)}
 				>
 					<MdOutlineReportProblem className="mr-2" />
-					<span>Rise Issue</span>
+					<span>Raise Issue</span>
 				</button>
 			</div>
 			{loading ? (
