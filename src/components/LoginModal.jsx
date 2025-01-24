@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
-import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -14,7 +14,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const stableOnClose = useCallback(onClose, []); // Memoize onClose
+  const stableOnClose = useCallback(onClose, [onClose]); // Memoize onClose
 
   // Toggle password visibility
   const togglePasswordVisibility = () => {
@@ -99,7 +99,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
       onClick={(e) => e.target.id === "modal-container" && stableOnClose()}
     >
       <div
-        className="bg-white p-6 rounded-lg"
+        className="bg-white rounded-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-center min-h-[36vh] bg-gray-100">
@@ -148,7 +148,24 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                         onClick={togglePasswordVisibility}
                         className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400"
                       >
-                        {isPasswordVisible ? "🙈" : "👁️"}
+                        <svg
+                          className="shrink-0 size-3.5"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                          <path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                          <path className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                          <line className={isPasswordVisible ? 'hidden' : 'hs-password-active:hidden'} x1="2" x2="22" y1="2" y2="22"></line>
+                          <path className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                          <circle className={isPasswordVisible ? 'hs-password-active:block' : 'hidden'} cx="12" cy="12" r="3"></circle>
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -158,12 +175,18 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading
-                        ? "bg-blue-400 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
+                    className={`w-full h-10 flex items-center justify-center px-4 rounded text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                       }`}
                   >
-                    {loading ? "Loading..." : "Sign in"}
+                    {loading ? (
+                      <div className="flex space-x-1 p-1.5">
+                        <span className="dot bg-white"></span>
+                        <span className="dot bg-white"></span>
+                        <span className="dot bg-white"></span>
+                      </div>
+                    ) : (
+                      "Login"
+                    )}
                   </button>
                 </div>
               </form>

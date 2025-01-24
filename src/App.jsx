@@ -7,7 +7,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ServicePage from './pages/ServicePage';
 import ContactPage from './pages/ContactPage';
-import CampaignDashboard from './pages/CampaignDashboard';
 import AddPost from './pages/AddPost';
 import ScheduleDashboard from './pages/ScheduleDashboard';
 import NotFoundPage from './pages/NotFoundPage';
@@ -41,7 +40,6 @@ function App() {
         <Route element={<ProtectedRoute element={<GreetingDashboard />} />} path='/greetings' />
         <Route element={<ProtectedRoute element={<TemplateDashboard />} />} path='/templates' />
         <Route element={<ProtectedRoute element={<DashboardAnalytics />} />} path='/analytics' />
-        <Route element={<ProtectedRoute element={<CampaignDashboard />} />} path='/campaign' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
         <Route element={<ProtectedRoute element={<UserTicketingList />} />} path='/support' />
         <Route element={<AdminDashboard />} path='/admin/dashboard' />

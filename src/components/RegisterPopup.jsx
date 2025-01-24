@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -11,8 +12,7 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 
 	const location = useLocation();
 
-	const stableOnClose = useCallback(onClose, []); // Memoize onClose
-
+	const stableOnClose = useCallback(onClose, [onClose]);
 
 	const togglePasswordVisibility = () => {
 		setIsPasswordVisible(!isPasswordVisible);
@@ -66,34 +66,34 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 
 	const handleGoogleLogin = () => {
 		window.location.href = `${backendUrl}/users/google`;
-	  };
-	
-	  // Extract token and userName from URL query parameters
-	  useEffect(() => {
+	};
+
+	// Extract token and userName from URL query parameters
+	useEffect(() => {
 		const params = new URLSearchParams(location.search);
 		const token = params.get("token");
 		const userName = params.get("userName");
-	
+
 		if (token && userName) {
-		  console.log("OAuth response received:", { token, userName });
-	
-		  // Save token and userName to localStorage
-		  localStorage.setItem("token", token);
-		  localStorage.setItem("userName", userName);
-	
-		  toast.success("Google login successful!", {
-			position: "top-center",
-			theme: "colored",
-		  });
-	
-		  // Clear the query parameters from the URL
-		  const newUrl = window.location.origin + window.location.pathname;
-		  window.history.replaceState({}, document.title, newUrl);
-	
-		  // Close modal only after successful login
-		  stableOnClose();
+			console.log("OAuth response received:", { token, userName });
+
+			// Save token and userName to localStorage
+			localStorage.setItem("token", token);
+			localStorage.setItem("userName", userName);
+
+			toast.success("Google login successful!", {
+				position: "top-center",
+				theme: "colored",
+			});
+
+			// Clear the query parameters from the URL
+			const newUrl = window.location.origin + window.location.pathname;
+			window.history.replaceState({}, document.title, newUrl);
+
+			// Close modal only after successful login
+			stableOnClose();
 		}
-	  }, [location.search, stableOnClose]);
+	}, [location.search, stableOnClose]);
 
 	return (
 		<div id="modal-container" onClick={handleOutsideClick} className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
@@ -102,7 +102,7 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 					<img src="/images/loginbg.png" alt="Promotion" className="w-full object-cover" />
 				</div>
 				<div className="lg:w-1/2 p-6">
-					<div className="space-y-8 text-black">
+					<div className="space-y-8 text-black relative">
 						{!isEmailSignup ? (
 							<>
 								<h2 className="text-3xl font-bold text-center">Sign up</h2>
@@ -118,12 +118,12 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 									>
 										Sign up with email or Phone
 									</button>
-									<div className="relative flex justify-center">
+									<div className="flex justify-center">
 										<span className="text-sm text-gray-500">or</span>
 									</div>
-									<button 
-									className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
-									onClick={handleGoogleLogin}>
+									<button
+										className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+										onClick={handleGoogleLogin}>
 										Continue with Google
 									</button>
 									{/* <button className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
@@ -139,6 +139,12 @@ const RegisterPopup = ({ onClose, onSwitchToLogin }) => {
 							</>
 						) : (
 							<>
+								<button
+									onClick={() => setIsEmailSignup(false)}
+									className="absolute top-0 flex items-center p-1 text-xl border-2 rounded-full transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
+								>
+									<IoMdArrowRoundBack />
+								</button>
 								<h2 className="text-3xl font-bold text-center">Register</h2>
 								<form className="space-y-6" onSubmit={handleSubmit}>
 									<div className="space-y-4">

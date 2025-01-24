@@ -209,8 +209,8 @@ const TemplateDashboard = () => {
 										title="Preset Posts"
 									/>
 								)}
+								<h3 className="text-base font-semibold my-3">{item.postName}</h3>
 							</div>
-							{/* <h3 className="text-lg font-semibold my-3">{item.postName}</h3> */}
 						</div>
 					))}
 				</div>

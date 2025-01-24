@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaEye } from "react-icons/fa";
 
 const AdminDashboard = () => {
 	const [tickets, setTickets] = useState([]);
@@ -68,13 +67,33 @@ const AdminDashboard = () => {
 			});
 		}
 	};
-	const truncateText = (text, wordLimit) => text.split(" ").length > wordLimit ? text.split(" ").slice(0, wordLimit).join(" ") + "..." : text;
+	const truncateText = (text, wordLimit) => {
+		const words = text.split(" ");
+		if (words.length > wordLimit) {
+			return (
+				<>
+					{words.slice(0, wordLimit).join(" ")}....
+					<button
+						onClick={() => {
+							setContent(text);
+							setPopupOpen(true);
+						}}
+						className="text-blue-600"
+						title="View Description"
+					>
+						<span>more</span>
+					</button>
+				</>
+			);
+		}
+		return text;
+	};
 
 	return (
 		<div className="py-10 lg:px-32 px-10 bg-gray-100 min-h-screen">
 			{popupOpen &&
 				<div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-10">
-					<div className="bg-white w-1/3 p-8 rounded-lg text-center flex flex-col">
+					<div className="bg-white lg:w-1/3 mx-8 w-full p-8 rounded-lg text-center flex flex-col">
 						<p className="mb-6">{content}</p>
 						<button
 							onClick={() => setPopupOpen(false)}
@@ -103,7 +122,7 @@ const AdminDashboard = () => {
 					<table className="w-full bg-white lg:text-base text-sm">
 						<thead>
 							<tr className="border-b bg-gray-200 text-gray-600 uppercase text-sm">
-								<th className="py-4 px-6 text-center">S.No.</th>
+								<th className="py-4 px-6 lg:table-cell hidden text-center">S.No.</th>
 								<th className="py-4 px-6 text-center">Issue</th>
 								<th className="py-4 px-6 lg:table-cell hidden text-center">Phone Number</th>
 								<th className="py-4 px-6 text-center">Description</th>
@@ -112,25 +131,16 @@ const AdminDashboard = () => {
 						</thead>
 						<tbody className="text-gray-700">
 							{tickets.map((ticket, index) => (
-								<tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-100">
-									<td className="py-4 pl-4 text-center">{index + 1}</td>
+								<tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-100 lg:text-base text-xs">
+									<td className="py-4 lg:table-cell hidden pl-4 text-center">{index + 1}</td>
 									<td className="py-4 pl-4 text-center">{ticket.sub}</td>
 									<td className="py-4 lg:table-cell hidden text-center">{ticket.phoneNumber}</td>
 									<td
-										className="py-4 pl-4 text-center"
+										className="p-4 text-center"
 									>
-										<div className="flex items-center gap-4">
-											{truncateText(ticket.complement, 4)}
-											<button
-												onClick={() => { setContent(ticket.complement); setPopupOpen(true); }}
-												className="text-blue-600"
-												title="View Description"
-											>
-												<FaEye className="text-lg" />
-											</button>
-										</div>
+										{truncateText(ticket.complement, 4)}
 									</td>
-									<td className="py-4 text-center">
+									<td className="px-4 text-center">
 										<button
 											onClick={() => {
 												if (ticket.status !== "completed") {
