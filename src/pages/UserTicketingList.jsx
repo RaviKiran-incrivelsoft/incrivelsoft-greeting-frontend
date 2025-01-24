@@ -71,7 +71,7 @@ const UserTicketingList = () => {
 				</p>
 			</div>
 
-			<div className="flex items-center gap-4 my-6 w-full text-sm">
+			<div className="flex items-center gap-4 my-6 w-full lg:text-base text-sm">
 				<button
 					onClick={() => navigate(-1)}
 					className="flex items-center py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600 hover:border-transparent"
@@ -106,9 +106,9 @@ const UserTicketingList = () => {
 					<table className="w-full bg-white lg:text-base text-sm">
 						<thead>
 							<tr className="border-b bg-gray-200 text-gray-600 uppercase lg:text-sm text-xs">
-								<th className="py-4 px-6 text-center">Subject</th>
+								<th className="py-4 px-6 text-center">Issue</th>
 								<th className="py-4 px-6 lg:table-cell hidden text-center">Phone Number</th>
-								<th className="py-4 px-6 lg:table-cell hidden text-center">Complement</th>
+								<th className="py-4 px-6 lg:table-cell hidden text-center">Description</th>
 								<th className="py-4 px-6 text-center">Created At</th>
 								<th className="py-4 px-6 text-center">Status</th>
 								<th className="py-4 px-6 text-center">Actions</th>

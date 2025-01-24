@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -11,7 +11,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const location = useLocation();
 
   const stableOnClose = useCallback(onClose, []); // Memoize onClose
@@ -35,11 +35,15 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userName", response.data.userName);
-        stableOnClose(); // Close modal
+        localStorage.setItem("role", response.data.role);
+        stableOnClose();
         toast.success("Login successful", {
           position: "top-center",
           theme: "colored",
         });
+        if (response.data.role === 'admin') {
+          navigate("/admin/dashboard");
+        }
       } else {
         toast.error("Login Failed", {
           position: "top-center",
@@ -154,11 +158,10 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${
-                      loading
+                    className={`group w-full h-10 flex items-center justify-center px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading
                         ? "bg-blue-400 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
-                    }`}
+                      }`}
                   >
                     {loading ? "Loading..." : "Sign in"}
                   </button>

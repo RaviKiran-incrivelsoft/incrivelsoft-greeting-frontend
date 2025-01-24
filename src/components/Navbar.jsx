@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = ({ onLoginClick }) => {
@@ -18,9 +18,15 @@ const Navbar = ({ onLoginClick }) => {
 		const randomIndex = Math.floor(Math.random() * images.length);
 		setProfileImage(`/avatars/${images[randomIndex]}.png`);
 	}
+
+	const role = localStorage.getItem("role");
+	useEffect(() => {
+		if (role) {
+			setProfileImage('/avatars/admin.png');
+		}
+	}, [role]);
 	const token = localStorage.getItem("token");
 	const userName = localStorage.getItem("userName");
-
 	const handleLogout = () => {
 		localStorage.clear();
 		navigate("/");
@@ -63,7 +69,7 @@ const Navbar = ({ onLoginClick }) => {
 				</div>
 
 				{/* Links (Desktop) */}
-				<div className="hidden lg:flex space-x-6">
+				<div className={`hidden space-x-6 ${role === 'admin' ? 'lg:hidden' : 'lg:flex'}`}>
 					<Link
 						to="/"
 						className={`${isActive("/") ? "text-gray-800 underline underline-offset-8" : "text-gray-600"
