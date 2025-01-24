@@ -21,7 +21,7 @@ const Navbar = ({ onLoginClick }) => {
 
 	const role = localStorage.getItem("role");
 	useEffect(() => {
-		if (role) {
+		if (role === "admin") {
 			setProfileImage('/avatars/admin.png');
 		}
 	}, [role]);
