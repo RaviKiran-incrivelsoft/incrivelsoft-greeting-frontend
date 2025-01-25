@@ -25,21 +25,15 @@ const EmailConfigPopup = ({ onClose }) => {
 		const fetchEmailConfig = async () => {
 			try {
 				const token = localStorage.getItem("token");
-				const response = await axios.get("/email-config", {
+				const response = await axios.get(`${backendUrl}/email-config`, {
 					headers: {
 						Authorization: `Bearer ${token}`,
 					},
 				});
-				// setFormData({
-				// 	email: "ravi@gmail.com",
-				// 	passkey: "cdwednwndoeqwidwidn",
-				// 	displayName: "Ravi",
-				// 	emailType: "gmail",
-				// 	status: "active",
-				// })
-				// setHasConfig(true);
+				
 				if (response.data?.emailConfig) {
 					setFormData(response.data.emailConfig);
+					setHasConfig(true);
 				} else {
 					setHasConfig(false);
 				}
@@ -51,7 +45,8 @@ const EmailConfigPopup = ({ onClose }) => {
 		};
 
 		fetchEmailConfig();
-	}, []);
+	}, [hasConfig, isEditing]);
+
 	const togglePasswordVisibility = () => {
 		setIsPasswordVisible(!isPasswordVisible);
 	};
@@ -62,7 +57,7 @@ const EmailConfigPopup = ({ onClose }) => {
 	const handleDelete = async () => {
 		const token = localStorage.getItem("token");
 		try {
-			const response = await axios.delete(`${backendUrl}/email-config`, {
+			await axios.delete(`${backendUrl}/email-config`, {
 				headers: {
 					'Authorization': `Bearer ${token}`,
 				},
@@ -71,7 +66,8 @@ const EmailConfigPopup = ({ onClose }) => {
 				position: 'top-center',
 				theme: "colored"
 			})
-			console.log(response.data);
+			setConfirmPopup(false);
+			onClose();
 		} catch (error) {
 			toast.error('Failed to delete email configuration', {
 				position: 'top-center',
@@ -82,7 +78,8 @@ const EmailConfigPopup = ({ onClose }) => {
 	}
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setFormLoading(true)
+		setFormLoading(true);
+		
 		const token = localStorage.getItem("token");
 		try {
 			if (hasConfig) {
@@ -111,7 +108,7 @@ const EmailConfigPopup = ({ onClose }) => {
 			}
 			setIsEditing(false);
 		} catch (error) {
-			toast.error(error.message, {
+			toast.error(error.response ? error.response.data.message : error.message, {
 				position: 'top-center',
 				theme: "colored"
 			})
@@ -232,6 +229,7 @@ const EmailConfigPopup = ({ onClose }) => {
 											className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
 											required
 										>
+											<option>Select type</option>
 											<option value="gmail">Gmail</option>
 											<option value="outlook">Outlook</option>
 											<option value="zoho">Zoho</option>
@@ -253,22 +251,12 @@ const EmailConfigPopup = ({ onClose }) => {
 											className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
 											required
 										>
+											<option>Select State</option>
 											<option value="active">Active</option>
 											<option value="pause">Pause</option>
 										</select>
 									</div>
 								</div>
-								{/* <div className="mb-4">
-							<label className="block font-semibold text-gray-600">User</label>
-							<input
-								type="text"
-								name="user"
-								value={formData.user}
-								onChange={handleChange}
-								className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-300"
-								required
-							/>
-						</div> */}
 								<div className="flex justify-end space-x-4">
 									<button
 										type="button"

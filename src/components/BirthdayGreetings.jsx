@@ -232,7 +232,7 @@ function BirthdayGreetings({ closeModal, fetchGreetings }) {
 
 					{isTemplateSelected && <Template onSelect={handlePostSelect} closeModal={() => setIsTemplateSelected(false)} />}
 					{userType === "single" &&
-						<div className="grid lg:grid-cols-1 grid-cols-2 gap-4">
+						<div className="grid grid-cols-2 gap-4">
 							<div>
 								<label className="block text-sm text-gray-700 font-semibold mb-2">First Name</label>
 								<input
