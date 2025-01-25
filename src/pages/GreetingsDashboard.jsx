@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FaEye, FaRegEnvelope, FaEdit, FaTrashAlt, FaFilter, FaCalendarAlt } from 'react-icons/fa';
+import { FaEye, FaEdit, FaTrashAlt, FaFilter, FaCalendarAlt } from 'react-icons/fa';
 import TablePagination from '@mui/material/TablePagination';
 import Dropdown from '../components/Dropdown';
 import { useNavigate } from 'react-router-dom';
@@ -8,12 +8,14 @@ import { toast } from 'react-toastify';
 import convertToUTC from "../utils/convertToUTC.js";
 import { deleteMarriageDetails, deleteTempleDetails, deleteFestivalDetails, deleteEventDetails, deleteBirthDatDetails } from "../utils/deleteMethods.js";
 import ConfirmationPopup from '../components/ConfirmationPopup.jsx';
-import { BsGraphUpArrow } from 'react-icons/bs';
+import { BsEnvelope, BsGraphUpArrow } from 'react-icons/bs';
 import TempleModal from '../components/EditModals/TempleModal.jsx';
 import EventModal from '../components/EditModals/EventModal.jsx';
 import BirthdayModal from '../components/EditModals/BirthdayModal.jsx';
 import MarriageModal from '../components/EditModals/MarriageModal.jsx';
 import FestivalModal from '../components/EditModals/FestivalModal.jsx';
+import EmailConfigPopup from '../components/EmailConfigPopup.jsx';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 const options = {
 	day: '2-digit',
@@ -35,6 +37,7 @@ const globalPostImages = {
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
+	const [configPopup, setConfigPopup] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [schLoading, setSchLoading] = useState(false);
 	const [greetings, setGreetings] = useState([]);
@@ -340,17 +343,24 @@ const GreetingDashboard = () => {
 				<h2 className="text-3xl font-semibold text-gray-800">Greeting Dashboard</h2>
 			</div>
 			<div className="mb-4 flex items-center justify-between">
-				<div className="flex items-center gap-2">
+				<div className="flex items-center">
 					<Dropdown fetchData={fetchGreetings} />
 					<button
 						onClick={() => navigate('/templates')}
 						className="flex items-center gap-1 py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent"
 					>
-						<FaRegEnvelope className="lg:mr-2" />
+						<BsEnvelope className="lg:mr-2 text-xl" />
 						<span className='lg:block hidden'>Templates</span>
 					</button>
 				</div>
-				<div className="flex gap-4">
+				<div className="flex gap-2">
+					<button
+						onClick={() => setConfigPopup(true)}
+						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+					>
+						<IoSettingsOutline className='lg:mr-1 text-xl' />
+						<span className='lg:block hidden'>Email Configure</span>
+					</button>
 					<button
 						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
 						onClick={() => navigate('/analytics')}
@@ -409,7 +419,7 @@ const GreetingDashboard = () => {
 				</div>
 			</div>
 
-
+			{configPopup && <EmailConfigPopup onClose={() => setConfigPopup(false)} />}
 			{isPopupOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 					<div className="bg-white p-4 rounded-lg shadow-lg">
@@ -429,7 +439,7 @@ const GreetingDashboard = () => {
 						<tr className="border-b bg-gray-200 text-gray-600 uppercase text-sm">
 							<th className="py-4 px-6 text-center">Greeting</th>
 							<th className="py-4 px-6 lg:table-cell hidden text-center">Recipient Count</th>
-							<th className="py-4 px-6 text-center">Created At</th>
+							<th className="py-4 px-6 text-center">Scheduled At</th>
 							<th className="py-4 px-6 lg:table-cell hidden text-center">Status</th>
 							<th className="py-4 px-6 lg:table-cell hidden text-center">Template</th>
 							<th className="py-4 px-6 text-center">Actions</th>
@@ -480,7 +490,7 @@ const GreetingDashboard = () => {
 										<tr key={row._id} className="border-b border-gray-200 hover:bg-gray-100">
 											<td className="py-4 pl-4 text-center">{greetingTitle === "Festival" ? "Occasion" : greetingTitle} Greetings</td>
 											<td className="py-4 lg:table-cell hidden text-center">{row[key].csvData.length}</td>
-											<td className="py-4 text-center">{new Date(row[key].createdAt).toLocaleString('en-GB', options)}</td>
+											<td className="py-4 text-center">{new Date(row.time).toLocaleString('en-GB', options)}</td>
 											<td className="py-4 lg:table-cell hidden text-center">{row.schedule}</td>
 											<td className="py-4 lg:table-cell hidden text-center">
 												<button

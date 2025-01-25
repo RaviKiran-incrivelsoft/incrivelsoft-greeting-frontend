@@ -16,6 +16,15 @@ const UserTicketingList = () => {
 	const [supportVisible, setSupportVisible] = useState(false);
 	const navigate = useNavigate();
 
+	const options = {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: true,
+	};
+
 	useEffect(() => {
 		const fetchTickets = async () => {
 			try {
@@ -143,8 +152,7 @@ const UserTicketingList = () => {
 										<td className="py-4 px-6 text-center lg:table-cell hidden">{ticket.phoneNumber}</td>
 										<td className="py-4 px-6 text-center lg:table-cell hidden">{truncateText(ticket.complement, 4)}</td>
 										<td className="py-4 px-6 text-center">
-											{new Date(ticket.createdAt).toLocaleDateString()} {" "}
-											{new Date(ticket.createdAt).toLocaleTimeString()}
+											{new Date(ticket.createdAt).toLocaleString('en-GB', options)}
 										</td>
 										<td className={`py-4 text-center ${color}`}>
 											<div className="flex justify-center items-center gap-2">

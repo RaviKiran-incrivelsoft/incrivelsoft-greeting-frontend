@@ -125,7 +125,6 @@ const deleteEventDetails = async(id) => {
 
 const deleteBirthDatDetails = async(id) => {
     try {
-        console.log("token : ", token);
         const response = await axios.delete(
             `${process.env.REACT_APP_BACKEND_URL}/birthdays/${id}`,
             {

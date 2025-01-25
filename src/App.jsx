@@ -19,6 +19,7 @@ import DashboardAnalytics from './pages/DashboardAnalytics';
 import UserTicketingList from './pages/UserTicketingList';
 import SupportForm from './components/SupportForm';
 import AdminDashboard from './pages/AdminDashboard';
+import EmailConfigPopup from './components/EmailConfigPopup';
 
 function App() {
   const [activeModal, setActiveModal] = useState(null);
@@ -37,6 +38,7 @@ function App() {
         <Route element={<ServicePage />} path='/service' />
         <Route element={<ContactPage />} path='/contact' />
         <Route element={<SupportForm />} path='/form' />
+        <Route element={<EmailConfigPopup />} path='/settings' />
         <Route element={<ProtectedRoute element={<GreetingDashboard />} />} path='/greetings' />
         <Route element={<ProtectedRoute element={<TemplateDashboard />} />} path='/templates' />
         <Route element={<ProtectedRoute element={<DashboardAnalytics />} />} path='/analytics' />

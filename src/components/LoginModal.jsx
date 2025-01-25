@@ -149,7 +149,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
                         className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400"
                       >
                         <svg
-                          className="shrink-0 size-3.5"
+                          className="shrink-0 size-4"
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
