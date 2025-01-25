@@ -4,6 +4,8 @@ import { BsEnvelopeExclamation, BsEnvelopePlus } from "react-icons/bs";
 import ConfirmationPopup from "./ConfirmationPopup";
 import { toast } from "react-toastify";
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
 const EmailConfigPopup = ({ onClose }) => {
 	const [loading, setLoading] = useState(true);
 	const [formLoading, setFormLoading] = useState(false);
@@ -22,25 +24,25 @@ const EmailConfigPopup = ({ onClose }) => {
 	useEffect(() => {
 		const fetchEmailConfig = async () => {
 			try {
-				// const token = localStorage.getItem("token");
-				// const response = await axios.get("/email-config", {
-				// 	headers: {
-				// 		Authorization: `Bearer ${token}`,
-				// 	},
-				// });
-				setFormData({
-					email: "ravi@gmail.com",
-					passkey: "cdwednwndoeqwidwidn",
-					displayName: "Ravi",
-					emailType: "gmail",
-					status: "active",
-				})
-				setHasConfig(true);
-				// if (response.data?.emailConfig) {
-				// 	setFormData(response.data.emailConfig);
-				// } else {
-				// 	setHasConfig(false);
-				// }
+				const token = localStorage.getItem("token");
+				const response = await axios.get("/email-config", {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+				// setFormData({
+				// 	email: "ravi@gmail.com",
+				// 	passkey: "cdwednwndoeqwidwidn",
+				// 	displayName: "Ravi",
+				// 	emailType: "gmail",
+				// 	status: "active",
+				// })
+				// setHasConfig(true);
+				if (response.data?.emailConfig) {
+					setFormData(response.data.emailConfig);
+				} else {
+					setHasConfig(false);
+				}
 			} catch (error) {
 				console.error("Error fetching email configuration: ", error);
 			} finally {
@@ -60,18 +62,18 @@ const EmailConfigPopup = ({ onClose }) => {
 	const handleDelete = async () => {
 		const token = localStorage.getItem("token");
 		try {
-			const response = await axios.delete('/email-config', {
+			const response = await axios.delete(`${backendUrl}/email-config`, {
 				headers: {
 					'Authorization': `Bearer ${token}`,
 				},
 			});
-			toast.success('Email Configurations Deleted..!', {
+			toast.success('Email Configuration Deleted..!', {
 				position: 'top-center',
 				theme: "colored"
 			})
 			console.log(response.data);
 		} catch (error) {
-			toast.error('Error deleting email configuration:', error.response ? error.response.data : error.message, {
+			toast.error('Failed to delete email configuration', {
 				position: 'top-center',
 				theme: "colored"
 			})
@@ -85,7 +87,7 @@ const EmailConfigPopup = ({ onClose }) => {
 		try {
 			if (hasConfig) {
 				// Update existing email configuration
-				const response = await axios.put('/email-config', formData, {
+				const response = await axios.put(`${backendUrl}/email-config`, formData, {
 					headers: {
 						'Authorization': `Bearer ${token}`,
 					},
@@ -96,7 +98,7 @@ const EmailConfigPopup = ({ onClose }) => {
 				})
 				console.log('Email configuration updated:', response.data);
 			} else {
-				const response = await axios.post('/email-config', formData, {
+				const response = await axios.post(`${backendUrl}/email-config`, formData, {
 					headers: {
 						'Authorization': `Bearer ${token}`,
 					},
@@ -109,6 +111,10 @@ const EmailConfigPopup = ({ onClose }) => {
 			}
 			setIsEditing(false);
 		} catch (error) {
+			toast.error(error.message, {
+				position: 'top-center',
+				theme: "colored"
+			})
 			console.error('Error submitting email configuration:', error.response ? error.response.data : error.message);
 		} finally {
 			setFormLoading(false)
@@ -117,8 +123,8 @@ const EmailConfigPopup = ({ onClose }) => {
 
 	return (
 		<div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-20">
-			<div className="bg-white p-6 rounded-lg shadow-md lg:w-1/2 w-full mx-4">
-				<h2 className="text-xl font-bold mb-4 text-gray-700 text-center">
+			<div className="bg-white p-6 rounded-lg shadow-md lg:w-1/3 w-full mx-4">
+				<h2 className="text-xl font-bold mb-8 text-gray-700 text-center">
 					{isEditing ? "Edit Email Configuration" :
 						!hasConfig ? "No Email Configuration Found" :
 							"Email Configuration Details"}
@@ -157,9 +163,9 @@ const EmailConfigPopup = ({ onClose }) => {
 						}
 						{isEditing &&
 							<form onSubmit={handleSubmit}>
-								<div className="mb-4 flex lg:flex-row flex-col gap-4">
+								<div className="mb-4 flex lg:flex-row flex-col gap-4 lg:text-base text-sm">
 									<div className="w-full">
-										<label className="block text-sm font-medium text-gray-600">Email</label>
+										<label className="block font-semibold text-gray-600">Email</label>
 										<input
 											type="email"
 											name="email"
@@ -170,7 +176,7 @@ const EmailConfigPopup = ({ onClose }) => {
 										/>
 									</div>
 									<div className="w-full">
-										<label className="block text-sm font-medium text-gray-600">Display Name</label>
+										<label className="block font-semibold text-gray-600">Display Name</label>
 										<input
 											type="text"
 											name="displayName"
@@ -182,7 +188,7 @@ const EmailConfigPopup = ({ onClose }) => {
 									</div>
 								</div>
 								<div className="mb-4 relative">
-									<label className="block text-sm font-medium text-gray-600">Passkey</label>
+									<label className="block font-semibold text-gray-600">Passkey</label>
 									<input
 										type={isPasswordVisible ? "text" : "password"}
 										name="passkey"
@@ -218,7 +224,7 @@ const EmailConfigPopup = ({ onClose }) => {
 								</div>
 								<div className="mb-4 flex lg:flex-row flex-col gap-4">
 									<div className="w-full">
-										<label className="block text-sm font-medium text-gray-600">Email Type</label>
+										<label className="block font-semibold text-gray-600">Email Type</label>
 										<select
 											name="emailType"
 											value={formData.emailType}
@@ -239,7 +245,7 @@ const EmailConfigPopup = ({ onClose }) => {
 										</select>
 									</div>
 									<div className="w-full">
-										<label className="block text-sm font-medium text-gray-600">Status</label>
+										<label className="block font-semibold text-gray-600">Status</label>
 										<select
 											name="status"
 											value={formData.status}
@@ -253,7 +259,7 @@ const EmailConfigPopup = ({ onClose }) => {
 									</div>
 								</div>
 								{/* <div className="mb-4">
-							<label className="block text-sm font-medium text-gray-600">User</label>
+							<label className="block font-semibold text-gray-600">User</label>
 							<input
 								type="text"
 								name="user"
@@ -292,17 +298,17 @@ const EmailConfigPopup = ({ onClose }) => {
 						}
 						{hasConfig && !isEditing && (
 							<>
-								<div className="space-y-3 text-sm">
+								<div className="space-y-3 lg:text-base text-sm">
 									<div className="flex justify-between items-center">
-										<span className="font-medium text-gray-600">Email:</span>
+										<span className="font-semibold text-gray-600">Email:</span>
 										<span className="text-gray-800">{formData.email}</span>
 									</div>
 									<div className="flex justify-between items-center">
-										<span className="font-medium text-gray-600">Display Name:</span>
+										<span className="font-semibold text-gray-600">Display Name:</span>
 										<span className="text-gray-800">{formData.displayName}</span>
 									</div>
 									<div className="flex justify-between items-center">
-										<span className="font-medium text-gray-600">Passkey:</span>
+										<span className="font-semibold text-gray-600">Passkey:</span>
 										<div className="flex items-center">
 											<span className="text-gray-800">
 												{isPasswordVisible ? formData.passkey : "●".repeat(formData.passkey.length)}
@@ -334,11 +340,11 @@ const EmailConfigPopup = ({ onClose }) => {
 										</div>
 									</div>
 									{/* <div className="flex justify-between items-center">
-										<span className="font-medium text-gray-600">Email Type:</span>
+										<span className="font-semibold text-gray-600">Email Type:</span>
 										<span className="text-gray-800 capitalize">{formData.emailType}</span>
 									</div> */}
 									<div className="flex justify-between items-center">
-										<span className="font-medium text-gray-600">Status:</span>
+										<span className="font-semibold text-gray-600">Status:</span>
 										<span
 											className={`px-2 py-1 text-sm rounded-full ${formData.status === "active"
 												? "bg-green-100 text-green-700"
