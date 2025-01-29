@@ -26,6 +26,7 @@ const Navbar = ({ onLoginClick }) => {
 			setProfileImage('/avatars/admin.png');
 		}
 	}, [role]);
+	useEffect(() => getRandomImage(), []);
 	const token = localStorage.getItem("token");
 	const userName = localStorage.getItem("userName");
 	const handleLogout = () => {
