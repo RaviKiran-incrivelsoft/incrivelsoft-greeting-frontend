@@ -12,6 +12,7 @@ const ProfilePage = () => {
   const [configPopup, setConfigPopup] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -32,6 +33,7 @@ const ProfilePage = () => {
           },
         });
         setFormData(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching user profile:", error);
         toast.error("Failed to fetch Data..!", {
@@ -121,108 +123,121 @@ const ProfilePage = () => {
     <div className="flex items-start justify-center min-h-screen bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/circles-light.png')] bg-cover bg-center">
       <div className="bg-white mt-[5%] p-10 w-full max-w-xl rounded-2xl shadow-lg flex flex-col justify-between backdrop-blur-md bg-opacity-90">
         <h2 className="text-xl font-semibold mb-4 text-center text-gray-700">Profile Information</h2>
-
-        {isEditing ? (
-          <form className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">First Name</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+        {loading
+          ?
+          <div className="relative py-24">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="rotating-circles">
+                <div></div>
+                <div></div>
+                <div></div>
               </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </form>
-        ) : (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">First Name</label>
-                <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.first_name}</p>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
-                <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.last_name}</p>
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1">Email</label>
-              <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.email}</p>
             </div>
           </div>
-        )}
-
-        {/* Buttons Section */}
-        <div className="flex gap-4 mt-6">
-          <button
-            type="button"
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            {isEditing ? 'Cancel' : <span className='flex items-center'><TbEdit className='text-lg mr-2' />Edit</span>}
-          </button>
-          {!isEditing &&
-            <button
-              onClick={() => setIsPasswordModalOpen(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-            >
-              Set New Password
-            </button>
-          }
-          {isEditing &&
-            <button
-              onClick={handleSubmit}
-              disabled={formLoading}
-              className={`h-10 flex items-center justify-center px-4 rounded-lg text-white ${formLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                }`}
-            >
-              {formLoading ? (
-                <div className="flex space-x-1 p-1.5">
-                  <span className="dot bg-white"></span>
-                  <span className="dot bg-white"></span>
-                  <span className="dot bg-white"></span>
+          :
+          <>
+            {isEditing ? (
+              <form className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">First Name</label>
+                    <input
+                      type="text"
+                      name="first_name"
+                      value={formData.first_name}
+                      onChange={handleChange}
+                      placeholder="First Name"
+                      className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
+                    <input
+                      type="text"
+                      name="last_name"
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      placeholder="Last Name"
+                      className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
-              ) : (
-                "Save"
-              )}
-            </button>
-          }
-        </div>
-        {!isEditing &&
-          <button
-            onClick={() => setConfigPopup(true)}
-            className='w-fit flex mt-4 items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
-          >
-            <IoSettingsOutline className='lg:mr-1 text-xl' />
-            <span className='lg:block hidden'>Email Configure</span>
-          </button>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email"
+                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">First Name</label>
+                    <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.first_name}</p>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
+                    <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.last_name}</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">Email</label>
+                  <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.email}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-4 mt-6">
+              <button
+                type="button"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                {isEditing ? 'Cancel' : <span className='flex items-center'><TbEdit className='text-lg mr-2' />Edit</span>}
+              </button>
+              {!isEditing &&
+                <button
+                  onClick={() => setIsPasswordModalOpen(true)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Set New Password
+                </button>
+              }
+              {isEditing &&
+                <button
+                  onClick={handleSubmit}
+                  disabled={formLoading}
+                  className={`h-10 flex items-center justify-center px-4 rounded-lg text-white ${formLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                >
+                  {formLoading ? (
+                    <div className="flex space-x-1 p-1.5">
+                      <span className="dot bg-white"></span>
+                      <span className="dot bg-white"></span>
+                      <span className="dot bg-white"></span>
+                    </div>
+                  ) : (
+                    "Save"
+                  )}
+                </button>
+              }
+            </div>
+            {!isEditing &&
+              <button
+                onClick={() => setConfigPopup(true)}
+                className='w-fit flex mt-4 items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+              >
+                <IoSettingsOutline className='lg:mr-1 text-xl' />
+                <span className='lg:block hidden'>Email Configure</span>
+              </button>
+            }
+          </>
         }
       </div>
       {configPopup && <EmailConfigPopup onClose={() => setConfigPopup(false)} />}
