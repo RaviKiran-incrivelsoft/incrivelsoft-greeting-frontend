@@ -14,8 +14,6 @@ import EventModal from '../components/EditModals/EventModal.jsx';
 import BirthdayModal from '../components/EditModals/BirthdayModal.jsx';
 import MarriageModal from '../components/EditModals/MarriageModal.jsx';
 import FestivalModal from '../components/EditModals/FestivalModal.jsx';
-import EmailConfigPopup from '../components/EmailConfigPopup.jsx';
-import { IoSettingsOutline } from 'react-icons/io5';
 
 const options = {
 	day: '2-digit',
@@ -37,7 +35,6 @@ const globalPostImages = {
 const GreetingDashboard = () => {
 	const navigate = useNavigate();
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
-	const [configPopup, setConfigPopup] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [schLoading, setSchLoading] = useState(false);
 	const [greetings, setGreetings] = useState([]);
@@ -355,13 +352,6 @@ const GreetingDashboard = () => {
 				</div>
 				<div className="flex gap-2">
 					<button
-						onClick={() => setConfigPopup(true)}
-						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
-					>
-						<IoSettingsOutline className='lg:mr-1 text-xl' />
-						<span className='lg:block hidden'>Email Configure</span>
-					</button>
-					<button
 						className='flex items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
 						onClick={() => navigate('/analytics')}
 					>
@@ -419,7 +409,6 @@ const GreetingDashboard = () => {
 				</div>
 			</div>
 
-			{configPopup && <EmailConfigPopup onClose={() => setConfigPopup(false)} />}
 			{isPopupOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 					<div className="bg-white p-4 rounded-lg shadow-lg">

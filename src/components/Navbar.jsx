@@ -7,6 +7,7 @@ const Navbar = ({ onLoginClick }) => {
 	const isActive = (path) => location.pathname === path;
 	const [profileImage, setProfileImage] = useState("/avatars/deer.png");
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const images = [
 		"bear", "cat", "chicken", "deer", "dog", "eagle", "giraffe", "meerkat", "panda",
@@ -44,12 +45,43 @@ const Navbar = ({ onLoginClick }) => {
 						<img
 							src={profileImage}
 							alt="Profile"
+							onClick={() => setIsOpen(!isOpen)}
 							className="w-10 h-10 rounded-full mr-2"
 						/>
 					}
+					{isOpen && (
+						<div
+							className="absolute lg:hidden text-xs top-full right-0 bg-gray-100 z-10 shadow-lg rounded-lg p-4"
+							onMouseEnter={() => setIsOpen(true)}
+							onMouseLeave={() => setIsOpen(false)}
+						>
+							<div className="flex items-center justify-center gap-4 border-b pb-2 mb-2">
+								<img
+									src={profileImage}
+									alt="Profile"
+									className="w-10 h-10 rounded-full mb-2"
+								/>
+								<span className="text-black font-semibold">{userName}</span>
+							</div>
+							<div className="flex justify-between gap-4">
+								<button
+									onClick={() => navigate('/profile')}
+									className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+								>
+									Profile
+								</button>
+								<button
+									onClick={handleLogout}
+									className="bg-red-500 text-white px-4 py-2 rounded-lg"
+								>
+									Logout
+								</button>
+							</div>
+						</div>
+					)}
 					<button
 						className="block text-gray-600 focus:outline-none"
-						onClick={() => setIsMenuOpen(!isMenuOpen)}
+						onClick={() => { setIsMenuOpen(!isMenuOpen); setIsOpen(false) }}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -117,19 +149,50 @@ const Navbar = ({ onLoginClick }) => {
 
 				{/* Profile Section */}
 				{token ? (
-					<div className="hidden lg:flex items-center ml-4">
-						<img
-							src={profileImage}
-							alt="Profile"
-							className="w-10 h-10 rounded-full mr-2"
-						/>
-						<span className="text-black font-semibold mr-3 ml-2">{userName}</span>
-						<button
-							onClick={handleLogout}
-							className="bg-red-500 text-white px-4 py-2 rounded-lg"
+					<div className="hidden lg:flex items-center ml-4 relative">
+						<div
+							className="flex items-center cursor-pointer"
+							onMouseEnter={() => setIsOpen(true)}
+							onMouseLeave={() => setIsOpen(false)}
 						>
-							Logout
-						</button>
+							<img
+								src={profileImage}
+								alt="Profile"
+								className="w-10 h-10 rounded-full mr-2"
+							/>
+							{/* <span className="text-black font-semibold mr-3 ml-2">{userName}</span> */}
+						</div>
+
+						{isOpen && (
+							<div
+								className="absolute top-full right-0 bg-gray-100 z-10 shadow-lg rounded-lg p-4"
+								onMouseEnter={() => setIsOpen(true)}
+								onMouseLeave={() => setIsOpen(false)}
+							>
+								<div className="flex items-center justify-center gap-4 border-b pb-2 mb-2">
+									<img
+										src={profileImage}
+										alt="Profile"
+										className="w-12 h-12 rounded-full mb-2"
+									/>
+									<span className="text-black font-semibold">{userName}</span>
+								</div>
+								<div className="flex justify-between gap-4">
+									<button
+										onClick={() => navigate('/profile')}
+										className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+									>
+										Profile
+									</button>
+									<button
+										onClick={handleLogout}
+										className="bg-red-500 text-white px-4 py-2 rounded-lg"
+									>
+										Logout
+									</button>
+								</div>
+							</div>
+						)}
 					</div>
 				) : (
 					<button

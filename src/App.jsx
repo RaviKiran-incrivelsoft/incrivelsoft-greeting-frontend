@@ -20,6 +20,7 @@ import UserTicketingList from './pages/UserTicketingList';
 import SupportForm from './components/SupportForm';
 import AdminDashboard from './pages/AdminDashboard';
 import EmailConfigPopup from './components/EmailConfigPopup';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const [activeModal, setActiveModal] = useState(null);
@@ -44,6 +45,7 @@ function App() {
         <Route element={<ProtectedRoute element={<DashboardAnalytics />} />} path='/analytics' />
         <Route element={<ProtectedRoute element={<ScheduleDashboard />} />} path='/schedule' />
         <Route element={<ProtectedRoute element={<UserTicketingList />} />} path='/support' />
+        <Route element={<ProtectedRoute element={<ProfilePage />} />} path='/profile' />
         <Route element={<AdminDashboard />} path='/admin/dashboard' />
         <Route element={<ProtectedRoute element={<AddPost />} />} path='/addpost' />
         <Route element={<NotFoundPage />} path="*" />
