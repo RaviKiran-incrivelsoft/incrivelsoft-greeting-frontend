@@ -9,7 +9,7 @@ const VideoShowcase = () => {
 	];
 
 	return (
-		<section className="py-16 lg:px-20 px-10 bg-gray-900 text-white">
+		<section className="py-16 lg:px-20 px-10 bg-black text-white">
 			<div className="text-center mb-12">
 				<h2 className="lg:text-4xl text-xl font-bold">Know more about the Automated Greetings</h2>
 				<p className="lg:text-lg text-sm text-gray-400 mt-2">Watch how our platform simplifies messaging.</p>

@@ -31,6 +31,7 @@ const Navbar = ({ onLoginClick }) => {
 	const userName = localStorage.getItem("userName");
 	const handleLogout = () => {
 		localStorage.clear();
+		setIsOpen(false)
 		navigate("/");
 	};
 
@@ -46,13 +47,25 @@ const Navbar = ({ onLoginClick }) => {
 
 				{/* Hamburger Menu */}
 				<div className="lg:hidden flex gap-2 relative">
-					{token &&
+					{token ?
 						<img
 							src={profileImage}
 							alt="Profile"
+							onMouseEnter={() => setIsOpen(true)}
+							onMouseLeave={() => setIsOpen(false)}
 							className="w-10 h-10 rounded-full mr-2"
-							onClick={() => setIsOpen(!isOpen)}
 						/>
+						:
+						<button
+							onClick={() => {
+								getRandomImage();
+								onLoginClick();
+								setIsMenuOpen(false);
+							}}
+							className="w-fit bg-gray-800 text-white text-sm px-4 py-2 rounded-lg mr-2"
+						>
+							Login
+						</button>
 					}
 					{isOpen && (
 						<div
@@ -70,7 +83,7 @@ const Navbar = ({ onLoginClick }) => {
 							</div>
 							<div className="flex justify-between gap-4">
 								<button
-									onClick={() => navigate('/profile')}
+									onClick={() => {navigate('/profile');setIsOpen(false);}}
 									className="bg-blue-500 text-white px-4 py-2 rounded-lg"
 								>
 									Profile
@@ -184,7 +197,7 @@ const Navbar = ({ onLoginClick }) => {
 								</div>
 								<div className="flex justify-between gap-4">
 									<button
-										onClick={() => navigate('/profile')}
+										onClick={() => {navigate('/profile');setIsOpen(false);}}
 										className="bg-blue-500 text-white px-4 py-2 rounded-lg"
 									>
 										Profile
@@ -265,28 +278,6 @@ const Navbar = ({ onLoginClick }) => {
 						>
 							Support
 						</Link>
-					)}
-					{token ? (
-						<button
-							onClick={() => {
-								handleLogout();
-								setIsMenuOpen(false);
-							}}
-							className="w-fit bg-red-500 text-white px-4 py-2 rounded-lg"
-						>
-							Logout
-						</button>
-					) : (
-						<button
-							onClick={() => {
-								getRandomImage();
-								onLoginClick();
-								setIsMenuOpen(false);
-							}}
-							className="w-fit bg-gray-800 text-white px-4 py-2 rounded-lg"
-						>
-							Login
-						</button>
 					)}
 				</div>
 			</div>

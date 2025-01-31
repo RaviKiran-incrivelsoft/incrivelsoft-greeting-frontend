@@ -120,9 +120,9 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="flex items-start justify-center min-h-screen bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/circles-light.png')] bg-cover bg-center">
-      <div className="bg-white mt-[5%] p-10 w-full max-w-xl rounded-2xl shadow-lg flex flex-col justify-between backdrop-blur-md bg-opacity-90">
-        <h2 className="text-xl font-semibold mb-4 text-center text-gray-700">Profile Information</h2>
+    <div className="flex items-start justify-center py-20 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/circles-light.png')] bg-cover bg-center">
+      <div className="bg-white my-auto mx-10 py-10 px-6 w-full max-w-xl rounded-2xl shadow-lg flex flex-col justify-between backdrop-blur-md bg-opacity-90">
+        <h2 className="text-xl font-semibold mb-6 text-center text-gray-700">Profile Information</h2>
         {loading
           ?
           <div className="relative py-24">
@@ -138,7 +138,7 @@ const ProfilePage = () => {
           <>
             {isEditing ? (
               <form className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-gray-700 font-semibold mb-1">First Name</label>
                     <input
@@ -176,7 +176,7 @@ const ProfilePage = () => {
               </form>
             ) : (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-gray-700 font-semibold mb-1">First Name</label>
                     <p className="w-full p-2 border rounded-lg bg-gray-100">{formData.first_name}</p>
@@ -196,7 +196,7 @@ const ProfilePage = () => {
             <div className="flex gap-4 mt-6">
               <button
                 type="button"
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 lg:text-base text-sm"
                 onClick={() => setIsEditing(!isEditing)}
               >
                 {isEditing ? 'Cancel' : <span className='flex items-center'><TbEdit className='text-lg mr-2' />Edit</span>}
@@ -204,7 +204,7 @@ const ProfilePage = () => {
               {!isEditing &&
                 <button
                   onClick={() => setIsPasswordModalOpen(true)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg lg:text-base text-sm"
                 >
                   Set New Password
                 </button>
@@ -231,10 +231,9 @@ const ProfilePage = () => {
             {!isEditing &&
               <button
                 onClick={() => setConfigPopup(true)}
-                className='w-fit flex mt-4 items-center gap-1 py-0 lg:py-1.5 lg:px-4 px-2 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
+                className='w-fit flex mt-4 items-center lg:text-base text-sm gap-1 py-1.5 px-4 border-2 rounded-md transition-all duration-300 ease-in-out text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 hover:border-transparent'
               >
-                <IoSettingsOutline className='lg:mr-1 text-xl' />
-                <span className='lg:block hidden'>Email Configure</span>
+                <IoSettingsOutline className='mr-1 text-xl' />Email Configure
               </button>
             }
           </>
@@ -243,7 +242,7 @@ const ProfilePage = () => {
       {configPopup && <EmailConfigPopup onClose={() => setConfigPopup(false)} />}
       {isPasswordModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+          <div className="bg-white mx-10 p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl font-semibold mb-4">Reset Password</h2>
             <form onSubmit={handlePasswordReset} className="space-y-4">
               <div className='relative'>
