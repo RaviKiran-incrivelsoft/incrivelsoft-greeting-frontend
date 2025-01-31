@@ -38,16 +38,20 @@ const Navbar = ({ onLoginClick }) => {
 		<nav className="bg-white">
 			<div className="px-10 py-4 flex items-center justify-between">
 				{/* Logo */}
-				<img src="/images/logo.png" alt="Logo" className="h-16" />
+				<img
+					src="/images/logo.png"
+					alt="Logo"
+					className="h-16"
+				/>
 
 				{/* Hamburger Menu */}
-				<div className="lg:hidden flex gap-2">
+				<div className="lg:hidden flex gap-2 relative">
 					{token &&
 						<img
 							src={profileImage}
 							alt="Profile"
-							onClick={() => setIsOpen(!isOpen)}
 							className="w-10 h-10 rounded-full mr-2"
+							onClick={() => setIsOpen(!isOpen)}
 						/>
 					}
 					{isOpen && (
