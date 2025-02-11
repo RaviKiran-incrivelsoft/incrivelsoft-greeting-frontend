@@ -9,11 +9,6 @@ import convertToUTC from "../utils/convertToUTC.js";
 import { deleteMarriageDetails, deleteTempleDetails, deleteFestivalDetails, deleteEventDetails, deleteBirthDatDetails } from "../utils/deleteMethods.js";
 import ConfirmationPopup from '../components/ConfirmationPopup.jsx';
 import { BsGraphUpArrow } from 'react-icons/bs';
-import TempleModal from '../components/EditModals/TempleModal.jsx';
-import EventModal from '../components/EditModals/EventModal.jsx';
-import BirthdayModal from '../components/EditModals/BirthdayModal.jsx';
-import MarriageModal from '../components/EditModals/MarriageModal.jsx';
-import FestivalModal from '../components/EditModals/FestivalModal.jsx';
 
 const options = {
 	day: '2-digit',
@@ -51,9 +46,7 @@ const GreetingDashboard = () => {
 	const [totalRows, setTotalRows] = useState(10);
 	const [filter, setFilter] = useState("none");
 	const [confirmPopup, setConfirmPopup] = useState(false);
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedRow, setSelectedRow] = useState(null);
-	const [selectedCategory, setSelectedCategory] = useState(null);
 
 	const token = localStorage.getItem("token");
 
@@ -67,13 +60,7 @@ const GreetingDashboard = () => {
 	};
 
 	const handleEditClick = (row) => {
-		const category = Object.keys(row).find((key) =>
-			['temple', 'event', 'marriage', 'festival', 'birthday'].includes(key)
-		);
-
 		setSelectedRow(row);
-		setSelectedCategory(category);
-		setIsModalOpen(true);
 	};
 
 	const fetchPosts = async () => {
@@ -151,55 +138,6 @@ const GreetingDashboard = () => {
 	useEffect(() => {
 		fetchGreetings();
 	}, [fetchGreetings]);
-
-	const renderModal = () => {
-		if (!isModalOpen || !selectedRow || !selectedCategory) return null;
-
-		switch (selectedCategory) {
-			case 'temple':
-				return (
-					<TempleModal
-						data={selectedRow.temple}
-						onClose={() => { setIsModalOpen(false) }}
-						onFetch={fetchGreetings}
-					/>
-				);
-			case 'event':
-				return (
-					<EventModal
-						data={selectedRow.event}
-						onClose={() => { setIsModalOpen(false) }}
-						onFetch={fetchGreetings}
-					/>
-				);
-			case 'marriage':
-				return (
-					<MarriageModal
-						data={selectedRow.marriage}
-						onClose={() => { setIsModalOpen(false) }}
-						onFetch={fetchGreetings}
-					/>
-				);
-			case 'festival':
-				return (
-					<FestivalModal
-						data={selectedRow.festival}
-						onClose={() => { setIsModalOpen(false) }}
-						onFetch={fetchGreetings}
-					/>
-				);
-			case 'birthday':
-				return (
-					<BirthdayModal
-						data={selectedRow.birthday}
-						onClose={() => { setIsModalOpen(false) }}
-						onFetch={fetchGreetings}
-					/>
-				);
-			default:
-				return null;
-		}
-	};
 
 	const handleTemplate = (id) => {
 		setIsPopupOpen(true);
@@ -539,7 +477,6 @@ const GreetingDashboard = () => {
 						)}
 					</tbody>
 				</table>
-				{isModalOpen && renderModal()}
 				<ConfirmationPopup
 					isOpen={confirmPopup}
 					onClose={() => setConfirmPopup(false)}
